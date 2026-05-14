@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Despertar Do Amor</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -32,7 +34,7 @@
             top:0;
             left:0;
             z-index:1000;
-            background:rgba(15,23,42,0.8);
+            background:rgba(15,23,42,0.85);
             backdrop-filter:blur(10px);
         }
 
@@ -45,6 +47,7 @@
         .menu{
             display:flex;
             gap:30px;
+            align-items:center;
         }
 
         .menu a{
@@ -153,7 +156,6 @@
             border-radius:30px;
             overflow:hidden;
             box-shadow:0 20px 50px rgba(0,0,0,0.4);
-            position:relative;
             animation:flutuar 3s ease-in-out infinite;
         }
 
@@ -234,7 +236,7 @@
 
         .feature-grid{
             display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+            grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
             gap:30px;
         }
 
@@ -265,6 +267,17 @@
             font-size:50px;
         }
 
+        .perfil-btn{
+            display:inline-block;
+            margin-top:20px;
+            background:#ff4d6d;
+            color:white;
+            padding:12px 20px;
+            border-radius:12px;
+            text-decoration:none;
+            font-weight:600;
+        }
+
         .footer{
             text-align:center;
             padding:40px;
@@ -293,6 +306,7 @@
         }
 
     </style>
+
 </head>
 <body>
 
@@ -301,13 +315,30 @@
         <div class="logo">LoveConnect</div>
 
         <div class="menu">
-            <a href="#">Início</a>
-            <a href="#">Perfis</a>
-            <a href="#">Matches</a>
-            <a href="#">Chat</a>
+
+            <a href="/">Início</a>
+
+            <a href="/matches">Matches</a>
+
+            <a href="/cadastro">Cadastro</a>
+
+            <a href="/logout">Sair</a>
+
         </div>
 
-        <a href="/login" class="btn-login">Entrar</a>
+        {% if "user_id" in session %}
+
+            <a href="/matches" class="btn-login">
+                Meus Matches
+            </a>
+
+        {% else %}
+
+            <a href="/login" class="btn-login">
+                Entrar
+            </a>
+
+        {% endif %}
 
     </nav>
 
@@ -325,8 +356,29 @@
             </p>
 
             <div class="hero-buttons">
-                <a href="/cadastro" class="btn-primary">Criar Conta</a>
-                <a href="#" class="btn-secondary">Explorar</a>
+
+                {% if "user_id" in session %}
+
+                    <a href="/" class="btn-primary">
+                        Explorar Perfis
+                    </a>
+
+                    <a href="/matches" class="btn-secondary">
+                        Abrir Matches
+                    </a>
+
+                {% else %}
+
+                    <a href="/cadastro" class="btn-primary">
+                        Criar Conta
+                    </a>
+
+                    <a href="/login" class="btn-secondary">
+                        Entrar
+                    </a>
+
+                {% endif %}
+
             </div>
 
         </div>
@@ -395,6 +447,42 @@
                     Conheça pessoas da sua cidade e de vários lugares do mundo.
                 </p>
             </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="features">
+
+        <div class="section-title">
+            <h2>Pessoas disponíveis</h2>
+            <p>Conheça novos perfis agora mesmo.</p>
+        </div>
+
+        <div class="feature-grid">
+
+            {% for u in usuarios %}
+
+            <div class="feature-card">
+
+                <div class="emoji">💖</div>
+
+                <h3>{{u.nome}}, {{u.idade}}</h3>
+
+                <p>{{u.cidade}}</p>
+
+                <p style="margin-top:10px;">
+                    {{u.bio}}
+                </p>
+
+                <a href="/curtir/{{u.id}}" class="perfil-btn">
+                    Curtir Perfil
+                </a>
+
+            </div>
+
+            {% endfor %}
 
         </div>
 
