@@ -309,27 +309,34 @@
 
 </head>
 <body>
+    Troque sua navbar por esta versão. Agora o botão “Sair” aparece corretamente no canto direito quando o usuário estiver logado:
 
-    <nav class="navbar">
+<nav class="navbar">
 
-        <div class="logo">LoveConnect</div>
+    <div class="logo">LoveConnect</div>
 
-        <div class="menu">
+    <div class="menu">
 
-            <a href="/">Início</a>
+        <a href="/">Início</a>
+
+        {% if "user_id" in session %}
 
             <a href="/matches">Matches</a>
 
-            <a href="/cadastro">Cadastro</a>
+        {% endif %}
 
-            <a href="/logout">Sair</a>
+    </div>
 
-        </div>
+    <div style="display:flex; gap:15px; align-items:center;">
 
         {% if "user_id" in session %}
 
             <a href="/matches" class="btn-login">
-                Meus Matches
+                Matches
+            </a>
+
+            <a href="/logout" class="btn-login">
+                Sair
             </a>
 
         {% else %}
@@ -338,9 +345,18 @@
                 Entrar
             </a>
 
+            <a href="/cadastro" class="btn-login">
+                Cadastro
+            </a>
+
         {% endif %}
 
-    </nav>
+    </div>
+
+</nav>
+
+    
+
 
 
     <section class="hero">
