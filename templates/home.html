@@ -7,291 +7,57 @@
 
     <title>LoveConnect</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <style>
-
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:'Poppins',sans-serif;
-        }
 
         body{
             background:#0f172a;
             color:white;
-            overflow-x:hidden;
+            font-family:Arial;
+            margin:0;
         }
 
-        .navbar{
-            width:100%;
-            padding:20px 8%;
+        .topo{
+            background:#1e293b;
+            padding:20px;
             display:flex;
             justify-content:space-between;
             align-items:center;
-            position:fixed;
-            top:0;
-            left:0;
-            z-index:1000;
-            background:rgba(15,23,42,0.9);
-            backdrop-filter:blur(10px);
         }
 
         .logo{
-            font-size:32px;
-            font-weight:700;
+            font-size:30px;
+            font-weight:bold;
             color:#ff4d6d;
         }
 
-        .nav-right{
+        .menu{
             display:flex;
-            gap:15px;
-            align-items:center;
+            gap:10px;
         }
 
         .btn{
             background:#ff4d6d;
             color:white;
-            padding:12px 24px;
-            border-radius:12px;
+            padding:10px 18px;
             text-decoration:none;
-            font-weight:600;
-            transition:0.3s;
-            border:none;
+            border-radius:10px;
         }
 
-        .btn:hover{
-            background:#ff3355;
-            transform:scale(1.05);
-        }
-
-        .hero{
-            min-height:100vh;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            padding:140px 8% 80px;
-            gap:60px;
-            flex-wrap:wrap;
-        }
-
-        .hero-text{
-            flex:1;
-            min-width:300px;
-        }
-
-        .hero-text h1{
-            font-size:65px;
-            line-height:1.1;
-            margin-bottom:25px;
-        }
-
-        .hero-text span{
-            color:#ff4d6d;
-        }
-
-        .hero-text p{
-            color:#cbd5e1;
-            font-size:18px;
-            margin-bottom:35px;
-            max-width:600px;
-        }
-
-        .hero-buttons{
-            display:flex;
-            gap:20px;
-            flex-wrap:wrap;
-        }
-
-        .btn-secondary{
-            border:2px solid #ff4d6d;
-            color:white;
-            padding:16px 34px;
-            border-radius:14px;
-            text-decoration:none;
-            font-weight:600;
-            transition:0.3s;
-        }
-
-        .btn-secondary:hover{
-            background:#ff4d6d;
-        }
-
-        .hero-image{
-            flex:1;
-            min-width:300px;
-            display:flex;
-            justify-content:center;
-        }
-
-        .card-preview{
-            width:350px;
-            background:#1e293b;
-            border-radius:30px;
-            overflow:hidden;
-            box-shadow:0 20px 50px rgba(0,0,0,0.4);
-            animation:flutuar 3s ease-in-out infinite;
-        }
-
-        @keyframes flutuar{
-            0%{transform:translateY(0px);}
-            50%{transform:translateY(-10px);}
-            100%{transform:translateY(0px);}
-        }
-
-        .card-preview img{
-            width:100%;
-            height:420px;
-            object-fit:cover;
-        }
-
-        .card-info{
-            padding:25px;
-        }
-
-        .card-info h2{
-            font-size:28px;
-            margin-bottom:8px;
-        }
-
-        .card-info p{
-            color:#cbd5e1;
-        }
-
-        .actions{
-            display:flex;
-            justify-content:center;
-            gap:25px;
-            margin-top:25px;
-            margin-bottom:30px;
-        }
-
-        .circle-btn{
-            width:65px;
-            height:65px;
-            border-radius:50%;
-            border:none;
-            font-size:28px;
-            cursor:pointer;
-            transition:0.3s;
-        }
-
-        .close{
-            background:#334155;
-            color:white;
-        }
-
-        .heart{
-            background:#ff4d6d;
-            color:white;
-        }
-
-        .circle-btn:hover{
-            transform:scale(1.1);
-        }
-
-        .features{
-            padding:80px 8%;
-        }
-
-        .section-title{
-            text-align:center;
-            margin-bottom:60px;
-        }
-
-        .section-title h2{
-            font-size:42px;
-            margin-bottom:15px;
-        }
-
-        .section-title p{
-            color:#cbd5e1;
-        }
-
-        .feature-grid{
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-            gap:30px;
-        }
-
-        .feature-card{
-            background:#1e293b;
-            padding:35px;
-            border-radius:24px;
-            transition:0.3s;
-        }
-
-        .feature-card:hover{
-            transform:translateY(-8px);
-            box-shadow:0 15px 30px rgba(0,0,0,0.3);
-        }
-
-        .feature-card h3{
-            margin-top:20px;
-            margin-bottom:15px;
-            font-size:24px;
-        }
-
-        .feature-card p{
-            color:#cbd5e1;
-            line-height:1.7;
-        }
-
-        .emoji{
-            font-size:50px;
-        }
-
-        .perfil-btn{
-            display:inline-block;
-            margin-top:20px;
-            background:#ff4d6d;
-            color:white;
-            padding:12px 20px;
-            border-radius:12px;
-            text-decoration:none;
-            font-weight:600;
-            transition:0.3s;
-        }
-
-        .perfil-btn:hover{
-            background:#ff3355;
-        }
-
-        .footer{
-            text-align:center;
+        .container{
             padding:40px;
-            color:#94a3b8;
-            border-top:1px solid rgba(255,255,255,0.1);
         }
 
-        @media(max-width:900px){
+        .card{
+            background:#1e293b;
+            padding:20px;
+            border-radius:20px;
+            margin-bottom:20px;
+        }
 
-            .hero-text h1{
-                font-size:45px;
-            }
-
-            .hero{
-                text-align:center;
-            }
-
-            .hero-buttons{
-                justify-content:center;
-            }
-
-            .navbar{
-                padding:15px 5%;
-            }
-
-            .logo{
-                font-size:24px;
-            }
-
-            .btn{
-                padding:10px 15px;
-                font-size:14px;
-            }
-
+        .acoes{
+            margin-top:20px;
+            display:flex;
+            gap:10px;
         }
 
     </style>
@@ -299,142 +65,72 @@
 </head>
 <body>
 
-    <nav class="navbar">
+    <div class="topo">
 
-        <div class="logo">LoveConnect</div>
+        <div class="logo">
+            LoveConnect
+        </div>
 
-        <div class="nav-right">
+        <div class="menu">
 
-            {% if "user_id" in session %}
+            <a href="/" class="btn">
+                Home
+            </a>
 
-                <a href="/" class="btn">
-                    Home
-                </a>
+            <a href="/matches" class="btn">
+                Matches
+            </a>
 
-                <a href="/matches" class="btn">
-                    Matches
-                </a>
-
-                <a href="/logout" class="btn">
-                    Sair
-                </a>
-
-            {% else %}
-
-                <a href="/login" class="btn">
-                    Entrar
-                </a>
-
-                <a href="/cadastro" class="btn">
-                    Cadastro
-                </a>
-
-            {% endif %}
+            <a href="/logout" class="btn">
+                Sair
+            </a>
 
         </div>
 
-    </nav>
+    </div>
 
 
-    <section class="hero">
+    <div class="container">
 
-        <div class="hero-text">
+        <h1>
+            Pessoas disponíveis
+        </h1>
 
-            <h1>
-                Encontre alguém <span>especial</span> hoje mesmo.
-            </h1>
+        <br>
+
+        {% for u in usuarios %}
+
+        <div class="card">
+
+            <h2>
+                {{u.nome}}, {{u.idade}}
+            </h2>
 
             <p>
-                Conecte pessoas reais, descubra novos matches e converse com quem combina com você.
+                Cidade: {{u.cidade}}
             </p>
 
-            <div class="hero-buttons">
+            <p>
+                {{u.bio}}
+            </p>
 
-                {% if "user_id" in session %}
+            <div class="acoes">
 
-                    <a href="/matches" class="btn">
-                        Abrir Matches
-                    </a>
+                <a href="/curtir/{{u.id}}" class="btn">
+                    Curtir
+                </a>
 
-                {% else %}
-
-                    <a href="/cadastro" class="btn">
-                        Criar Conta
-                    </a>
-
-                    <a href="/login" class="btn-secondary">
-                        Entrar
-                    </a>
-
-                {% endif %}
-
-            </div>
-
-        </div>
-
-
-        <div class="hero-image">
-
-            <div class="card-preview">
-
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1200&auto=format&fit=crop" alt="perfil">
-
-                <div class="card-info">
-                    <h2>Amanda, 22</h2>
-                    <p>São Paulo • Ama viagens e tecnologia ✨</p>
-                </div>
-
-                <div class="actions">
-                    <button class="circle-btn close">✖</button>
-                    <button class="circle-btn heart">❤</button>
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <section class="features">
-
-        <div class="section-title">
-            <h2>Pessoas disponíveis</h2>
-            <p>Conheça novos perfis agora mesmo.</p>
-        </div>
-
-        <div class="feature-grid">
-
-            {% for u in usuarios %}
-
-            <div class="feature-card">
-
-                <div class="emoji">💖</div>
-
-                <h3>{{u.nome}}, {{u.idade}}</h3>
-
-                <p>{{u.cidade}}</p>
-
-                <p style="margin-top:10px;">
-                    {{u.bio}}
-                </p>
-
-                <a href="/curtir/{{u.id}}" class="perfil-btn">
-                    Curtir Perfil
+                <a href="/chat/{{u.id}}" class="btn">
+                    Chat
                 </a>
 
             </div>
 
-            {% endfor %}
-
         </div>
 
-    </section>
+        {% endfor %}
 
-
-    <footer class="footer">
-        © 2026 LoveConnect - Todos os direitos reservados.
-    </footer>
+    </div>
 
 </body>
 </html>
