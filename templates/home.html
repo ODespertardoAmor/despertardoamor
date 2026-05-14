@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Despertar Do Amor</title>
+    <title>LoveConnect</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -34,7 +34,7 @@
             top:0;
             left:0;
             z-index:1000;
-            background:rgba(15,23,42,0.85);
+            background:rgba(15,23,42,0.9);
             backdrop-filter:blur(10px);
         }
 
@@ -44,24 +44,13 @@
             color:#ff4d6d;
         }
 
-        .menu{
+        .nav-right{
             display:flex;
-            gap:30px;
+            gap:15px;
             align-items:center;
         }
 
-        .menu a{
-            text-decoration:none;
-            color:white;
-            font-weight:500;
-            transition:0.3s;
-        }
-
-        .menu a:hover{
-            color:#ff4d6d;
-        }
-
-        .btn-login{
+        .btn{
             background:#ff4d6d;
             color:white;
             padding:12px 24px;
@@ -69,11 +58,12 @@
             text-decoration:none;
             font-weight:600;
             transition:0.3s;
+            border:none;
         }
 
-        .btn-login:hover{
-            transform:scale(1.05);
+        .btn:hover{
             background:#ff3355;
+            transform:scale(1.05);
         }
 
         .hero{
@@ -81,7 +71,7 @@
             display:flex;
             align-items:center;
             justify-content:center;
-            padding:120px 8%;
+            padding:140px 8% 80px;
             gap:60px;
             flex-wrap:wrap;
         }
@@ -112,21 +102,6 @@
             display:flex;
             gap:20px;
             flex-wrap:wrap;
-        }
-
-        .btn-primary{
-            background:#ff4d6d;
-            color:white;
-            padding:16px 34px;
-            border-radius:14px;
-            text-decoration:none;
-            font-weight:600;
-            transition:0.3s;
-        }
-
-        .btn-primary:hover{
-            transform:translateY(-3px);
-            box-shadow:0 10px 25px rgba(255,77,109,0.4);
         }
 
         .btn-secondary{
@@ -217,16 +192,16 @@
         }
 
         .features{
-            padding:100px 8%;
+            padding:80px 8%;
         }
 
         .section-title{
             text-align:center;
-            margin-bottom:70px;
+            margin-bottom:60px;
         }
 
         .section-title h2{
-            font-size:45px;
+            font-size:42px;
             margin-bottom:15px;
         }
 
@@ -276,6 +251,11 @@
             border-radius:12px;
             text-decoration:none;
             font-weight:600;
+            transition:0.3s;
+        }
+
+        .perfil-btn:hover{
+            background:#ff3355;
         }
 
         .footer{
@@ -288,11 +268,7 @@
         @media(max-width:900px){
 
             .hero-text h1{
-                font-size:48px;
-            }
-
-            .menu{
-                display:none;
+                font-size:45px;
             }
 
             .hero{
@@ -303,60 +279,61 @@
                 justify-content:center;
             }
 
+            .navbar{
+                padding:15px 5%;
+            }
+
+            .logo{
+                font-size:24px;
+            }
+
+            .btn{
+                padding:10px 15px;
+                font-size:14px;
+            }
+
         }
 
     </style>
 
 </head>
 <body>
-    
 
-<nav class="navbar">
+    <nav class="navbar">
 
-    <div class="logo">LoveConnect</div>
+        <div class="logo">LoveConnect</div>
 
-    <div class="menu">
+        <div class="nav-right">
 
-        <a href="/">Início</a>
+            {% if "user_id" in session %}
 
-        {% if "user_id" in session %}
+                <a href="/" class="btn">
+                    Home
+                </a>
 
-            <a href="/matches">Matches</a>
+                <a href="/matches" class="btn">
+                    Matches
+                </a>
 
-        {% endif %}
+                <a href="/logout" class="btn">
+                    Sair
+                </a>
 
-    </div>
+            {% else %}
 
-    <div style="display:flex; gap:15px; align-items:center;">
+                <a href="/login" class="btn">
+                    Entrar
+                </a>
 
-        {% if "user_id" in session %}
+                <a href="/cadastro" class="btn">
+                    Cadastro
+                </a>
 
-            <a href="/matches" class="btn-login">
-                Matches
-            </a>
+            {% endif %}
 
-            <a href="/logout" class="btn-login">
-                Sair
-            </a>
+        </div>
 
-        {% else %}
-
-            <a href="/login" class="btn-login">
-                Entrar
-            </a>
-
-            <a href="/cadastro" class="btn-login">
-                Cadastro
-            </a>
-
-        {% endif %}
-
-    </div>
-
-</nav>
-
-    
-
+    </nav>
 
 
     <section class="hero">
@@ -375,17 +352,13 @@
 
                 {% if "user_id" in session %}
 
-                    <a href="/" class="btn-primary">
-                        Explorar Perfis
-                    </a>
-
-                    <a href="/matches" class="btn-secondary">
+                    <a href="/matches" class="btn">
                         Abrir Matches
                     </a>
 
                 {% else %}
 
-                    <a href="/cadastro" class="btn-primary">
+                    <a href="/cadastro" class="btn">
                         Criar Conta
                     </a>
 
@@ -416,52 +389,6 @@
                     <button class="circle-btn heart">❤</button>
                 </div>
 
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <section class="features">
-
-        <div class="section-title">
-            <h2>Por que usar o LoveConnect?</h2>
-            <p>Uma plataforma moderna, rápida e feita para conexões reais.</p>
-        </div>
-
-        <div class="feature-grid">
-
-            <div class="feature-card">
-                <div class="emoji">💘</div>
-                <h3>Matches Inteligentes</h3>
-                <p>
-                    Descubra pessoas compatíveis com você através de interesses e curtidas.
-                </p>
-            </div>
-
-            <div class="feature-card">
-                <div class="emoji">💬</div>
-                <h3>Chat em Tempo Real</h3>
-                <p>
-                    Converse instantaneamente com seus matches de forma simples e segura.
-                </p>
-            </div>
-
-            <div class="feature-card">
-                <div class="emoji">🔒</div>
-                <h3>Perfis Seguros</h3>
-                <p>
-                    Sistema protegido para garantir autenticidade e segurança.
-                </p>
-            </div>
-
-            <div class="feature-card">
-                <div class="emoji">🌎</div>
-                <h3>Conexões Reais</h3>
-                <p>
-                    Conheça pessoas da sua cidade e de vários lugares do mundo.
-                </p>
             </div>
 
         </div>
