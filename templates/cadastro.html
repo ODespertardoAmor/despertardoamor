@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - LoveConnect</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Poppins',sans-serif;
+        }
+
+        body{
+            background:#0f172a;
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:20px;
+        }
+
+        .container{
+            width:100%;
+            max-width:1000px;
+            background:#1e293b;
+            border-radius:30px;
+            overflow:hidden;
+            display:flex;
+            box-shadow:0 20px 50px rgba(0,0,0,0.4);
+        }
+
+        .left{
+            flex:1;
+            background:linear-gradient(135deg,#ff4d6d,#ff758f);
+            padding:60px;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            color:white;
+        }
+
+        .left h1{
+            font-size:52px;
+            margin-bottom:25px;
+            line-height:1.1;
+        }
+
+        .left p{
+            font-size:18px;
+            line-height:1.8;
+        }
+
+        .right{
+            flex:1;
+            padding:50px;
+            background:#111827;
+        }
+
+        .right h2{
+            color:white;
+            font-size:36px;
+            margin-bottom:35px;
+        }
+
+        form{
+            display:flex;
+            flex-direction:column;
+            gap:18px;
+        }
+
+        input, textarea{
+
+            width:100%;
+            padding:16px;
+            border:none;
+            outline:none;
+            border-radius:14px;
+            background:#1e293b;
+            color:white;
+            font-size:16px;
+
+        }
+
+        textarea{
+            resize:none;
+            height:120px;
+        }
+
+        input::placeholder,
+        textarea::placeholder{
+            color:#94a3b8;
+        }
+
+        .btn{
+
+            background:#ff4d6d;
+            color:white;
+            border:none;
+            padding:18px;
+            border-radius:14px;
+            font-size:17px;
+            font-weight:600;
+            cursor:pointer;
+            transition:0.3s;
+
+        }
+
+        .btn:hover{
+            background:#ff3355;
+            transform:translateY(-3px);
+        }
+
+        .login-link{
+            margin-top:25px;
+            text-align:center;
+            color:#cbd5e1;
+        }
+
+        .login-link a{
+            color:#ff4d6d;
+            text-decoration:none;
+            font-weight:600;
+        }
+
+        @media(max-width:900px){
+
+            .container{
+                flex-direction:column;
+            }
+
+            .left{
+                padding:40px;
+            }
+
+            .left h1{
+                font-size:40px;
+            }
+
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="left">
+
+            <h1>
+                Encontre conexões reais ❤️
+            </h1>
+
+            <p>
+                Crie sua conta agora e conheça pessoas incríveis perto de você.
+                Matches, conversas e novas experiências começam aqui.
+            </p>
+
+        </div>
+
+
+        <div class="right">
+
+            <h2>Criar Conta</h2>
+
+            <form method="POST">
+
+                <input type="text"
+                       name="nome"
+                       placeholder="Seu nome"
+                       required>
+
+                <input type="email"
+                       name="email"
+                       placeholder="Seu email"
+                       required>
+
+                <input type="password"
+                       name="senha"
+                       placeholder="Sua senha"
+                       required>
+
+                <input type="number"
+                       name="idade"
+                       placeholder="Sua idade"
+                       required>
+
+                <input type="text"
+                       name="cidade"
+                       placeholder="Sua cidade"
+                       required>
+
+                <textarea name="bio"
+                          placeholder="Fale um pouco sobre você"></textarea>
+
+                <button class="btn" type="submit">
+                    Criar Conta
+                </button>
+
+            </form>
+
+            <div class="login-link">
+                Já possui conta?
+                <a href="/login">Entrar</a>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
