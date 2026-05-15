@@ -41,6 +41,8 @@
             padding:10px 18px;
             text-decoration:none;
             border-radius:10px;
+            border:none;
+            cursor:pointer;
         }
 
         .container{
@@ -58,6 +60,19 @@
             margin-top:20px;
             display:flex;
             gap:10px;
+        }
+
+        .avatar-box{
+            background:#1e293b;
+            padding:20px;
+            border-radius:20px;
+            margin-bottom:30px;
+        }
+
+        .avatar-img{
+            border-radius:50%;
+            object-fit:cover;
+            margin-bottom:15px;
         }
 
     </style>
@@ -78,7 +93,7 @@
             </a>
 
             <a href="/matches" class="btn">
-                Pessoas 
+                Pessoas
             </a>
 
             <a href="/logout" class="btn">
@@ -88,35 +103,40 @@
         </div>
 
     </div>
-<h2 style="margin-bottom:15px;">
-        Alterar Avatar
-    </h2>
 
-    <form
-        action="/upload_foto"
-        method="POST"
-        enctype="multipart/form-data"
-    >
-
-        <input
-            type="file"
-            name="foto"
-            required
-        >
-
-        <button
-            type="submit"
-            class="btn"
-            style="margin-top:15px;"
-        >
-            Enviar Foto
-        </button>
-
-    </form>
-
-</div>
 
     <div class="container">
+
+        <div class="avatar-box">
+
+            <h2 style="margin-bottom:15px;">
+                Alterar Avatar
+            </h2>
+
+            <form
+                action="/upload_foto"
+                method="POST"
+                enctype="multipart/form-data"
+            >
+
+                <input
+                    type="file"
+                    name="foto"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="btn"
+                    style="margin-top:15px;"
+                >
+                    Enviar Foto
+                </button>
+
+            </form>
+
+        </div>
+
 
         <h1>
             Pessoas disponíveis
@@ -127,26 +147,14 @@
         {% for u in usuarios %}
 
         <div class="card">
-            
-<img
-    src="{{ url_for('static', filename='uploads/' + u.foto) }}"
-    width="120"
-    height="120"
-    style="
-        border-radius:50%;
-        object-fit:cover;
-        margin-bottom:15px;
-    "
->
-<div style="
-    background:#1e293b;
-    padding:20px;
-    border-radius:20px;
-    margin-bottom:30px;
-">
 
-    
-            
+            <img
+                src="{{ url_for('static', filename='uploads/' + u.foto) }}"
+                width="120"
+                height="120"
+                class="avatar-img"
+            >
+
             <h2>
                 {{u.nome}}, {{u.idade}}
             </h2>
