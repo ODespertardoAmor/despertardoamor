@@ -202,64 +202,72 @@
 
     <div class="chat-container">
 
-        <div class="chat-box" id="chatBox">
+<div class="chat-box" id="chatBox">
 
-            {% if mensagens %}
+    {% if mensagens %}
 
-                {% for msg in mensagens %}
+        {% for msg in mensagens %}
 
-                    {% if msg.de_usuario == session["user_id"] %}
+            {% if msg.de_usuario == session["user_id"] %}
 
-                        <div class="message me">
-                            {{ msg.mensagem }}
-                        </div>
+                <div class="message me">
 
-                    {% else %}
+                    {% if msg.mensagem %}
+                        <p>{{ msg.mensagem }}</p>
+                    {% endif %}
 
-                        <div class="message other">
-                            {{ msg.mensagem }}
-                        </div>
+                    {% if msg.foto %}
+
+                        <img
+                            src="{{ url_for('static', filename='uploads/' + msg.foto) }}"
+                            style="
+                                width:220px;
+                                border-radius:15px;
+                                margin-top:10px;
+                            "
+                        >
 
                     {% endif %}
 
-                {% endfor %}
+                </div>
 
             {% else %}
 
-                <div class="empty">
-                    Nenhuma mensagem ainda ❤️
+                <div class="message other">
+
+                    {% if msg.mensagem %}
+                        <p>{{ msg.mensagem }}</p>
+                    {% endif %}
+
+                    {% if msg.foto %}
+
+                        <img
+                            src="{{ url_for('static', filename='uploads/' + msg.foto) }}"
+                            style="
+                                width:220px;
+                                border-radius:15px;
+                                margin-top:10px;
+                            "
+                        >
+
+                    {% endif %}
+
                 </div>
 
             {% endif %}
 
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty">
+            Nenhuma mensagem ainda ❤️
         </div>
 
+    {% endif %}
 
-        
-        <form method="POST" enctype="multipart/form-data">
-
-    <input
-        type="text"
-        name="mensagem"
-        placeholder="Digite uma mensagem"
-    >
-
-    <input
-        type="file"
-        name="foto"
-    >
-
-    <button type="submit">
-        Enviar
-    </button>
-
-</form>
-            
-
-    </div>
-
-
-    <script>
+</div>
+<script>
 
         const chatBox = document.getElementById("chatBox");
 
