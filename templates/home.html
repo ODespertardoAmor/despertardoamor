@@ -101,7 +101,17 @@
         {% for u in usuarios %}
 
         <div class="card">
-
+            
+<img
+    src="{{ url_for('static', filename='uploads/' + u.foto) }}"
+    width="120"
+    height="120"
+    style="
+        border-radius:50%;
+        object-fit:cover;
+        margin-bottom:15px;
+    "
+>
             <h2>
                 {{u.nome}}, {{u.idade}}
             </h2>
