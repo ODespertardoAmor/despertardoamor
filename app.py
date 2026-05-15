@@ -125,10 +125,13 @@ class Mensagem(db.Model):
 
     mensagem = db.Column(db.Text)
 
+    foto = db.Column(db.String(300))
+
     data = db.Column(
         db.DateTime,
         default=datetime.utcnow
     )
+    
 
 # ====================================
 # HOME
