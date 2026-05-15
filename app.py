@@ -3,8 +3,13 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
-
+from werkzeug.utils import secure_filename
 app = Flask(__name__)
+UPLOAD_FOLDER = "static/uploads"
+
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ====================================
 # CONFIGURAÇÕES
@@ -147,7 +152,6 @@ def home():
 # ====================================
 # CADASTRO
 # ====================================
-
 @app.route("/cadastro", methods=["GET", "POST"])
 def cadastro():
 
@@ -161,12 +165,22 @@ def cadastro():
         cidade = request.form["cidade"]
         bio = request.form["bio"]
 
-        existe = Usuario.query.filter_by(
-            email=email
-        ).first()
+        foto = request.files["foto"]
 
-        if existe:
-            return "Email já cadastrado"
+        nome_foto = "default.png"
+
+        if foto:
+
+            filename = secure_filename(foto.filename)
+
+            caminho = os.path.join(
+                app.config["UPLOAD_FOLDER"],
+                filename
+            )
+
+            foto.save(caminho)
+
+            nome_foto = filename
 
         senha_hash = generate_password_hash(senha)
 
@@ -176,7 +190,8 @@ def cadastro():
             senha=senha_hash,
             idade=idade,
             cidade=cidade,
-            bio=bio
+            bio=bio,
+            foto=nome_foto
         )
 
         db.session.add(novo)
