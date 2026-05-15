@@ -324,6 +324,7 @@ def matches():
 # CHAT
 # ====================================
 
+
 @app.route("/chat/<int:id>", methods=["GET", "POST"])
 def chat(id):
 
@@ -334,18 +335,34 @@ def chat(id):
 
     if request.method == "POST":
 
-        texto = request.form["mensagem"]
+        texto = request.form.get("mensagem")
 
-        if texto.strip() != "":
+        foto = request.files.get("foto")
 
-            nova = Mensagem(
-                de_usuario=meu_id,
-                para_usuario=id,
-                mensagem=texto
+        nome_foto = None
+
+        if foto and foto.filename != "":
+
+            filename = secure_filename(foto.filename)
+
+            caminho = os.path.join(
+                app.config["UPLOAD_FOLDER"],
+                filename
             )
 
-            db.session.add(nova)
-            db.session.commit()
+            foto.save(caminho)
+
+            nome_foto = filename
+
+        nova = Mensagem(
+            de_usuario=meu_id,
+            para_usuario=id,
+            mensagem=texto,
+            foto=nome_foto
+        )
+
+        db.session.add(nova)
+        db.session.commit()
 
     mensagens = Mensagem.query.filter(
         (
@@ -368,6 +385,8 @@ def chat(id):
         mensagens=mensagens,
         usuario=usuario
     )
+
+
 
 # ====================================
 # LOGOUT
