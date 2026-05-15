@@ -112,6 +112,40 @@
         margin-bottom:15px;
     "
 >
+<div style="
+    background:#1e293b;
+    padding:20px;
+    border-radius:20px;
+    margin-bottom:30px;
+">
+
+    <h2 style="margin-bottom:15px;">
+        Alterar Avatar
+    </h2>
+
+    <form
+        action="/upload_foto"
+        method="POST"
+        enctype="multipart/form-data"
+    >
+
+        <input
+            type="file"
+            name="foto"
+            required
+        >
+
+        <button
+            type="submit"
+            class="btn"
+            style="margin-top:15px;"
+        >
+            Enviar Foto
+        </button>
+
+    </form>
+
+</div>
             
             <h2>
                 {{u.nome}}, {{u.idade}}
