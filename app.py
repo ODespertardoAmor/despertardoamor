@@ -132,7 +132,72 @@ class Mensagem(db.Model):
         default=datetime.utcnow
     )
     
+#======≠===Foto perfil=======
+class FotoPerfil(db.Model):
 
+    __tablename__ = "fotos_perfil"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(db.Integer)
+
+    foto = db.Column(db.String(300))
+
+    avatar = db.Column(
+        db.Boolean,
+        default=False
+    )
+#=============rota perfil======≠===
+@app.route("/upload_foto", methods=["POST"])
+def upload_foto():
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    foto = request.files.get("foto")
+
+    if foto and foto.filename != "":
+
+        filename = secure_filename(foto.filename)
+
+        caminho = os.path.join(
+            app.config["UPLOAD_FOLDER"],
+            filename
+        )
+
+        foto.save(caminho)
+
+        nova = FotoPerfil(
+            user_id=session["user_id"],
+            foto=filename
+        )
+
+        db.session.add(nova)
+        db.session.commit()
+
+    return redirect("/")
+#===========Definir avatar==≠===
+@app.route("/avatar/<int:id>")
+def avatar(id):
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    fotos = FotoPerfil.query.filter_by(
+        user_id=session["user_id"]
+    ).all()
+
+    for f in fotos:
+        f.avatar = False
+
+    foto = FotoPerfil.query.get(id)
+
+    if foto:
+        foto.avatar = True
+
+    db.session.commit()
+
+    return redirect("/")
 # ====================================
 # HOME
 # ====================================
