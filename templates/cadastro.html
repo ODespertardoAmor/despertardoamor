@@ -37,23 +37,30 @@
 
         .left{
             flex:1;
-            background:linear-gradient(135deg,#ff4d6d,#ff758f);
+            background:linear-gradient(135deg, rgba(255, 77, 109, 0.85), rgba(255, 117, 143, 0.85)), 
+                        url('https://picsum.photos/id/49/800/800') center/cover no-repeat;
             padding:60px;
             display:flex;
             flex-direction:column;
             justify-content:center;
             color:white;
+            position: relative;
+            z-index: 1;
         }
 
         .left h1{
             font-size:52px;
             margin-bottom:25px;
             line-height:1.1;
+            position: relative;
+            z-index: 2;
         }
 
         .left p{
             font-size:18px;
             line-height:1.8;
+            position: relative;
+            z-index: 2;
         }
 
         .right{
