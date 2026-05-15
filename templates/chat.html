@@ -235,18 +235,26 @@
         </div>
 
 
-        <form method="POST" class="form-area">
+        
+        <form method="POST" enctype="multipart/form-data">
 
-            <input type="text"
-                   name="mensagem"
-                   placeholder="Digite sua mensagem..."
-                   required>
+    <input
+        type="text"
+        name="mensagem"
+        placeholder="Digite uma mensagem"
+    >
 
-            <button class="send-btn" type="submit">
-                Enviar
-            </button>
+    <input
+        type="file"
+        name="foto"
+    >
 
-        </form>
+    <button type="submit">
+        Enviar
+    </button>
+
+</form>
+            
 
     </div>
 
