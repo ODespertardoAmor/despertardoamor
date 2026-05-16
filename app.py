@@ -201,7 +201,6 @@ def avatar(id):
 # ====================================
 # HOME
 # ====================================
-
 @app.route("/")
 def home():
 
@@ -212,10 +211,16 @@ def home():
         Usuario.id != session["user_id"]
     ).all()
 
+    usuario_logado = Usuario.query.get(
+        session["user_id"]
+    )
+
     return render_template(
         "home.html",
-        usuarios=usuarios
+        usuarios=usuarios,
+        usuario_logado=usuario_logado
     )
+
 
 # ====================================
 # CADASTRO
