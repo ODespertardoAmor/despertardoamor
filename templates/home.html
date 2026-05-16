@@ -22,6 +22,8 @@
             display:flex;
             justify-content:space-between;
             align-items:center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .logo{
@@ -30,7 +32,7 @@
             color:#ff4d6d;
         }
 
-        .menu{
+        .menu-superior{
             display:flex;
             align-items:center;
             gap:15px;
@@ -44,6 +46,31 @@
             border-radius:10px;
             border:none;
             cursor:pointer;
+            font-size: 15px;
+        }
+
+        .btn:hover{
+            background:#ff3355;
+        }
+
+        .area-perfil{
+            display:flex;
+            align-items:center;
+            gap:15px;
+        }
+
+        .avatar-user{
+            width:55px;
+            height:55px;
+            border-radius:50%;
+            object-fit:cover;
+            border:3px solid #ff4d6d;
+        }
+
+        .avatar-form{
+            display:flex;
+            align-items:center;
+            gap:10px;
         }
 
         .container{
@@ -63,24 +90,23 @@
             gap:10px;
         }
 
-        .avatar-user{
-            width:55px;
-            height:55px;
-            border-radius:50%;
-            object-fit:cover;
-            border:3px solid #ff4d6d;
-        }
-
-        .avatar-form{
-            display:flex;
-            align-items:center;
-            gap:10px;
-        }
-
         .avatar-outro{
+            width: 120px;
+            height: 120px;
             border-radius:50%;
             object-fit:cover;
             margin-bottom:15px;
+        }
+
+        @media(max-width:768px){
+            .topo{
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .menu-superior, .area-perfil{
+                width: 100%;
+                justify-content: space-between;
+            }
         }
 
     </style>
@@ -94,26 +120,19 @@
             ❤️ D/Amor
         </div>
 
-        <div class="menu">
+        <!-- BOTÕES DE NAVEGAÇÃO - EM CIMA -->
+        <div class="menu-superior">
+            <a href="/" class="btn">Home</a>
+            <a href="/matches" class="btn">Pessoas</a>
+            <a href="/logout" class="btn">Sair</a>
+        </div>
 
-            <a href="/" class="btn">
-                Home
-            </a>
-
-            <a href="/matches" class="btn">
-                Pessoas
-            </a>
-
-            <a href="/logout" class="btn">
-                Sair
-            </a>
-
-
+        <!-- ÁREA DA FOTO E BOTÃO ALTERAR - EMBAIXO/LADO -->
+        <div class="area-perfil">
             <img
                 src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}"
                 class="avatar-user"
             >
-
 
             <form
                 action="/upload_foto"
@@ -121,22 +140,9 @@
                 enctype="multipart/form-data"
                 class="avatar-form"
             >
-
-                <input
-                    type="file"
-                    name="foto"
-                    required
-                >
-
-                <button
-                    type="submit"
-                    class="btn"
-                >
-                    Alterar
-                </button>
-
+                <input type="file" name="foto" required>
+                <button type="submit" class="btn">Alterar</button>
             </form>
-
         </div>
 
     </div>
@@ -144,10 +150,7 @@
 
     <div class="container">
 
-        <h1>
-            Pessoas disponíveis
-        </h1>
-
+        <h1>Pessoas disponíveis</h1>
         <br>
 
         {% for u in usuarios %}
@@ -156,33 +159,16 @@
 
             <img
                 src="{{ url_for('static', filename='uploads/' + u.foto) }}"
-                width="120"
-                height="120"
                 class="avatar-outro"
             >
 
-            <h2>
-                {{u.nome}}, {{u.idade}}
-            </h2>
-
-            <p>
-                Cidade: {{u.cidade}}
-            </p>
-
-            <p>
-                {{u.bio}}
-            </p>
+            <h2>{{u.nome}}, {{u.idade}}</h2>
+            <p>Cidade: {{u.cidade}}</p>
+            <p>{{u.bio}}</p>
 
             <div class="acoes">
-
-                <a href="/curtir/{{u.id}}" class="btn">
-                    Curtir
-                </a>
-
-                <a href="/chat/{{u.id}}" class="btn">
-                    Chat
-                </a>
-
+                <a href="/curtir/{{u.id}}" class="btn">Curtir</a>
+                <a href="/chat/{{u.id}}" class="btn">Chat</a>
             </div>
 
         </div>
