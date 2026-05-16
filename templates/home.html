@@ -32,7 +32,8 @@
 
         .menu{
             display:flex;
-            gap:10px;
+            align-items:center;
+            gap:15px;
         }
 
         .btn{
@@ -62,14 +63,21 @@
             gap:10px;
         }
 
-        .avatar-box{
-            background:#1e293b;
-            padding:20px;
-            border-radius:20px;
-            margin-bottom:30px;
+        .avatar-user{
+            width:55px;
+            height:55px;
+            border-radius:50%;
+            object-fit:cover;
+            border:3px solid #ff4d6d;
         }
 
-        .avatar-img{
+        .avatar-form{
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+
+        .avatar-outro{
             border-radius:50%;
             object-fit:cover;
             margin-bottom:15px;
@@ -83,7 +91,7 @@
     <div class="topo">
 
         <div class="logo">
-            ❤️
+            ❤️ D/Amor
         </div>
 
         <div class="menu">
@@ -100,23 +108,18 @@
                 Sair
             </a>
 
-        </div>
 
-    </div>
+            <img
+                src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}"
+                class="avatar-user"
+            >
 
-
-    <div class="container">
-
-        <div class="avatar-box">
-
-            <h2 style="margin-bottom:15px;">
-                Alterar Avatar
-            </h2>
 
             <form
                 action="/upload_foto"
                 method="POST"
                 enctype="multipart/form-data"
+                class="avatar-form"
             >
 
                 <input
@@ -128,15 +131,18 @@
                 <button
                     type="submit"
                     class="btn"
-                    style="margin-top:15px;"
                 >
-                    Enviar Foto
+                    Alterar
                 </button>
 
             </form>
 
         </div>
 
+    </div>
+
+
+    <div class="container">
 
         <h1>
             Pessoas disponíveis
@@ -152,7 +158,7 @@
                 src="{{ url_for('static', filename='uploads/' + u.foto) }}"
                 width="120"
                 height="120"
-                class="avatar-img"
+                class="avatar-outro"
             >
 
             <h2>
