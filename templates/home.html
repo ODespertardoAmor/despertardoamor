@@ -30,12 +30,13 @@
             position:sticky;
             top:0;
             z-index:1000;
+            border-bottom:2px solid #38bdf8;
         }
 
         .logo{
             font-size:28px;
             font-weight:bold;
-            color:#ff4d6d;
+            color:#38bdf8;
             text-align:center;
         }
 
@@ -47,7 +48,7 @@
         }
 
         .btn{
-            background:#ff4d6d;
+            background:#2563eb;
             color:white;
             padding:10px 16px;
             text-decoration:none;
@@ -59,7 +60,7 @@
         }
 
         .btn:hover{
-            background:#ff3355;
+            background:#1d4ed8;
         }
 
         .area-perfil{
@@ -69,12 +70,27 @@
             gap:15px;
         }
 
+        .perfil-info{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            background:#0f172a;
+            padding:10px 15px;
+            border-radius:20px;
+        }
+
+        .nome-user{
+            font-size:16px;
+            font-weight:bold;
+            color:#38bdf8;
+        }
+
         .avatar-user{
             width:70px;
             height:70px;
             border-radius:50%;
             object-fit:cover;
-            border:3px solid #ff4d6d;
+            border:3px solid #38bdf8;
         }
 
         .avatar-form{
@@ -92,6 +108,7 @@
             border-radius:12px;
             width:100%;
             max-width:300px;
+            border:1px solid #334155;
         }
 
         .container{
@@ -101,6 +118,7 @@
         .titulo{
             text-align:center;
             margin-bottom:25px;
+            color:#38bdf8;
         }
 
         .card{
@@ -112,6 +130,7 @@
             flex-direction:column;
             align-items:center;
             text-align:center;
+            border:1px solid #334155;
         }
 
         .avatar-outro{
@@ -120,11 +139,12 @@
             border-radius:50%;
             object-fit:cover;
             margin-bottom:15px;
-            border:3px solid #ff4d6d;
+            border:3px solid #38bdf8;
         }
 
         .card h2{
             margin-bottom:10px;
+            color:#38bdf8;
         }
 
         .card p{
@@ -184,7 +204,7 @@
     <div class="topo">
 
         <div class="logo">
-            ❤️ D/Amor
+            💙 D/Amor
         </div>
 
 
@@ -207,10 +227,18 @@
 
         <div class="area-perfil">
 
-            <img
-                src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}"
-                class="avatar-user"
-            >
+            <div class="perfil-info">
+
+                <img
+                    src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}"
+                    class="avatar-user"
+                >
+
+                <div class="nome-user">
+                    {{usuario_logado.nome}}
+                </div>
+
+            </div>
 
             <form
                 action="/upload_foto"
@@ -229,7 +257,7 @@
                     type="submit"
                     class="btn"
                 >
-                    Alterar
+                    Alterar Foto
                 </button>
 
             </form>
