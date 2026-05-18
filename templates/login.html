@@ -37,7 +37,7 @@
 
         .left{
             flex:1;
-            background:linear-gradient(135deg,#ff4d6d,#ff758f);
+            background:linear-gradient(135deg,#2563eb,#38bdf8);
             padding:60px;
             display:flex;
             flex-direction:column;
@@ -54,13 +54,13 @@
         .left p{
             font-size:18px;
             line-height:1.8;
-            margin-bottom: 20px; /* Espaçamento entre o texto e a imagem */
+            margin-bottom:20px;
         }
 
-        .imagem-secao {
-            width: 100%;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        .imagem-secao{
+            width:100%;
+            border-radius:15px;
+            box-shadow:0 8px 20px rgba(0,0,0,0.15);
         }
 
         .right{
@@ -70,7 +70,7 @@
         }
 
         .right h2{
-            color:white;
+            color:#38bdf8;
             font-size:36px;
             margin-bottom:35px;
         }
@@ -100,7 +100,7 @@
 
         .btn{
 
-            background:#ff4d6d;
+            background:#2563eb;
             color:white;
             border:none;
             padding:18px;
@@ -113,7 +113,7 @@
         }
 
         .btn:hover{
-            background:#ff3355;
+            background:#1d4ed8;
             transform:translateY(-3px);
         }
 
@@ -124,7 +124,7 @@
         }
 
         .cadastro-link a{
-            color:#ff4d6d;
+            color:#38bdf8;
             text-decoration:none;
             font-weight:600;
         }
@@ -155,7 +155,7 @@
         <div class="left">
 
             <h1>
-                Bem-vindo ao Despertar Do Amor❤️
+                Bem-vindo ao Despertar Do Amor 💙
             </h1>
 
             <p>
@@ -163,8 +163,11 @@
                 conversar e descobrir pessoas incríveis.
             </p>
 
-            <!-- Imagem adicionada abaixo do texto -->
-            <img src="https://picsum.photos/id/64/600/400" alt="Imagem ilustrativa de amor e conexão" class="imagem-secao">
+            <img
+                src="https://picsum.photos/id/64/600/400"
+                alt="Imagem ilustrativa"
+                class="imagem-secao"
+            >
 
         </div>
 
@@ -175,15 +178,19 @@
 
             <form method="POST">
 
-                <input type="email"
-                       name="email"
-                       placeholder="Seu email"
-                       required>
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Seu email"
+                    required
+                >
 
-                <input type="password"
-                       name="senha"
-                       placeholder="Sua senha"
-                       required>
+                <input
+                    type="password"
+                    name="senha"
+                    placeholder="Sua senha"
+                    required
+                >
 
                 <button class="btn" type="submit">
                     Entrar
@@ -192,8 +199,13 @@
             </form>
 
             <div class="cadastro-link">
+
                 Não possui conta?
-                <a href="/cadastro">Criar conta</a>
+
+                <a href="/cadastro">
+                    Criar conta
+                </a>
+
             </div>
 
         </div>
