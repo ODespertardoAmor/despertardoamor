@@ -77,6 +77,19 @@ class Mensagem(db.Model):
     lida = db.Column(db.Boolean, default=False)
 
     data = db.Column(db.DateTime, default=datetime.utcnow)
+#========notificação===========
+@app.context_processor
+def notificacoes():
+
+    if "user_id" not in session:
+        return dict(total_notificacoes=0)
+
+    total = Mensagem.query.filter_by(
+        para_usuario=session["user_id"],
+        lida=False
+    ).count()
+
+    return dict(total_notificacoes=total)
 # =========================
 # HOME
 # =========================
