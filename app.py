@@ -370,7 +370,6 @@ def curtir(id):
 # ====================================
 # MATCHES
 # ====================================
-
 @app.route("/matches")
 def matches():
 
@@ -379,16 +378,30 @@ def matches():
 
     meu_id = session["user_id"]
 
-    matches = Match.query.filter(
-        (Match.user1 == meu_id)
-        |
+    matches_db = Match.query.filter(
+        (Match.user1 == meu_id) |
         (Match.user2 == meu_id)
     ).all()
 
+    lista_matches = []
+
+    for match in matches_db:
+
+        if match.user1 == meu_id:
+            outro_id = match.user2
+        else:
+            outro_id = match.user1
+
+        usuario = Usuario.query.get(outro_id)
+
+        lista_matches.append(usuario)
+
     return render_template(
         "matches.html",
-        matches=matches
+        matches=lista_matches
     )
+
+    
 
 # ====================================
 # CHAT
