@@ -486,7 +486,7 @@ def chat(id):
     return render_template(
         "chat.html",
         mensagens=mensagens,
-        usuario=usuario
+        usuario=usuario,
         usuario_logado=usuario_logado,
         usuario_chat=usuario_chat
 
