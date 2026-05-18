@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
+import uuid
 from werkzeug.utils import secure_filename
 app = Flask(__name__)
 UPLOAD_FOLDER = "static/uploads"
@@ -164,35 +165,35 @@ def apagar_mensagem(id):
             db.session.commit()
 
     return redirect(request.referrer)
-#=============rota perfil======≠===
+#=============rota perfil=================
 @app.route("/upload_foto", methods=["POST"])
 def upload_foto():
 
     if "user_id" not in session:
         return redirect("/login")
 
-    foto = request.files.get("foto")
+    foto = request.files["foto"]
 
-    if foto and foto.filename != "":
+    if foto:
 
-        filename = secure_filename(foto.filename)
+        extensao = foto.filename.split(".")[-1]
+
+        nome_foto = f"{uuid.uuid4()}.{extensao}"
 
         caminho = os.path.join(
-            app.config["UPLOAD_FOLDER"],
-            filename
+            "static/uploads",
+            nome_foto
         )
 
         foto.save(caminho)
 
-        nova = FotoPerfil(
-            user_id=session["user_id"],
-            foto=filename
-        )
+        user = Usuario.query.get(session["user_id"])
 
-        db.session.add(nova)
+        user.foto = nome_foto
+
         db.session.commit()
 
-    return redirect("/")
+    return redirect("/")   
 #===========Definir avatar==≠===
 @app.route("/avatar/<int:id>")
 def avatar(id):
