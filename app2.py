@@ -61,7 +61,9 @@ class Match(db.Model):
 # =========================
 # MENSAGENS
 # =========================
+
 class Mensagem(db.Model):
+
     id = db.Column(db.Integer, primary_key=True)
 
     de_usuario = db.Column(db.Integer)
@@ -70,8 +72,11 @@ class Mensagem(db.Model):
 
     mensagem = db.Column(db.Text)
 
-    data = db.Column(db.DateTime, default=datetime.utcnow)
+    foto = db.Column(db.String(300))
 
+    lida = db.Column(db.Boolean, default=False)
+
+    data = db.Column(db.DateTime, default=datetime.utcnow)
 # =========================
 # HOME
 # =========================
