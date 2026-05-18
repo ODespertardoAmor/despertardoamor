@@ -124,6 +124,21 @@
 
         }
 
+        .delete-btn{
+
+            display:block;
+            margin-top:10px;
+            color:white;
+            font-size:12px;
+            text-decoration:none;
+            opacity:0.8;
+
+        }
+
+        .delete-btn:hover{
+            opacity:1;
+        }
+
         .form-area{
 
             margin-top:20px;
@@ -272,6 +287,13 @@
 
                             {% endif %}
 
+                            <a
+                                href="/apagar_mensagem/{{msg.id}}"
+                                class="delete-btn"
+                            >
+                                Apagar
+                            </a>
+
                         </div>
 
                     {% else %}
@@ -289,18 +311,6 @@
                                 >
 
                             {% endif %}
-                            <a
-    href="/apagar_mensagem/{{msg.id}}"
-    style="
-        display:block;
-        margin-top:10px;
-        color:white;
-        font-size:12px;
-        text-decoration:none;
-    "
->
-    Apagar
-</a>
 
                         </div>
 
