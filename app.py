@@ -147,6 +147,23 @@ class FotoPerfil(db.Model):
         db.Boolean,
         default=False
     )
+#========apagar msm======
+@app.route("/apagar_mensagem/<int:id>")
+def apagar_mensagem(id):
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    msg = Mensagem.query.get(id)
+
+    if msg:
+
+        if msg.de_usuario == session["user_id"]:
+
+            db.session.delete(msg)
+            db.session.commit()
+
+    return redirect(request.referrer)
 #=============rota perfil======≠===
 @app.route("/upload_foto", methods=["POST"])
 def upload_foto():
