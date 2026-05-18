@@ -479,11 +479,17 @@ def chat(id):
     ).order_by(Mensagem.data.asc()).all()
 
     usuario = Usuario.query.get(id)
+    usuario_logado = Usuario.query.get(meu_id)
+
+    usuario_chat = Usuario.query.get(id)
 
     return render_template(
         "chat.html",
         mensagens=mensagens,
         usuario=usuario
+        usuario_logado=usuario_logado,
+        usuario_chat=usuario_chat
+
     )
 
 
