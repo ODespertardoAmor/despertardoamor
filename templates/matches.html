@@ -53,10 +53,10 @@
 
             color:white;
             text-decoration:none;
-            transition:0.3s;
             background:#2563eb;
             padding:10px 15px;
             border-radius:12px;
+            transition:0.3s;
             font-size:14px;
 
         }
@@ -72,14 +72,14 @@
         }
 
         .title{
-            margin-bottom:30px;
             text-align:center;
+            margin-bottom:30px;
         }
 
         .title h1{
-            font-size:40px;
-            margin-bottom:10px;
+            font-size:38px;
             color:#38bdf8;
+            margin-bottom:10px;
         }
 
         .title p{
@@ -99,9 +99,9 @@
             background:#1e293b;
             border-radius:24px;
             overflow:hidden;
+            border:1px solid #334155;
             transition:0.3s;
             box-shadow:0 10px 30px rgba(0,0,0,0.3);
-            border:1px solid #334155;
 
         }
 
@@ -123,14 +123,14 @@
         }
 
         .card-info h2{
+            color:#38bdf8;
             margin-bottom:10px;
             font-size:26px;
-            color:#38bdf8;
         }
 
         .card-info p{
             color:#cbd5e1;
-            margin-bottom:22px;
+            margin-bottom:10px;
             line-height:1.6;
         }
 
@@ -145,6 +145,7 @@
             border-radius:14px;
             text-decoration:none;
             font-weight:600;
+            margin-top:20px;
             transition:0.3s;
 
         }
@@ -164,9 +165,9 @@
         }
 
         .empty h2{
+            color:#38bdf8;
             margin-bottom:15px;
             font-size:30px;
-            color:#38bdf8;
         }
 
         .empty p{
@@ -190,11 +191,11 @@
             }
 
             .title h1{
-                font-size:32px;
+                font-size:30px;
             }
 
             .match-card img{
-                height:260px;
+                height:250px;
             }
 
         }
@@ -213,7 +214,7 @@
         <div class="menu">
 
             <a href="/">
-                Início
+                Home
             </a>
 
             <a href="/matches">
@@ -248,42 +249,30 @@
 
         <div class="matches-grid">
 
-            {% for match in matches %}
-
-            {% if match.user1 == session["user_id"] %}
-
-                {% set outro_id = match.user2 %}
-
-            {% else %}
-
-                {% set outro_id = match.user1 %}
-
-            {% endif %}
-
-            {% set outro = Usuario.query.get(outro_id) %}
+            {% for u in matches %}
 
             <div class="match-card">
 
                 <img
-                    src="{{ url_for('static', filename='uploads/' + outro.foto) }}"
+                    src="{{ url_for('static', filename='uploads/' + u.foto) }}"
                 >
 
                 <div class="card-info">
 
                     <h2>
-                        {{outro.nome}}, {{outro.idade}}
+                        {{u.nome}}, {{u.idade}}
                     </h2>
 
                     <p>
-                        📍 {{outro.cidade}}
+                        📍 {{u.cidade}}
                     </p>
 
                     <p>
-                        {{outro.bio}}
+                        {{u.bio}}
                     </p>
 
                     <a
-                        href="/chat/{{ outro.id }}"
+                        href="/chat/{{u.id}}"
                         class="btn-chat"
                     >
                         Conversar
