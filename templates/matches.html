@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matches - D❤️</title>
+    <title>Matches - D/Amor</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -25,7 +25,7 @@
         .navbar{
 
             width:100%;
-            padding:20px 8%;
+            padding:18px 20px;
             display:flex;
             justify-content:space-between;
             align-items:center;
@@ -33,41 +33,53 @@
             position:sticky;
             top:0;
             z-index:1000;
+            border-bottom:2px solid #38bdf8;
 
         }
 
         .logo{
-            font-size:32px;
+            font-size:28px;
             font-weight:700;
-            color:#ff4d6d;
+            color:#38bdf8;
         }
 
         .menu{
             display:flex;
-            gap:25px;
+            gap:12px;
+            flex-wrap:wrap;
         }
 
         .menu a{
+
             color:white;
             text-decoration:none;
             transition:0.3s;
+            background:#2563eb;
+            padding:10px 15px;
+            border-radius:12px;
+            font-size:14px;
+
         }
 
         .menu a:hover{
-            color:#ff4d6d;
+            background:#1d4ed8;
         }
 
         .container{
-            padding:60px 8%;
+            padding:25px 15px;
+            max-width:1200px;
+            margin:auto;
         }
 
         .title{
-            margin-bottom:40px;
+            margin-bottom:30px;
+            text-align:center;
         }
 
         .title h1{
-            font-size:48px;
+            font-size:40px;
             margin-bottom:10px;
+            color:#38bdf8;
         }
 
         .title p{
@@ -78,7 +90,7 @@
 
             display:grid;
             grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-            gap:30px;
+            gap:25px;
 
         }
 
@@ -89,33 +101,37 @@
             overflow:hidden;
             transition:0.3s;
             box-shadow:0 10px 30px rgba(0,0,0,0.3);
+            border:1px solid #334155;
 
         }
 
         .match-card:hover{
-            transform:translateY(-8px);
+            transform:translateY(-6px);
         }
 
         .match-card img{
 
             width:100%;
-            height:320px;
+            height:300px;
             object-fit:cover;
 
         }
 
         .card-info{
-            padding:25px;
+            padding:22px;
+            text-align:center;
         }
 
         .card-info h2{
             margin-bottom:10px;
-            font-size:28px;
+            font-size:26px;
+            color:#38bdf8;
         }
 
         .card-info p{
             color:#cbd5e1;
-            margin-bottom:25px;
+            margin-bottom:22px;
+            line-height:1.6;
         }
 
         .btn-chat{
@@ -123,7 +139,7 @@
             width:100%;
             display:block;
             text-align:center;
-            background:#ff4d6d;
+            background:#2563eb;
             color:white;
             padding:15px;
             border-radius:14px;
@@ -134,35 +150,51 @@
         }
 
         .btn-chat:hover{
-            background:#ff3355;
+            background:#1d4ed8;
         }
 
         .empty{
 
             background:#1e293b;
-            padding:50px;
+            padding:50px 20px;
             border-radius:24px;
             text-align:center;
+            border:1px solid #334155;
 
         }
 
         .empty h2{
             margin-bottom:15px;
-            font-size:32px;
+            font-size:30px;
+            color:#38bdf8;
         }
 
         .empty p{
             color:#cbd5e1;
+            line-height:1.6;
         }
 
         @media(max-width:768px){
 
-            .title h1{
-                font-size:38px;
+            .navbar{
+                flex-direction:column;
+                gap:15px;
+            }
+
+            .logo{
+                font-size:24px;
             }
 
             .menu{
-                display:none;
+                justify-content:center;
+            }
+
+            .title h1{
+                font-size:32px;
+            }
+
+            .match-card img{
+                height:260px;
             }
 
         }
@@ -174,12 +206,24 @@
 
     <nav class="navbar">
 
-        <div class="logo">Desperta Do amor ❤️</div>
+        <div class="logo">
+            💙 D/Amor
+        </div>
 
         <div class="menu">
-            <a href="/">Início</a>
-            <a href="/matches">Matches</a>
-            <a href="/logout">Sair</a>
+
+            <a href="/">
+                Início
+            </a>
+
+            <a href="/matches">
+                Matches
+            </a>
+
+            <a href="/logout">
+                Sair
+            </a>
+
         </div>
 
     </nav>
@@ -188,10 +232,15 @@
     <div class="container">
 
         <div class="title">
-            <h1>Seus Matches ❤️</h1>
+
+            <h1>
+                Seus Matches 💙
+            </h1>
+
             <p>
                 Pessoas que curtiram você de volta.
             </p>
+
         </div>
 
 
@@ -201,23 +250,43 @@
 
             {% for match in matches %}
 
+            {% if match.user1 == session["user_id"] %}
+
+                {% set outro_id = match.user2 %}
+
+            {% else %}
+
+                {% set outro_id = match.user1 %}
+
+            {% endif %}
+
+            {% set outro = Usuario.query.get(outro_id) %}
+
             <div class="match-card">
 
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1200&auto=format&fit=crop">
+                <img
+                    src="{{ url_for('static', filename='uploads/' + outro.foto) }}"
+                >
 
                 <div class="card-info">
 
                     <h2>
-                        Match {{ loop.index }}
+                        {{outro.nome}}, {{outro.idade}}
                     </h2>
 
                     <p>
-                        Você possui uma nova conexão esperando por você ✨
+                        📍 {{outro.cidade}}
                     </p>
 
-                    <a href="/chat/{{ match.user2 }}"
-                       class="btn-chat">
-                       Conversar
+                    <p>
+                        {{outro.bio}}
+                    </p>
+
+                    <a
+                        href="/chat/{{ outro.id }}"
+                        class="btn-chat"
+                    >
+                        Conversar
                     </a>
 
                 </div>
@@ -232,7 +301,9 @@
 
         <div class="empty">
 
-            <h2>Nenhum match ainda 😢</h2>
+            <h2>
+                Nenhum match ainda 😢
+            </h2>
 
             <p>
                 Continue curtindo perfis para encontrar alguém especial.
