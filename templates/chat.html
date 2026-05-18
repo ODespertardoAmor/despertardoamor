@@ -244,7 +244,28 @@
             }
 
         }
+        
+.msg-row{
+    display:flex;
+    align-items:flex-end;
+    gap:10px;
+}
 
+.me-row{
+    justify-content:flex-end;
+}
+
+.other-row{
+    justify-content:flex-start;
+}
+
+.avatar-chat{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid #38bdf8;
+}
     </style>
 
 </head>
@@ -267,66 +288,84 @@
 
         <div class="chat-box" id="chatBox">
 
-            {% if mensagens %}
+    {% if mensagens %}
 
-                {% for msg in mensagens %}
+        {% for msg in mensagens %}
 
-                    {% if msg.de_usuario == session["user_id"] %}
+            {% if msg.de_usuario == session["user_id"] %}
 
-                        <div class="message me">
+                <div class="msg-row me-row">
 
-                            {% if msg.mensagem %}
-                                <p>{{ msg.mensagem }}</p>
-                            {% endif %}
+                    <img
+                        src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}"
+                        class="avatar-chat"
+                    >
 
-                            {% if msg.foto %}
+                    <div class="message me">
 
-                                <img
-                                    src="{{ url_for('static', filename='uploads/' + msg.foto) }}"
-                                >
+                        {% if msg.mensagem %}
+                            <p>{{ msg.mensagem }}</p>
+                        {% endif %}
 
-                            {% endif %}
+                        {% if msg.foto %}
 
-                            <a
-                                href="/apagar_mensagem/{{msg.id}}"
-                                class="delete-btn"
+                            <img
+                                src="{{ url_for('static', filename='uploads/' + msg.foto) }}"
                             >
-                                Apagar
-                            </a>
 
-                        </div>
+                        {% endif %}
 
-                    {% else %}
+                        <a
+                            href="/apagar_mensagem/{{msg.id}}"
+                            class="delete-btn"
+                        >
+                            Apagar
+                        </a>
 
-                        <div class="message other">
+                    </div>
 
-                            {% if msg.mensagem %}
-                                <p>{{ msg.mensagem }}</p>
-                            {% endif %}
-
-                            {% if msg.foto %}
-
-                                <img
-                                    src="{{ url_for('static', filename='uploads/' + msg.foto) }}"
-                                >
-
-                            {% endif %}
-
-                        </div>
-
-                    {% endif %}
-
-                {% endfor %}
+                </div>
 
             {% else %}
 
-                <div class="empty">
-                    Nenhuma mensagem ainda 💙
+                <div class="msg-row other-row">
+
+                    <img
+                        src="{{ url_for('static', filename='uploads/' + usuario_chat.foto) }}"
+                        class="avatar-chat"
+                    >
+
+                    <div class="message other">
+
+                        {% if msg.mensagem %}
+                            <p>{{ msg.mensagem }}</p>
+                        {% endif %}
+
+                        {% if msg.foto %}
+
+                            <img
+                                src="{{ url_for('static', filename='uploads/' + msg.foto) }}"
+                            >
+
+                        {% endif %}
+
+                    </div>
+
                 </div>
 
             {% endif %}
 
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty">
+            Nenhuma mensagem ainda 💙
         </div>
+
+    {% endif %}
+
+</div>
 
 
         <form
