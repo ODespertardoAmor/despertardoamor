@@ -153,10 +153,26 @@ def home():
     if "user_id" not in session:
         return redirect("/login")
 
-    usuarios = Usuario.query.filter(Usuario.id != session["user_id"]).all()
-    usuario_logado = Usuario.query.get(session["user_id"])
+    meu_id = session["user_id"]
+    usuarios = Usuario.query.filter(Usuario.id != meu_id).all()
+    usuario_logado = Usuario.query.get(meu_id)
 
-    return render_template("home.html", usuarios=usuarios, usuario_logado=usuario_logado)
+    # Criamos o dicionário para contar as mensagens não lidas de cada usuário na Home
+    notificacoes = {}
+    for u in usuarios:
+        total_nao_lidas = Mensagem.query.filter_by(
+            de_usuario=u.id, 
+            para_usuario=meu_id, 
+            lida=False
+        ).count()
+        notificacoes[u.id] = total_nao_lidas
+
+    return render_template(
+        "home.html",
+        usuarios=usuarios,
+        usuario_logado=usuario_logado,
+        notificacoes=notificacoes # Enviando as contagens para o HTML
+    )
 
 @app.route("/cadastro", methods=["GET", "POST"])
 def cadastro():
