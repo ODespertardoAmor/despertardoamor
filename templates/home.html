@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>D/Amor</title>
 
     <style>
-
         *{
             margin:0;
             padding:0;
@@ -159,13 +156,43 @@
             width:100%;
         }
 
+        /* Container relativo para alinhar a bolinha de notificação */
+        .wrapper-chat {
+            position: relative;
+            flex: 1;
+            display: flex;
+        }
+
+        .wrapper-chat .btn {
+            width: 100%;
+        }
+
+        /* Estilo da Bolinha Vermelha de Mensagens */
+        .badge-notificacao {
+            background-color: #ef4444;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 7px;
+            border-radius: 50%;
+            position: absolute;
+            top: -8px;
+            right: -5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+            min-width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px solid #1e293b;
+        }
+
         .acoes .btn{
             flex:1;
             text-align:center;
         }
 
         @media(min-width:768px){
-
             .topo{
                 flex-direction:row;
                 justify-content:space-between;
@@ -192,124 +219,75 @@
             .container{
                 max-width:1100px;
                 margin:auto;
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 20px;
             }
-
+            
+            .card {
+                margin-bottom: 0px;
+            }
+            
+            .titulo {
+                grid-column: 1 / -1;
+            }
         }
-
     </style>
-
 </head>
 <body>
 
     <div class="topo">
-
         <div class="logo">
             💙 D/Amor
         </div>
 
-
         <div class="menu-superior">
-
-            <a href="/" class="btn">
-                Home
-            </a>
-
-            <a href="/matches" class="btn">
-                Pessoas
-            </a>
-
-            <a href="/logout" class="btn">
-                Sair
-            </a>
-
+            <a href="/" class="btn">Home</a>
+            <a href="/matches" class="btn">Pessoas</a>
+            <a href="/logout" class="btn">Sair</a>
         </div>
 
-
         <div class="area-perfil">
-
             <div class="perfil-info">
-
-                <img
-                    src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}"
-                    class="avatar-user"
-                >
-
+                <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-user">
                 <div class="nome-user">
                     {{usuario_logado.nome}}
                 </div>
-
             </div>
 
-            <form
-                action="/upload_foto"
-                method="POST"
-                enctype="multipart/form-data"
-                class="avatar-form"
-            >
-
-                <input
-                    type="file"
-                    name="foto"
-                    required
-                >
-
-                <button
-                    type="submit"
-                    class="btn"
-                >
-                    Alterar Foto
-                </button>
-
+            <form action="/upload_foto" method="POST" enctype="multipart/form-data" class="avatar-form">
+                <input type="file" name="foto" required>
+                <button type="submit" class="btn">Alterar Foto</button>
             </form>
-
         </div>
-
     </div>
 
-
     <div class="container">
-
         <h1 class="titulo">
             Pessoas disponíveis
         </h1>
 
         {% for u in usuarios %}
-
         <div class="card">
+            <img src="{{ url_for('static', filename='uploads/' + u.foto) }}" class="avatar-outro">
 
-            <img
-                src="{{ url_for('static', filename='uploads/' + u.foto) }}"
-                class="avatar-outro"
-            >
-
-            <h2>
-                {{u.nome}}, {{u.idade}}
-            </h2>
-
-            <p>
-                📍 {{u.cidade}}
-            </p>
-
-            <p>
-                {{u.bio}}
-            </p>
+            <h2>{{u.nome}}, {{u.idade}}</h2>
+            <p>📍 {{u.cidade}}</p>
+            <p>{{u.bio}}</p>
 
             <div class="acoes">
-
-                <a href="/curtir/{{u.id}}" class="btn">
-                    Curtir
-                </a>
-
-                <a href="/chat/{{u.id}}" class="btn">
-                    Chat
-                </a>
-
+                <a href="/curtir/{{u.id}}" class="btn">Curtir</a>
+                
+                <div class="wrapper-chat">
+                    <a href="/chat/{{u.id}}" class="btn">Chat</a>
+                    
+                    {% if notificacoes and notificacoes[u.id] > 0 %}
+                        <span class="badge-notificacao">{{ notificacoes[u.id] }}</span>
+                    {% endif %}
+                </div>
             </div>
-
         </div>
-
         {% endfor %}
-
     </div>
 
 </body>
