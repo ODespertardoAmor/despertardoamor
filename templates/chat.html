@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Chat - D/Amor</title>
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-
         *{
             margin:0;
             padding:0;
@@ -26,7 +23,6 @@
         }
 
         .navbar{
-
             width:100%;
             background:#111827;
             padding:18px 8%;
@@ -35,7 +31,6 @@
             align-items:center;
             color:white;
             border-bottom:2px solid #38bdf8;
-
         }
 
         .logo{
@@ -45,14 +40,12 @@
         }
 
         .back{
-
             text-decoration:none;
             color:white;
             background:#2563eb;
             padding:10px 18px;
             border-radius:12px;
             transition:0.3s;
-
         }
 
         .back:hover{
@@ -60,7 +53,6 @@
         }
 
         .chat-container{
-
             flex:1;
             width:100%;
             max-width:1100px;
@@ -68,11 +60,9 @@
             display:flex;
             flex-direction:column;
             padding:20px;
-
         }
 
         .chat-box{
-
             flex:1;
             background:#111827;
             border-radius:24px;
@@ -82,57 +72,53 @@
             flex-direction:column;
             gap:20px;
             box-shadow:0 10px 40px rgba(0,0,0,0.3);
-
         }
 
         .message{
-
             max-width:75%;
             padding:16px 20px;
             border-radius:20px;
             word-wrap:break-word;
             font-size:15px;
             line-height:1.6;
-
         }
 
         .message img{
-
             width:220px;
             max-width:100%;
             border-radius:15px;
             margin-top:10px;
+        }
 
+        /* Estilo para o player de áudio dentro do chat */
+        .message audio {
+            max-width: 100%;
+            margin-top: 5px;
+            display: block;
         }
 
         .me{
-
             align-self:flex-end;
             background:#2563eb;
             color:white;
             border-bottom-right-radius:5px;
-
         }
 
         .other{
-
             align-self:flex-start;
             background:#1e293b;
             color:white;
             border-bottom-left-radius:5px;
             border:1px solid #334155;
-
         }
 
         .delete-btn{
-
             display:block;
             margin-top:10px;
             color:white;
             font-size:12px;
             text-decoration:none;
             opacity:0.8;
-
         }
 
         .delete-btn:hover{
@@ -140,17 +126,14 @@
         }
 
         .form-area{
-
             margin-top:20px;
             display:flex;
             gap:12px;
             align-items:center;
             flex-wrap:wrap;
-
         }
 
         .msg-input{
-
             flex:1;
             min-width:200px;
             padding:18px;
@@ -160,7 +143,6 @@
             background:#111827;
             color:white;
             font-size:16px;
-
         }
 
         .msg-input::placeholder{
@@ -168,17 +150,14 @@
         }
 
         .file-input{
-
             background:#111827;
             color:white;
             padding:14px;
             border-radius:14px;
             border:1px solid #334155;
-
         }
 
         .send-btn{
-
             background:#2563eb;
             color:white;
             border:none;
@@ -188,224 +167,225 @@
             font-size:16px;
             font-weight:600;
             transition:0.3s;
-
         }
 
         .send-btn:hover{
             background:#1d4ed8;
         }
 
-        .empty{
+        /* Botão de Áudio Estilo WhatsApp */
+        .audio-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 58px;
+            height: 58px;
+        }
 
+        .audio-btn:hover {
+            background: #059669;
+        }
+
+        .audio-btn.recording {
+            background: #ef4444;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .empty{
             color:#94a3b8;
             text-align:center;
             margin-top:40px;
-
         }
 
         @media(max-width:768px){
-
-            .navbar{
-                padding:15px;
-            }
-
-            .logo{
-                font-size:24px;
-            }
-
-            .chat-container{
-                padding:10px;
-            }
-
-            .chat-box{
-                padding:15px;
-            }
-
-            .message{
-                max-width:90%;
-                font-size:14px;
-            }
-
-            .form-area{
-                flex-direction:column;
-                align-items:stretch;
-            }
-
-            .send-btn{
-                width:100%;
-            }
-
-            .msg-input{
-                width:100%;
-            }
-
-            .file-input{
-                width:100%;
-            }
-
+            .navbar{ padding:15px; }
+            .logo{ font-size:24px; }
+            .chat-container{ padding:10px; }
+            .chat-box{ padding:15px; }
+            .message{ max-width:90%; font-size:14px; }
+            .form-area{ flex-direction:column; align-items:stretch; }
+            .send-btn, .audio-btn, .msg-input, .file-input{ width:100%; }
+            .audio-btn { height: 54px; }
         }
         
-.msg-row{
-    display:flex;
-    align-items:flex-end;
-    gap:10px;
-}
+        .msg-row{
+            display:flex;
+            align-items:flex-end;
+            gap:10px;
+        }
 
-.me-row{
-    justify-content:flex-end;
-}
+        .me-row{ justify-content:flex-end; }
+        .other-row{ justify-content:flex-start; }
 
-.other-row{
-    justify-content:flex-start;
-}
-
-.avatar-chat{
-    width:45px;
-    height:45px;
-    border-radius:50%;
-    object-fit:cover;
-    border:2px solid #38bdf8;
-}
+        .avatar-chat{
+            width:45px;
+            height:45px;
+            border-radius:50%;
+            object-fit:cover;
+            border:2px solid #38bdf8;
+        }
     </style>
-
 </head>
 <body>
 
     <nav class="navbar">
-
-        <div class="logo">
-            💙 D/Amor
-        </div>
-
-        <a href="/matches" class="back">
-            Voltar
-        </a>
-
+        <div class="logo">💙 D/Amor</div>
+        <a href="/matches" class="back">Voltar</a>
     </nav>
 
-
     <div class="chat-container">
-
         <div class="chat-box" id="chatBox">
+            {% if mensagens %}
+                {% for msg in mensagens %}
+                    {% if msg.de_usuario == session["user_id"] %}
+                        <div class="msg-row me-row">
+                            <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-chat">
+                            <div class="message me">
+                                {% if msg.mensagem %}
+                                    <p>{{ msg.mensagem }}</p>
+                                {% endif %}
 
-    {% if mensagens %}
+                                {% if msg.foto %}
+                                    <img src="{{ url_for('static', filename='uploads/' + msg.foto) }}">
+                                {% endif %}
 
-        {% for msg in mensagens %}
+                                {% if msg.audio %}
+                                    <audio src="{{ url_for('static', filename='uploads/' + msg.audio) }}" controls></audio>
+                                {% endif %}
 
-            {% if msg.de_usuario == session["user_id"] %}
+                                <a href="/apagar_mensagem/{{msg.id}}" class="delete-btn">Apagar</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="msg-row other-row">
+                            <img src="{{ url_for('static', filename='uploads/' + usuario_chat.foto) }}" class="avatar-chat">
+                            <div class="message other">
+                                {% if msg.mensagem %}
+                                    <p>{{ msg.mensagem }}</p>
+                                {% endif %}
 
-                <div class="msg-row me-row">
+                                {% if msg.foto %}
+                                    <img src="{{ url_for('static', filename='uploads/' + msg.foto) }}">
+                                {% endif %}
 
-                    <img
-                        src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}"
-                        class="avatar-chat"
-                    >
-
-                    <div class="message me">
-
-                        {% if msg.mensagem %}
-                            <p>{{ msg.mensagem }}</p>
-                        {% endif %}
-
-                        {% if msg.foto %}
-
-                            <img
-                                src="{{ url_for('static', filename='uploads/' + msg.foto) }}"
-                            >
-
-                        {% endif %}
-
-                        <a
-                            href="/apagar_mensagem/{{msg.id}}"
-                            class="delete-btn"
-                        >
-                            Apagar
-                        </a>
-
-                    </div>
-
-                </div>
-
+                                {% if msg.audio %}
+                                    <audio src="{{ url_for('static', filename='uploads/' + msg.audio) }}" controls></audio>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
             {% else %}
-
-                <div class="msg-row other-row">
-
-                    <img
-                        src="{{ url_for('static', filename='uploads/' + usuario_chat.foto) }}"
-                        class="avatar-chat"
-                    >
-
-                    <div class="message other">
-
-                        {% if msg.mensagem %}
-                            <p>{{ msg.mensagem }}</p>
-                        {% endif %}
-
-                        {% if msg.foto %}
-
-                            <img
-                                src="{{ url_for('static', filename='uploads/' + msg.foto) }}"
-                            >
-
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
+                <div class="empty">Nenhuma mensagem ainda 💙</div>
             {% endif %}
-
-        {% endfor %}
-
-    {% else %}
-
-        <div class="empty">
-            Nenhuma mensagem ainda 💙
         </div>
 
-    {% endif %}
+        <form method="POST" enctype="multipart/form-data" class="form-area" id="chatForm">
+            <input type="text" name="mensagem" id="msgInput" placeholder="Digite uma mensagem" class="msg-input">
+            <input type="file" name="foto" class="file-input" accept="image/*">
+            
+            <input type="file" name="audio" id="audioInput" style="display: none;" accept="audio/*">
 
-</div>
-
-
-        <form
-            method="POST"
-            enctype="multipart/form-data"
-            class="form-area"
-        >
-
-            <input
-                type="text"
-                name="mensagem"
-                placeholder="Digite uma mensagem"
-                class="msg-input"
-            >
-
-            <input
-                type="file"
-                name="foto"
-                class="file-input"
-            >
-
-            <button
-                type="submit"
-                class="send-btn"
-            >
-                Enviar
+            <button type="button" id="audioBtn" class="audio-btn" title="Gravar Áudio">
+                <i class="fa-solid fa-microphone" id="audioIcon"></i>
             </button>
 
+            <button type="submit" class="send-btn">Enviar</button>
         </form>
-
     </div>
 
-
     <script>
-
+        // Scroll automático
         const chatBox = document.getElementById("chatBox");
-
         chatBox.scrollTop = chatBox.scrollHeight;
 
-    </script>
+        // Lógica de Gravação de Áudio
+        const audioBtn = document.getElementById("audioBtn");
+        const audioIcon = document.getElementById("audioIcon");
+        const audioInput = document.getElementById("audioInput");
+        const chatForm = document.getElementById("chatForm");
+        const msgInput = document.getElementById("msgInput");
 
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+
+        audioBtn.addEventListener("click", async () => {
+            if (!isRecording) {
+                // Iniciar gravação
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    alert("Seu navegador não suporta gravação de áudio.");
+                    return;
+                }
+
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = (event) => {
+                        audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        // Junta os pedaços do áudio num arquivo .mp3/.wav genérico
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+                        
+                        // Cria um objeto de arquivo virtual para colocar dentro do input file escondido
+                        const file = new File([audioBlob], "audio_message.mp3", { type: "audio/mp3" });
+                        
+                        // Transfere o arquivo criado para o input name="audio"
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(file);
+                        audioInput.files = dataTransfer.files;
+
+                        // Altera o placeholder para indicar que o áudio está pronto
+                        msgInput.placeholder = "🎙️ Áudio gravado! Clique em Enviar.";
+                        msgInput.focus();
+                    };
+
+                    mediaRecorder.start();
+                    isRecording = true;
+                    audioBtn.classList.add("recording");
+                    audioIcon.className = "fa-solid fa-stop"; // Muda ícone para "Parar"
+                    msgInput.placeholder = "Gravando áudio...";
+
+                } catch (err) {
+                    console.error("Erro ao acessar microfone:", err);
+                    alert("Permissão de microfone negada ou indisponível.");
+                }
+            } else {
+                // Parar gravação
+                mediaRecorder.stop();
+                // Desliga o microfone fisicamente
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                
+                isRecording = false;
+                audioBtn.classList.remove("recording");
+                audioIcon.className = "fa-solid fa-microphone"; // Volta o ícone original
+            }
+        });
+
+        // Limpa o input de áudio após o envio bem-sucedido
+        chatForm.addEventListener("submit", () => {
+            setTimeout(() => {
+                msgInput.placeholder = "Digite uma mensagem";
+            }, 500);
+        });
+    </script>
 </body>
 </html>
