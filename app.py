@@ -354,7 +354,36 @@ def chat(id):
 def logout():
     session.clear()
     return redirect("/login")
+# ====================================
+# CRIAR BANCO
+# ====================================
 
+with app.app_context():
+    db.create_all()
+
+# ====================================
+# ATUALIZAÇÃO DO POSTGRES (COLE AQUI)
+# ====================================
+with app.app_context():
+    try:
+        db.session.execute(db.text("ALTER TABLE mensagens ADD COLUMN lida BOOLEAN DEFAULT FALSE;"))
+        db.session.execute(db.text("ALTER TABLE mensagens ADD COLUMN visualizacao_unica BOOLEAN DEFAULT FALSE;"))
+        db.session.execute(db.text("ALTER TABLE mensagens ADD COLUMN audio VARCHAR(300);"))
+        db.session.commit()
+        print("Campos adicionados com sucesso no Postgres do Render!")
+    except Exception as e:
+        print("Os campos provavelmente já existem ou ocorreu um erro:", e)
+
+# CÓDIGO TEMPORÁRIO - REMOVA DEPOIS DE SUBIR UMA VEZ
+with app.app_context():
+    try:
+        db.session.execute(db.text("ALTER TABLE mensagens ADD COLUMN lida BOOLEAN DEFAULT FALSE;"))
+        db.session.execute(db.text("ALTER TABLE mensagens ADD COLUMN visualizacao_unica BOOLEAN DEFAULT FALSE;"))
+        db.session.execute(db.text("ALTER TABLE mensagens ADD COLUMN audio VARCHAR(300);"))
+        db.session.commit()
+        print("Campos adicionados com sucesso no Postgres do Render!")
+    except Exception as e:
+        print("Os campos provavelmente já existem ou ocorreu um erro:", e)
 # ====================================
 # INICIALIZAÇÃO
 # ====================================
