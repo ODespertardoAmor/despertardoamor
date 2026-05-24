@@ -148,6 +148,16 @@ class FotoPerfil(db.Model):
         db.Boolean,
         default=False
     )
+# notificações da msm
+class Mensagem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    de_usuario = db.Column(db.Integer)
+    para_usuario = db.Column(db.Integer)
+    mensagem = db.Column(db.Text)
+    # ... outros campos (foto, audio) ...
+    
+    # ADICIONE ESTE CAMPO:
+    lida = db.Column(db.Boolean, default=False)    
 #========apagar msm======
 @app.route("/apagar_mensagem/<int:id>")
 def apagar_mensagem(id):
@@ -420,7 +430,23 @@ def matches():
     )
 
     
-
+# ========= buscar msm não lidas =====
+@app.route('/chat/<int:parceiro_id>')
+def abrir_chat(parceiro_id):
+    usuario_logado_id = session["user_id"]
+    
+    # Busca as mensagens não lidas que o usuário LOGADO recebeu do PARCEIRO e marca como lidas
+    mensagens_nao_lidas = Mensagem.query.filter_by(
+        de_usuario=parceiro_id, 
+        para_usuario=usuario_logado_id, 
+        lida=False
+    ).all()
+    
+    for msg in mensagens_nao_lidas:
+        msg.lida = True
+    db.session.commit()
+    
+    # ... resto do seu código que busca as mensagens e renderiza a página ...
 # ====================================
 # CHAT
 # ====================================
