@@ -5,32 +5,25 @@ from datetime import datetime
 import os
 import uuid
 from werkzeug.utils import secure_filename
+
 app = Flask(__name__)
 UPLOAD_FOLDER = "static/uploads"
-
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ====================================
 # CONFIGURAÇÕES
 # ====================================
-
 app.secret_key = os.getenv("SECRET_KEY", "segredo")
 
 # ====================================
 # BANCO RENDER / POSTGRESQL
 # ====================================
-
 database_url = os.getenv("DATABASE_URL")
 
 # Corrige URL do Render
 if database_url and database_url.startswith("postgres://"):
-    database_url = database_url.replace(
-        "postgres://",
-        "postgresql://",
-        1
-    )
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
 
 # LOCAL SQLITE
 if not database_url:
@@ -42,513 +35,316 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
 # ====================================
-# TABELA DE USUÁRIOS
+# MODELOS (BANCO DE DADOS)
 # ====================================
 
 class Usuario(db.Model):
-
     __tablename__ = "usuarios"
-
     id = db.Column(db.Integer, primary_key=True)
-
     nome = db.Column(db.String(100), nullable=False)
-
-    email = db.Column(
-        db.String(120),
-        unique=True,
-        nullable=False
-    )
-
+    email = db.Column(db.String(120), unique=True, nullable=False)
     senha = db.Column(db.String(300), nullable=False)
-
     idade = db.Column(db.Integer)
-
     cidade = db.Column(db.String(100))
-
     bio = db.Column(db.Text)
-
-    foto = db.Column(
-        db.String(300),
-        default="default.png"
-    )
-
-    criado_em = db.Column(
-        db.DateTime,
-        default=datetime.utcnow
-    )
-
-# ====================================
-# CURTIDAS
-# ====================================
+    foto = db.Column(db.String(300), default="default.png")
+    criado_em = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Curtida(db.Model):
-
     __tablename__ = "curtidas"
-
     id = db.Column(db.Integer, primary_key=True)
-
     de_usuario = db.Column(db.Integer)
-
     para_usuario = db.Column(db.Integer)
-
-# ====================================
-# MATCHES
-# ====================================
 
 class Match(db.Model):
-
     __tablename__ = "matches"
-
     id = db.Column(db.Integer, primary_key=True)
-
     user1 = db.Column(db.Integer)
-
     user2 = db.Column(db.Integer)
+    criado_em = db.Column(db.DateTime, default=datetime.utcnow)
 
-    criado_em = db.Column(
-        db.DateTime,
-        default=datetime.utcnow
-    )
-
-# ====================================
-# MENSAGENS
-# ====================================
-
+# CLASSE MENSAGEM UNIFICADA (Com áudio, lida e visualização única)
 class Mensagem(db.Model):
-
     __tablename__ = "mensagens"
-
     id = db.Column(db.Integer, primary_key=True)
-
     de_usuario = db.Column(db.Integer)
-
     para_usuario = db.Column(db.Integer)
-
     mensagem = db.Column(db.Text)
-
     foto = db.Column(db.String(300))
+    audio = db.Column(db.String(300)) # Campo para armazenar o arquivo de áudio
+    lida = db.Column(db.Boolean, default=False) # Controle de notificações
+    visualizacao_unica = db.Column(db.Boolean, default=False) # Controle do modo WhatsApp sumir
+    data = db.Column(db.DateTime, default=datetime.utcnow)
 
-    data = db.Column(
-        db.DateTime,
-        default=datetime.utcnow
-    )
-    
-#======≠===Foto perfil=======
 class FotoPerfil(db.Model):
-
     __tablename__ = "fotos_perfil"
-
     id = db.Column(db.Integer, primary_key=True)
-
     user_id = db.Column(db.Integer)
-
     foto = db.Column(db.String(300))
+    avatar = db.Column(db.Boolean, default=False)
 
-    avatar = db.Column(
-        db.Boolean,
-        default=False
-    )
-# notificações da msm
-class Mensagem(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    de_usuario = db.Column(db.Integer)
-    para_usuario = db.Column(db.Integer)
-    mensagem = db.Column(db.Text)
-    # ... outros campos (foto, audio) ...
-    
-    # ADICIONE ESTE CAMPO:
-    lida = db.Column(db.Boolean, default=False)    
-#========apagar msm======
+# ====================================
+# ROTAS E LÓGICA DO SISTEMA
+# ====================================
+
+# Apagar Mensagem (Física e Logicamente)
 @app.route("/apagar_mensagem/<int:id>")
 def apagar_mensagem(id):
-
     if "user_id" not in session:
         return redirect("/login")
 
     msg = Mensagem.query.get(id)
-
     if msg:
-
-        if msg.de_usuario == session["user_id"]:
+        # Só quem enviou pode apagar, ou o sistema deleta se for visualização única concluída
+        if msg.de_usuario == session["user_id"] or msg.visualizacao_unica:
+            # Apaga o arquivo físico de foto se existir
+            if msg.foto:
+                caminho_foto = os.path.join(app.config["UPLOAD_FOLDER"], msg.foto)
+                if os.path.exists(caminho_foto):
+                    os.remove(caminho_foto)
+            
+            # Apaga o arquivo físico de áudio se existir
+            if msg.audio:
+                caminho_audio = os.path.join(app.config["UPLOAD_FOLDER"], msg.audio)
+                if os.path.exists(caminho_audio):
+                    os.remove(caminho_audio)
 
             db.session.delete(msg)
             db.session.commit()
 
-    return redirect(request.referrer)
-#=============rota perfil=================
+    return redirect(request.referrer or "/")
+
 @app.route("/upload_foto", methods=["POST"])
 def upload_foto():
-
     if "user_id" not in session:
         return redirect("/login")
 
-    foto = request.files["foto"]
-
+    foto = request.files.get("foto")
     if foto:
-
         extensao = foto.filename.split(".")[-1]
-
         nome_foto = f"{uuid.uuid4()}.{extensao}"
-
-        caminho = os.path.join(
-            "static/uploads",
-            nome_foto
-        )
-
+        caminho = os.path.join(app.config["UPLOAD_FOLDER"], nome_foto)
         foto.save(caminho)
 
         user = Usuario.query.get(session["user_id"])
-
         user.foto = nome_foto
-
         db.session.commit()
 
     return redirect("/")   
-#===========Definir avatar==≠===
+
 @app.route("/avatar/<int:id>")
 def avatar(id):
-
     if "user_id" not in session:
         return redirect("/login")
 
-    fotos = FotoPerfil.query.filter_by(
-        user_id=session["user_id"]
-    ).all()
-
+    fotos = FotoPerfil.query.filter_by(user_id=session["user_id"]).all()
     for f in fotos:
         f.avatar = False
 
     foto = FotoPerfil.query.get(id)
-
     if foto:
         foto.avatar = True
 
     db.session.commit()
-
     return redirect("/")
-# ====================================
-# HOME
-# ====================================
+
 @app.route("/")
 def home():
-
     if "user_id" not in session:
         return redirect("/login")
 
-    usuarios = Usuario.query.filter(
-        Usuario.id != session["user_id"]
-    ).all()
+    usuarios = Usuario.query.filter(Usuario.id != session["user_id"]).all()
+    usuario_logado = Usuario.query.get(session["user_id"])
 
-    usuario_logado = Usuario.query.get(
-        session["user_id"]
-    )
+    return render_template("home.html", usuarios=usuarios, usuario_logado=usuario_logado)
 
-    return render_template(
-        "home.html",
-        usuarios=usuarios,
-        usuario_logado=usuario_logado
-    )
-
-
-# ====================================
-# CADASTRO
-# ====================================
 @app.route("/cadastro", methods=["GET", "POST"])
 def cadastro():
-
     if request.method == "POST":
-
         nome = request.form["nome"]
         email = request.form["email"]
         senha = request.form["senha"]
-
         idade = request.form["idade"]
         cidade = request.form["cidade"]
         bio = request.form["bio"]
 
-        foto = request.files["foto"]
-
+        foto = request.files.get("foto")
         nome_foto = "default.png"
 
         if foto:
-
             filename = secure_filename(foto.filename)
-
-            caminho = os.path.join(
-                app.config["UPLOAD_FOLDER"],
-                filename
-            )
-
+            caminho = os.path.join(app.config["UPLOAD_FOLDER"], filename)
             foto.save(caminho)
-
             nome_foto = filename
 
         senha_hash = generate_password_hash(senha)
-
         novo = Usuario(
-            nome=nome,
-            email=email,
-            senha=senha_hash,
-            idade=idade,
-            cidade=cidade,
-            bio=bio,
-            foto=nome_foto
+            nome=nome, email=email, senha=senha_hash,
+            idade=idade, cidade=cidade, bio=bio, foto=nome_foto
         )
-
         db.session.add(novo)
         db.session.commit()
-
         return redirect("/login")
 
     return render_template("cadastro.html")
 
-# ====================================
-# LOGIN
-# ====================================
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
-
     if request.method == "POST":
-
         email = request.form["email"]
         senha = request.form["senha"]
+        user = Usuario.query.filter_by(email=email).first()
 
-        user = Usuario.query.filter_by(
-            email=email
-        ).first()
-
-        if user and check_password_hash(
-            user.senha,
-            senha
-        ):
-
+        if user and check_password_hash(user.senha, senha):
             session["user_id"] = user.id
-
             return redirect("/")
-
         return "Login inválido"
 
     return render_template("login.html")
 
-# ====================================
-# CURTIR
-# ====================================
-
 @app.route("/curtir/<int:id>")
 def curtir(id):
-
     if "user_id" not in session:
         return redirect("/login")
 
     minha_id = session["user_id"]
-
     if minha_id == id:
         return redirect("/")
 
-    ja_curtiu = Curtida.query.filter_by(
-        de_usuario=minha_id,
-        para_usuario=id
-    ).first()
-
+    ja_curtiu = Curtida.query.filter_by(de_usuario=minha_id, para_usuario=id).first()
     if ja_curtiu:
         return redirect("/")
 
-    nova = Curtida(
-        de_usuario=minha_id,
-        para_usuario=id
-    )
-
+    nova = Curtida(de_usuario=minha_id, para_usuario=id)
     db.session.add(nova)
     db.session.commit()
 
-    # VERIFICAR MATCH
-
-    curtiu_de_volta = Curtida.query.filter_by(
-        de_usuario=id,
-        para_usuario=minha_id
-    ).first()
-
+    curtiu_de_volta = Curtida.query.filter_by(de_usuario=id, para_usuario=minha_id).first()
     if curtiu_de_volta:
-
         existe_match = Match.query.filter(
-            (
-                (Match.user1 == minha_id) &
-                (Match.user2 == id)
-            )
-            |
-            (
-                (Match.user1 == id) &
-                (Match.user2 == minha_id)
-            )
+            ((Match.user1 == minha_id) & (Match.user2 == id)) |
+            ((Match.user1 == id) & (Match.user2 == minha_id))
         ).first()
 
         if not existe_match:
-
-            novo_match = Match(
-                user1=minha_id,
-                user2=id
-            )
-
+            novo_match = Match(user1=minha_id, user2=id)
             db.session.add(novo_match)
             db.session.commit()
 
     return redirect("/")
 
-# ====================================
-# MATCHES
-# ====================================
+# Rota de Matches Modificada com contador de mensagens não lidas
 @app.route("/matches")
 def matches():
-
     if "user_id" not in session:
         return redirect("/login")
 
     meu_id = session["user_id"]
-
-    matches_db = Match.query.filter(
-        (Match.user1 == meu_id) |
-        (Match.user2 == meu_id)
-    ).all()
+    matches_db = Match.query.filter((Match.user1 == meu_id) | (Match.user2 == meu_id)).all()
 
     lista_matches = []
+    notificacoes = {} # Dicionário contendo o total de não lidas {parceiro_id: total}
 
     for match in matches_db:
-
-        if match.user1 == meu_id:
-            outro_id = match.user2
-        else:
-            outro_id = match.user1
-
+        outro_id = match.user2 if match.user1 == meu_id else match.user1
         usuario = Usuario.query.get(outro_id)
+        if usuario:
+            lista_matches.append(usuario)
+            
+            # Conta mensagens não lidas vindo deste usuário para mim
+            total_nao_lidas = Mensagem.query.filter_by(
+                de_usuario=outro_id, 
+                para_usuario=meu_id, 
+                lida=False
+            ).count()
+            notificacoes[outro_id] = total_nao_lidas
 
-        lista_matches.append(usuario)
+    return render_template("matches.html", matches=lista_matches, notificacoes=notificacoes)
 
-    return render_template(
-        "matches.html",
-        matches=lista_matches
-    )
-
-    
-# ========= buscar msm não lidas =====
-@app.route('/chat/<int:parceiro_id>')
-def abrir_chat(parceiro_id):
-    usuario_logado_id = session["user_id"]
-    
-    # Busca as mensagens não lidas que o usuário LOGADO recebeu do PARCEIRO e marca como lidas
-    mensagens_nao_lidas = Mensagem.query.filter_by(
-        de_usuario=parceiro_id, 
-        para_usuario=usuario_logado_id, 
-        lida=False
-    ).all()
-    
-    for msg in mensagens_nao_lidas:
-        msg.lida = True
-    db.session.commit()
-    
-    # ... resto do seu código que busca as mensagens e renderiza a página ...
-# ====================================
-# CHAT
-# ====================================
-
-
+# Rota do Chat Consolidada (Garante marcação de lidas e aceita áudio e visualização única)
 @app.route("/chat/<int:id>", methods=["GET", "POST"])
 def chat(id):
-
     if "user_id" not in session:
         return redirect("/login")
 
     meu_id = session["user_id"]
 
+    # 1. MARCAR MENSAGENS RECEBIDAS COMO LIDAS AO ENTRAR
+    mensagens_nao_lidas = Mensagem.query.filter_by(
+        de_usuario=id, 
+        para_usuario=meu_id, 
+        lida=False
+    ).all()
+    for m in mensagens_nao_lidas:
+        m.lida = True
+    db.session.commit()
+
+    # 2. SE FOR ENVIO DE NOVA MENSAGEM (POST)
     if request.method == "POST":
-
         texto = request.form.get("mensagem")
-
         foto = request.files.get("foto")
+        audio = request.files.get("audio") # Pega o áudio do gravador
+        
+        # Verifica se ativou o botão de visualização única
+        once_input = request.form.get("visualizacao_unica")
+        modo_once = True if once_input == "1" else False
 
         nome_foto = None
+        nome_audio = None
 
+        # Salva Foto se houver
         if foto and foto.filename != "":
+            filename_foto = secure_filename(f"{uuid.uuid4()}_{foto.filename}")
+            foto.save(os.path.join(app.config["UPLOAD_FOLDER"], filename_foto))
+            nome_foto = filename_foto
 
-            filename = secure_filename(foto.filename)
+        # Salva Áudio se houver
+        if audio and audio.filename != "":
+            filename_audio = secure_filename(f"{uuid.uuid4()}_audio.mp3")
+            audio.save(os.path.join(app.config["UPLOAD_FOLDER"], filename_audio))
+            nome_audio = filename_audio
 
-            caminho = os.path.join(
-                app.config["UPLOAD_FOLDER"],
-                filename
+        if texto or nome_foto or nome_audio:
+            nova = Mensagem(
+                de_usuario=meu_id,
+                para_usuario=id,
+                mensagem=texto,
+                foto=nome_foto,
+                audio=nome_audio,
+                visualizacao_unica=modo_once,
+                lida=False
             )
+            db.session.add(nova)
+            db.session.commit()
 
-            foto.save(caminho)
-
-            nome_foto = filename
-
-        nova = Mensagem(
-            de_usuario=meu_id,
-            para_usuario=id,
-            mensagem=texto,
-            foto=nome_foto
-        )
-
-        db.session.add(nova)
-        db.session.commit()
-
+    # 3. BUSCA HISTÓRICO DE MENSAGENS PARA EXIBIR
     mensagens = Mensagem.query.filter(
-        (
-            (Mensagem.de_usuario == meu_id)
-            &
-            (Mensagem.para_usuario == id)
-        )
-        |
-        (
-            (Mensagem.de_usuario == id)
-            &
-            (Mensagem.para_usuario == meu_id)
-        )
+        ((Mensagem.de_usuario == meu_id) & (Mensagem.para_usuario == id)) |
+        ((Mensagem.de_usuario == id) & (Mensagem.para_usuario == meu_id))
     ).order_by(Mensagem.data.asc()).all()
 
-    usuario = Usuario.query.get(id)
     usuario_logado = Usuario.query.get(meu_id)
-
     usuario_chat = Usuario.query.get(id)
 
     return render_template(
         "chat.html",
         mensagens=mensagens,
-        usuario=usuario,
+        usuario=usuario_chat,
         usuario_logado=usuario_logado,
         usuario_chat=usuario_chat
-
     )
-
-
-
-# ====================================
-# LOGOUT
-# ====================================
 
 @app.route("/logout")
 def logout():
-
     session.clear()
-
     return redirect("/login")
 
 # ====================================
-# CRIAR BANCO
+# INICIALIZAÇÃO
 # ====================================
-
 with app.app_context():
     db.create_all()
 
-# ====================================
-# RENDER
-# ====================================
-
 if __name__ == "__main__":
-
     port = int(os.environ.get("PORT", 5000))
-
-    app.run(
-        host="0.0.0.0",
-        port=port,
-        debug=True
-    )
+    app.run(host="0.0.0.0", port=port, debug=True)
