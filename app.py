@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect,session,jsonify
+from flask import Flask, render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -299,8 +299,9 @@ def chat(id):
     if request.method == "POST":
         texto = request.form.get("mensagem")
         foto = request.files.get("foto")
-        audio = request.files.get("audio")
+        audio = request.files.get("audio") # Pega o áudio do gravador
         
+        # Verifica se ativou o botão de visualização única
         once_input = request.form.get("visualizacao_unica")
         modo_once = True if once_input == "1" else False
 
@@ -319,30 +320,20 @@ def chat(id):
             audio.save(os.path.join(app.config["UPLOAD_FOLDER"], filename_audio))
             nome_audio = filename_audio
 
-        # Só cria a mensagem se tiver conteúdo
         if texto or nome_foto or nome_audio:
-            try:
-                nova = Mensagem(
-                    de_usuario=meu_id,
-                    para_usuario=id,
-                    mensagem=texto,
-                    foto=nome_foto,
-                    audio=nome_audio,
-                    visualizacao_unica=modo_once,
-                    lida=False  # Fica como não lida para o outro usuário ver
-                )
-                db.session.add(nova)
-                db.session.commit()  # Salva DEFINITIVAMENTE no banco
+            nova = Mensagem(
+                de_usuario=meu_id,
+                para_usuario=id,
+                mensagem=texto,
+                foto=nome_foto,
+                audio=nome_audio,
+                visualizacao_unica=modo_once,
+                lida=False
+            )
+            db.session.add(nova)
+            db.session.commit()
 
-                # Após salvar, redireciona para a mesma página (força carregar as mensagens atualizadas)
-                return redirect(f"/chat/{id}")
-
-            except Exception as e:
-                db.session.rollback()
-                print("Erro ao salvar mensagem:", str(e))
-                return redirect(f"/chat/{id}")
-
-    # 3. BUSCA HISTÓRICO DE MENSAGENS
+    # 3. BUSCA HISTÓRICO DE MENSAGENS PARA EXIBIR
     mensagens = Mensagem.query.filter(
         ((Mensagem.de_usuario == meu_id) & (Mensagem.para_usuario == id)) |
         ((Mensagem.de_usuario == id) & (Mensagem.para_usuario == meu_id))
@@ -359,45 +350,10 @@ def chat(id):
         usuario_chat=usuario_chat
     )
 
-
-
-
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/login")
- # procurar novas mensagens   
-@app.route('/novas_mensagens/<int:id_chat>')
-def novas_mensagens(id_chat):
-    if "user_id" not in session:
-        return jsonify({"novas": []})
-
-    meu_id = session["user_id"]
-    # Pega a última mensagem que já está na tela
-    ultima_id = request.args.get('ultima_id', 0, type=int)
-
-    # Busca apenas mensagens NOVAS que a outra pessoa enviou
-    mensagens_novas = Mensagem.query.filter(
-        Mensagem.de_usuario == id_chat,
-        Mensagem.para_usuario == meu_id,
-        Mensagem.id > ultima_id
-    ).order_by(Mensagem.data.asc()).all()
-
-    lista = []
-    for msg in mensagens_novas:
-        lista.append({
-            "id": msg.id,
-            "mensagem": msg.mensagem,
-            "foto": bool(msg.foto),
-            "foto_url": url_for('static', filename=f'uploads/{msg.foto}') if msg.foto else "",
-            "audio": bool(msg.audio),
-            "audio_url": url_for('static', filename=f'uploads/{msg.audio}') if msg.audio else "",
-            "visualizacao_unica": msg.visualizacao_unica,
-            "avatar_url": url_for('static', filename=f'uploads/{Usuario.query.get(msg.de_usuario).foto}')
-        })
-
-    return jsonify({"novas": lista})
-    
 # ====================================
 # CRIAR BANCO
 # ====================================
