@@ -26,7 +26,6 @@
         .delete-btn{ display:block; margin-top:10px; color:white; font-size:12px; text-decoration:none; opacity:0.8; }
         .delete-btn:hover{ opacity:1; }
 
-        /* Banner de aviso para áudio autodestrutivo */
         .once-badge {
             font-size: 11px;
             background: rgba(239, 68, 68, 0.2);
@@ -47,13 +46,12 @@
         
         .send-btn{ background:#2563eb; color:white; border:none; padding:18px 30px; border-radius:16px; cursor:pointer; font-size:16px; font-weight:600; transition:0.3s; }
         .send-btn:hover{ background:#1d4ed8; }
+        .send-btn:disabled{ background:#475569; cursor:not-allowed; }
 
-        /* Botões de Controle */
         .audio-btn { background: #10b981; color: white; border: none; padding: 18px; border-radius: 16px; cursor: pointer; font-size: 18px; transition: 0.3s; display: flex; align-items: center; justify-content: center; width: 58px; height: 58px; }
         .audio-btn:hover { background: #059669; }
         .audio-btn.recording { background: #ef4444; animation: pulse 1.5s infinite; }
 
-        /* Botão Visualização Única */
         .view-once-btn {
             background: #334155;
             color: #94a3b8;
@@ -65,7 +63,7 @@
             transition: 0.3s;
             width: 58px;
             height: 58px;
-            display: none; /* Só aparece quando houver um áudio gravado */
+            display: none;
             align-items: center;
             justify-content: center;
         }
@@ -83,10 +81,10 @@
             .audio-btn, .view-once-btn { height: 54px; }
         }
         
-        .msg-row{ display:flex; align-items:flex-end; gap:10px; }
+        .msg-row{ display:flex; align-items:flex-end; gap:10px; margin: 8px 0; }
         .me-row{ justify-content:flex-end; }
         .other-row{ justify-content:flex-start; }
-        .avatar-chat{ width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #38bdf8; }
+        .avatar-chat{ width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #38bdf8; flex-shrink: 0; }
     </style>
 </head>
 <body>
@@ -122,7 +120,7 @@
                                     src="{{ url_for('static', filename='uploads/' + msg.audio) }}" 
                                     controls 
                                     {% if msg.visualizacao_unica %} onended="destruirAudio('{{ msg.id }}')" {% endif %}>
-                                </audio>
+                                
                             {% endif %}
 
                             {% if msg.de_usuario == session["user_id"] %}
@@ -132,13 +130,13 @@
                     </div>
                 {% endfor %}
             {% else %}
-                <div class="empty">Nenhuma mensagem ainda 💙</div>
+                <div class="empty" id="emptyState">Nenhuma mensagem ainda 💙</div>
             {% endif %}
         </div>
 
         <form method="POST" enctype="multipart/form-data" class="form-area" id="chatForm">
             <input type="text" name="mensagem" id="msgInput" placeholder="Digite uma mensagem" class="msg-input">
-            <input type="file" name="foto" class="file-input" accept="image/*">
+            <input type="file" name="foto" id="fotoInput" class="file-input" accept="image/*">
             
             <input type="file" name="audio" id="audioInput" style="display: none;" accept="audio/*">
             <input type="hidden" name="visualizacao_unica" id="hiddenOnceInput" value="0">
@@ -151,28 +149,31 @@
                 <i class="fa-solid fa-microphone" id="audioIcon"></i>
             </button>
 
-            <button type="submit" class="send-btn">Enviar</button>
+            <button type="submit" class="send-btn" id="sendBtn">Enviar</button>
         </form>
     </div>
 
     <script>
         const chatBox = document.getElementById("chatBox");
+        const emptyState = document.getElementById("emptyState");
         chatBox.scrollTop = chatBox.scrollHeight;
 
         const audioBtn = document.getElementById("audioBtn");
         const audioIcon = document.getElementById("audioIcon");
         const viewOnceBtn = document.getElementById("viewOnceBtn");
         const audioInput = document.getElementById("audioInput");
+        const fotoInput = document.getElementById("fotoInput");
         const hiddenOnceInput = document.getElementById("hiddenOnceInput");
         const chatForm = document.getElementById("chatForm");
         const msgInput = document.getElementById("msgInput");
+        const sendBtn = document.getElementById("sendBtn");
 
         let mediaRecorder;
         let audioChunks = [];
         let isRecording = false;
         let isViewOnce = false;
 
-        // Alternar o modo de Visualização Única
+        // Alternar visualização única
         viewOnceBtn.addEventListener("click", () => {
             isViewOnce = !isViewOnce;
             if (isViewOnce) {
@@ -184,6 +185,7 @@
             }
         });
 
+        // Gravação de áudio
         audioBtn.addEventListener("click", async () => {
             if (!isRecording) {
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -207,7 +209,7 @@
                         audioInput.files = dataTransfer.files;
 
                         msgInput.placeholder = "🎙️ Áudio pronto para envio!";
-                        viewOnceBtn.style.display = "flex"; // Mostra o botão de visualização única
+                        viewOnceBtn.style.display = "flex";
                     };
 
                     mediaRecorder.start();
@@ -228,9 +230,7 @@
             }
         });
 
-        // Função executada quando o áudio termina de tocar
         function destruirAudio(msgId) {
-            // 1. Remove visualmente da tela imediatamente
             const elementoMsg = document.getElementById(`msg-container-${msgId}`);
             if (elementoMsg) {
                 elementoMsg.style.transition = "0.5s";
@@ -238,21 +238,123 @@
                 setTimeout(() => elementoMsg.remove(), 500);
             }
 
-            // 2. Avisa o seu servidor em segundo plano para apagar o arquivo definitivo
             fetch(`/apagar_mensagem/${msgId}`)
-                .then(response => console.log("Áudio autodestruído com sucesso no servidor."))
-                .catch(err => console.error("Erro ao deletar arquivo:", err));
+                .then(response => console.log("Áudio autodestruído."))
+                .catch(err => console.error("Erro:", err));
         }
 
-        chatForm.addEventListener("submit", () => {
-            setTimeout(() => {
-                msgInput.placeholder = "Digite uma mensagem";
-                viewOnceBtn.style.display = "none";
-                viewOnceBtn.classList.remove("active");
-                hiddenOnceInput.value = "0";
-                isViewOnce = false;
-            }, 500);
+        // ENVIO SEM RECARREGAR A PÁGINA
+        chatForm.addEventListener("submit", async (e) => {
+            e.preventDefault(); // Impede o recarregamento
+
+            sendBtn.disabled = true;
+            sendBtn.textContent = "Enviando...";
+
+            const formData = new FormData(chatForm);
+
+            try {
+                // Envia os dados para o servidor
+                const response = await fetch(window.location.href, {
+                    method: "POST",
+                    body: formData
+                });
+
+                const resultado = await response.json();
+
+                if (resultado.sucesso) {
+                    // Remove aviso de "nenhuma mensagem" se existir
+                    if (emptyState) emptyState.remove();
+
+                    // Adiciona a mensagem imediatamente na tela
+                    const novaMensagem = document.createElement("div");
+                    novaMensagem.className = "msg-row me-row";
+                    novaMensagem.id = `msg-container-${resultado.id}`;
+
+                    let conteudo = "";
+                    if (resultado.visualizacao_unica) {
+                        conteudo += `<div class="once-badge"><i class="fa-solid fa-eye-slash"></i> Áudio de Visualização Única</div>`;
+                    }
+                    if (resultado.mensagem) {
+                        conteudo += `<p>${resultado.mensagem}</p>`;
+                    }
+                    if (resultado.foto) {
+                        conteudo += `<img src="${resultado.foto_url}">`;
+                    }
+                    if (resultado.audio) {
+                        const onEnded = resultado.visualizacao_unica ? `onended="destruirAudio('${resultado.id}')"` : "";
+                        conteudo += `<audio src="${resultado.audio_url}" controls ${onEnded}>`;
+                    }
+                    conteudo += `<a href="/apagar_mensagem/${resultado.id}" class="delete-btn">Apagar</a>`;
+
+                    novaMensagem.innerHTML = `
+                        <img src="${resultado.avatar_url}" class="avatar-chat">
+                        <div class="message me">
+                            ${conteudo}
+                        </div>
+                    `;
+
+                    chatBox.appendChild(novaMensagem);
+                    chatBox.scrollTop = chatBox.scrollHeight;
+
+                    // Limpa o formulário
+                    msgInput.value = "";
+                    fotoInput.value = "";
+                    audioInput.value = "";
+                    msgInput.placeholder = "Digite uma mensagem";
+                    viewOnceBtn.style.display = "none";
+                    viewOnceBtn.classList.remove("active");
+                    hiddenOnceInput.value = "0";
+                    isViewOnce = false;
+
+                } else {
+                    alert("Erro ao enviar mensagem: " + resultado.erro);
+                }
+
+            } catch (erro) {
+                console.error("Erro na requisição:", erro);
+                alert("Não foi possível enviar a mensagem. Tente novamente.");
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.textContent = "Enviar";
+            }
         });
+
+        // Atualização automática para ver mensagens do outro usuário
+        setInterval(async () => {
+            try {
+                const resposta = await fetch("/novas_mensagens");
+                const dados = await resposta.json();
+                
+                dados.novas.forEach(msg => {
+                    if (!document.getElementById(`msg-container-${msg.id}`)) {
+                        const novaMsg = document.createElement("div");
+                        novaMsg.className = "msg-row other-row";
+                        novaMsg.id = `msg-container-${msg.id}`;
+
+                        let conteudo = "";
+                        if (msg.visualizacao_unica) {
+                            conteudo += `<div class="once-badge"><i class="fa-solid fa-eye-slash"></i> Áudio de Visualização Única</div>`;
+                        }
+                        if (msg.mensagem) conteudo += `<p>${msg.mensagem}</p>`;
+                        if (msg.foto) conteudo += `<img src="${msg.foto_url}">`;
+                        if (msg.audio) {
+                            const onEnded = msg.visualizacao_unica ? `onended="destruirAudio('${msg.id}')"` : "";
+                            conteudo += `<audio src="${msg.audio_url}" controls ${onEnded}>`;
+                        }
+
+                        novaMsg.innerHTML = `
+                            <img src="${msg.avatar_url}" class="avatar-chat">
+                            <div class="message other">${conteudo}</div>
+                        `;
+
+                        chatBox.appendChild(novaMsg);
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
+                });
+            } catch (e) {
+                console.log("Sem novas mensagens");
+            }
+        }, 2000); // Verifica novas mensagens a cada 2 segundos
     </script>
 </body>
 </html>
