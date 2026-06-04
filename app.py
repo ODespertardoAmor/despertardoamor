@@ -278,8 +278,6 @@ def matches():
     return render_template("matches.html", matches=lista_matches, notificacoes=notificacoes)
 
 # Rota do Chat Consolidada (Garante marcação de lidas e aceita áudio e visualização única)
-
-
 @app.route("/chat/<int:id>", methods=["GET", "POST"])
 def chat(id):
     if "user_id" not in session:
@@ -301,22 +299,19 @@ def chat(id):
     if request.method == "POST":
         texto = request.form.get("mensagem")
         foto = request.files.get("foto")
-        audio = request.files.get("audio") # Pega o áudio do gravador
+        audio = request.files.get("audio")
         
-        # Verifica se ativou o botão de visualização única
         once_input = request.form.get("visualizacao_unica")
         modo_once = True if once_input == "1" else False
 
         nome_foto = None
         nome_audio = None
 
-        # Salva Foto se houver
         if foto and foto.filename != "":
             filename_foto = secure_filename(f"{uuid.uuid4()}_{foto.filename}")
             foto.save(os.path.join(app.config["UPLOAD_FOLDER"], filename_foto))
             nome_foto = filename_foto
 
-        # Salva Áudio se houver
         if audio and audio.filename != "":
             filename_audio = secure_filename(f"{uuid.uuid4()}_audio.mp3")
             audio.save(os.path.join(app.config["UPLOAD_FOLDER"], filename_audio))
@@ -336,27 +331,29 @@ def chat(id):
                 db.session.add(nova)
                 db.session.commit()
 
-                # ✅ AGORA RETORNA OS DADOS EM JSON PARA O JAVASCRIPT
+                # ✅ Agora montamos a URL manualmente para evitar erro
+                caminho_base = "/static/uploads/"
+                usuario_logado = Usuario.query.get(meu_id)
+
                 return jsonify({
                     "sucesso": True,
                     "id": nova.id,
                     "mensagem": nova.mensagem,
                     "foto": bool(nova.foto),
-                    "foto_url": url_for('static', filename=f'uploads/{nova.foto}') if nova.foto else "",
+                    "foto_url": caminho_base + nova.foto if nova.foto else "",
                     "audio": bool(nova.audio),
-                    "audio_url": url_for('static', filename=f'uploads/{nova.audio}') if nova.audio else "",
+                    "audio_url": caminho_base + nova.audio if nova.audio else "",
                     "visualizacao_unica": nova.visualizacao_unica,
-                    "avatar_url": url_for('static', filename=f'uploads/{Usuario.query.get(meu_id).foto}')
+                    "avatar_url": caminho_base + usuario_logado.foto
                 })
 
             except Exception as e:
                 db.session.rollback()
                 return jsonify({"sucesso": False, "erro": str(e)})
 
-        # Se não tinha nada para enviar, retorna erro
         return jsonify({"sucesso": False, "erro": "Digite uma mensagem ou envie um arquivo"})
 
-    # 3. BUSCA HISTÓRICO DE MENSAGENS PARA EXIBIR
+    # 3. BUSCA HISTÓRICO DE MENSAGENS
     mensagens = Mensagem.query.filter(
         ((Mensagem.de_usuario == meu_id) & (Mensagem.para_usuario == id)) |
         ((Mensagem.de_usuario == id) & (Mensagem.para_usuario == meu_id))
@@ -372,6 +369,9 @@ def chat(id):
         usuario_logado=usuario_logado,
         usuario_chat=usuario_chat
     )
+
+
+
 
 
 @app.route("/logout")
