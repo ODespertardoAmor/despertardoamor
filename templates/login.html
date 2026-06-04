@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D/Amor</title>
+    <title>D/Amor - Entrar</title>
 
     <style>
         * {
@@ -16,321 +16,144 @@
             background: #0f172a;
             color: white;
             font-family: Arial, sans-serif;
-            /* Remove rolagem geral da página */
-            overflow: hidden;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
-        }
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
 
-        /* TOPO COM CAPA */
-        .topo {
-            position: relative;
-            min-height: 320px;
             background:
-                linear-gradient(rgba(0,0,0,.35), rgba(15,23,42,.95)),
-                url("{{ url_for('static', filename='imagens/capa.png') }}");
-            background-size: cover;
-            background-position: center;
-            padding: 20px;
-            flex-shrink: 0; /* Não deixa o topo encolher */
+                linear-gradient(rgba(15,23,42,.85), rgba(15,23,42,.95)),
+                url("{{ url_for('static', filename='imagens/capa.png') }}") center/cover no-repeat;
         }
 
-        /* LOGO */
-        .logo {
-            position: absolute;
-            top: 20px;
-            left: 220px;
-            font-size: 34px;
-            font-weight: bold;
-            color: white;
-            text-shadow: 0 0 10px rgba(0,0,0,.4);
-        }
-
-        /* PERFIL FIXO NO CANTO ESQUERDO */
-        .area-perfil {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            width: 180px;
-            z-index: 10;
-        }
-
-        .perfil-info {
-            background: rgba(255,255,255,.08);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,.15);
-            padding: 12px;
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-
-        .avatar-user {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #38bdf8;
-            box-shadow: 0 0 15px rgba(56,189,248,.4);
-        }
-
-        .nome-user {
-            margin-top: 6px;
-            font-size: 14px;
-            font-weight: bold;
-            color: #38bdf8;
-            text-align: center;
-        }
-
-        /* FORMULÁRIO DE FOTO */
-        .avatar-form {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .avatar-form input[type="file"] {
-            width: 100%;
-            background: #1e293b;
-            color: white;
-            border: 1px solid #334155;
-            padding: 8px;
-            border-radius: 10px;
-            font-size: 12px;
-        }
-
-        /* BOTÕES */
-        .btn {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-            padding: 10px 14px;
-            text-decoration: none;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: .3s;
-            text-align: center;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59,130,246,.4);
-        }
-
-        /* MENU ABAIXO DO ALTERAR FOTO */
-        .menu-superior {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            width: 100%;
-            margin-top: 5px;
-        }
-
-        /* CONTEÚDO PRINCIPAL - SÓ ESTE ROLA */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            overflow-y: auto; /* Habilita rolagem apenas aqui */
-            flex: 1; /* Ocupa o espaço restante */
-        }
-
-        .titulo {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #38bdf8;
-            font-size: 32px;
-        }
-
-        /* CARDS */
-        .card {
-            background: #1e293b;
-            border: 1px solid #334155;
+        .container-login {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 24px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 420px;
             text-align: center;
-            margin-bottom: 20px;
-            transition: .3s;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,.3);
-        }
-
-        .avatar-outro {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 15px;
-            border: 4px solid #38bdf8;
-        }
-
-        .card h2 {
+        .logo {
+            font-size: 36px;
+            font-weight: bold;
             color: #38bdf8;
             margin-bottom: 10px;
         }
 
-        .card p {
+        .subtitulo {
             color: #d1d5db;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .form-grupo {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
             margin-bottom: 8px;
+            color: #e2e8f0;
+            font-weight: 500;
         }
 
-        /* AÇÕES DOS CARDS */
-        .acoes {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
+        input {
             width: 100%;
-        }
-
-        .acoes .btn {
-            flex: 1;
-        }
-
-        /* NOTIFICAÇÃO CHAT */
-        .wrapper-chat {
-            position: relative;
-            flex: 1;
-            display: flex;
-        }
-
-        .wrapper-chat .btn {
-            width: 100%;
-        }
-
-        .badge-notificacao {
-            background: #ef4444;
+            padding: 14px 16px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 14px;
             color: white;
-            font-size: 11px;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
             font-weight: bold;
-            position: absolute;
-            top: -8px;
-            right: -5px;
-            min-width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            border: 2px solid #1e293b;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
         }
 
-        /* RESPONSIVO */
-        @media(max-width: 768px) {
-            body {
-                overflow: auto; /* Em telas pequenas, rola tudo normalmente */
-                height: auto;
-            }
-
-            .logo {
-                left: 20px;
-                top: auto;
-                bottom: 20px;
-                font-size: 24px;
-            }
-
-            .area-perfil {
-                position: relative; /* Deixa de ser fixo em telas pequenas */
-                top: auto;
-                left: auto;
-                margin: 0 auto 20px;
-                width: 90%;
-                max-width: 280px;
-            }
-
-            .container {
-                overflow: visible;
-            }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(59, 130, 246, 0.4);
         }
 
-        @media(min-width: 768px) {
-            .container {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-                gap: 20px;
-            }
+        .link-cadastro {
+            margin-top: 25px;
+            color: #94a3b8;
+            font-size: 15px;
+        }
 
-            .titulo {
-                grid-column: 1 / -1;
-            }
+        .link-cadastro a {
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
 
-            .card {
-                margin-bottom: 0;
-            }
+        .link-cadastro a:hover {
+            text-decoration: underline;
+        }
+
+        .mensagem-erro {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-    <div class="topo">
-        <div class="logo">
-            💙 D/Amor
-        </div>
+    <div class="container-login">
+        <h1 class="logo">💙 D/Amor</h1>
+        <p class="subtitulo">Entre para encontrar pessoas especiais</p>
 
-        <!-- ÁREA DO PERFIL FIXA NO CANTO ESQUERDO -->
-        <div class="area-perfil">
-            <div class="perfil-info">
-                <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-user">
-                <div class="nome-user">
-                    {{usuario_logado.nome}}
-                </div>
+        <!-- Se quiser exibir mensagem de erro, descomente abaixo -->
+        <!-- <div class="mensagem-erro">E-mail ou senha incorretos!</div> -->
+
+        <form action="/login" method="POST">
+            <div class="form-grupo">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" required placeholder="seuemail@exemplo.com">
             </div>
 
-            <form action="/upload_foto" method="POST" enctype="multipart/form-data" class="avatar-form">
-                <input type="file" name="foto" required>
-                <button type="submit" class="btn">Alterar Foto</button>
-            </form>
-
-            <!-- BOTÕES ABAIXO -->
-            <div class="menu-superior">
-                <a href="/" class="btn">Home</a>
-                <a href="/matches" class="btn">Pessoas</a>
-                <a href="/logout" class="btn">Sair</a>
+            <div class="form-grupo">
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" name="senha" required placeholder="Digite sua senha">
             </div>
-        </div>
-    </div>
 
-    <!-- CONTEÚDO QUE ROLA -->
-    <div class="container">
-        <h1 class="titulo">
-            Pessoas disponíveis
-        </h1>
+            <button type="submit" class="btn">Entrar</button>
+        </form>
 
-        {% for u in usuarios %}
-        <div class="card">
-            <img src="{{ url_for('static', filename='uploads/' + u.foto) }}" class="avatar-outro">
-
-            <h2>{{u.nome}}, {{u.idade}}</h2>
-            <p>📍 {{u.cidade}}</p>
-            <p>{{u.bio}}</p>
-
-            <div class="acoes">
-                <a href="/curtir/{{u.id}}" class="btn">Curtir</a>
-                
-                <div class="wrapper-chat">
-                    <a href="/chat/{{u.id}}" class="btn">Chat</a>
-                    
-                    {% if notificacoes and notificacoes[u.id] > 0 %}
-                        <span class="badge-notificacao">{{ notificacoes[u.id] }}</span>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        {% endfor %}
+        <p class="link-cadastro">
+            Ainda não tem conta? <a href="/cadastro">Cadastre-se aqui</a>
+        </p>
     </div>
 
 </body>
