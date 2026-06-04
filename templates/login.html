@@ -3,214 +3,334 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Despertar Do Amor</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>D/Amor</title>
 
     <style>
-
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:'Poppins',sans-serif;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        body{
-            background:#0f172a;
-            min-height:100vh;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            padding:20px;
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: Arial, sans-serif;
+            /* Remove rolagem geral da página */
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        .container{
-            width:100%;
-            max-width:950px;
-            background:#1e293b;
-            border-radius:30px;
-            overflow:hidden;
-            display:flex;
-            box-shadow:0 20px 50px rgba(0,0,0,0.4);
+        /* TOPO COM CAPA */
+        .topo {
+            position: relative;
+            min-height: 320px;
+            background:
+                linear-gradient(rgba(0,0,0,.35), rgba(15,23,42,.95)),
+                url("{{ url_for('static', filename='imagens/capa.png') }}");
+            background-size: cover;
+            background-position: center;
+            padding: 20px;
+            flex-shrink: 0; /* Não deixa o topo encolher */
         }
 
-        .left{
-            flex:1;
-            background:linear-gradient(135deg,#2563eb,#38bdf8);
-            padding:60px;
-            display:flex;
-            flex-direction:column;
-            justify-content:center;
-            color:white;
+        /* LOGO */
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 220px;
+            font-size: 34px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 10px rgba(0,0,0,.4);
         }
 
-        .left h1{
-            font-size:52px;
-            margin-bottom:25px;
-            line-height:1.1;
+        /* PERFIL FIXO NO CANTO ESQUERDO */
+        .area-perfil {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 180px;
+            z-index: 10;
         }
 
-        .left p{
-            font-size:18px;
-            line-height:1.8;
-            margin-bottom:20px;
+        .perfil-info {
+            background: rgba(255,255,255,.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,.15);
+            padding: 12px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
         }
 
-        .imagem-secao{
-            width:100%;
-            border-radius:15px;
-            box-shadow:0 8px 20px rgba(0,0,0,0.15);
-            object-fit:cover;
+        .avatar-user {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #38bdf8;
+            box-shadow: 0 0 15px rgba(56,189,248,.4);
         }
 
-        .right{
-            flex:1;
-            padding:55px;
-            background:#111827;
+        .nome-user {
+            margin-top: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #38bdf8;
+            text-align: center;
         }
 
-        .right h2{
-            color:#38bdf8;
-            font-size:36px;
-            margin-bottom:35px;
+        /* FORMULÁRIO DE FOTO */
+        .avatar-form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        form{
-            display:flex;
-            flex-direction:column;
-            gap:20px;
+        .avatar-form input[type="file"] {
+            width: 100%;
+            background: #1e293b;
+            color: white;
+            border: 1px solid #334155;
+            padding: 8px;
+            border-radius: 10px;
+            font-size: 12px;
         }
 
-        input{
-
-            width:100%;
-            padding:16px;
-            border:none;
-            outline:none;
-            border-radius:14px;
-            background:#1e293b;
-            color:white;
-            font-size:16px;
-
+        /* BOTÕES */
+        .btn {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            padding: 10px 14px;
+            text-decoration: none;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: .3s;
+            text-align: center;
         }
 
-        input::placeholder{
-            color:#94a3b8;
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59,130,246,.4);
         }
 
-        .btn{
-
-            background:#2563eb;
-            color:white;
-            border:none;
-            padding:18px;
-            border-radius:14px;
-            font-size:17px;
-            font-weight:600;
-            cursor:pointer;
-            transition:0.3s;
-
+        /* MENU ABAIXO DO ALTERAR FOTO */
+        .menu-superior {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            margin-top: 5px;
         }
 
-        .btn:hover{
-            background:#1d4ed8;
-            transform:translateY(-3px);
+        /* CONTEÚDO PRINCIPAL - SÓ ESTE ROLA */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            overflow-y: auto; /* Habilita rolagem apenas aqui */
+            flex: 1; /* Ocupa o espaço restante */
         }
 
-        .cadastro-link{
-            margin-top:25px;
-            text-align:center;
-            color:#cbd5e1;
+        .titulo {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #38bdf8;
+            font-size: 32px;
         }
 
-        .cadastro-link a{
-            color:#38bdf8;
-            text-decoration:none;
-            font-weight:600;
+        /* CARDS */
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 24px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: .3s;
         }
 
-        @media(max-width:900px){
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,.3);
+        }
 
-            .container{
-                flex-direction:column;
+        .avatar-outro {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 4px solid #38bdf8;
+        }
+
+        .card h2 {
+            color: #38bdf8;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #d1d5db;
+            margin-bottom: 8px;
+        }
+
+        /* AÇÕES DOS CARDS */
+        .acoes {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .acoes .btn {
+            flex: 1;
+        }
+
+        /* NOTIFICAÇÃO CHAT */
+        .wrapper-chat {
+            position: relative;
+            flex: 1;
+            display: flex;
+        }
+
+        .wrapper-chat .btn {
+            width: 100%;
+        }
+
+        .badge-notificacao {
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            position: absolute;
+            top: -8px;
+            right: -5px;
+            min-width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2px solid #1e293b;
+        }
+
+        /* RESPONSIVO */
+        @media(max-width: 768px) {
+            body {
+                overflow: auto; /* Em telas pequenas, rola tudo normalmente */
+                height: auto;
             }
 
-            .left{
-                padding:40px;
+            .logo {
+                left: 20px;
+                top: auto;
+                bottom: 20px;
+                font-size: 24px;
             }
 
-            .left h1{
-                font-size:42px;
+            .area-perfil {
+                position: relative; /* Deixa de ser fixo em telas pequenas */
+                top: auto;
+                left: auto;
+                margin: 0 auto 20px;
+                width: 90%;
+                max-width: 280px;
             }
 
+            .container {
+                overflow: visible;
+            }
         }
 
+        @media(min-width: 768px) {
+            .container {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                gap: 20px;
+            }
+
+            .titulo {
+                grid-column: 1 / -1;
+            }
+
+            .card {
+                margin-bottom: 0;
+            }
+        }
     </style>
-
 </head>
 <body>
 
-    <div class="container">
-
-        <div class="left">
-
-            <h1>
-                Bem-vindo ao Despertar Do Amor 💙
-            </h1>
-
-            <p>
-                Entre na sua conta para encontrar novos matches,
-                conversar e descobrir pessoas incríveis.
-            </p>
-
-            <img
-                src="https://raw.githubusercontent.com/ODespertardoAmor/despertardoamor/refs/heads/main/static/imagens/capa.png"
-                alt="Imagem ilustrativa"
-                class="imagem-secao"
-            >
-
+    <div class="topo">
+        <div class="logo">
+            💙 D/Amor
         </div>
 
-
-        <div class="right">
-
-            <h2>Entrar</h2>
-
-            <form method="POST">
-
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Seu email"
-                    required
-                >
-
-                <input
-                    type="password"
-                    name="senha"
-                    placeholder="Sua senha"
-                    required
-                >
-
-                <button class="btn" type="submit">
-                    Entrar
-                </button>
-
-            </form>
-
-            <div class="cadastro-link">
-
-                Não possui conta?
-
-                <a href="/cadastro">
-                    Criar conta
-                </a>
-
+        <!-- ÁREA DO PERFIL FIXA NO CANTO ESQUERDO -->
+        <div class="area-perfil">
+            <div class="perfil-info">
+                <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-user">
+                <div class="nome-user">
+                    {{usuario_logado.nome}}
+                </div>
             </div>
 
-        </div>
+            <form action="/upload_foto" method="POST" enctype="multipart/form-data" class="avatar-form">
+                <input type="file" name="foto" required>
+                <button type="submit" class="btn">Alterar Foto</button>
+            </form>
 
+            <!-- BOTÕES ABAIXO -->
+            <div class="menu-superior">
+                <a href="/" class="btn">Home</a>
+                <a href="/matches" class="btn">Pessoas</a>
+                <a href="/logout" class="btn">Sair</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTEÚDO QUE ROLA -->
+    <div class="container">
+        <h1 class="titulo">
+            Pessoas disponíveis
+        </h1>
+
+        {% for u in usuarios %}
+        <div class="card">
+            <img src="{{ url_for('static', filename='uploads/' + u.foto) }}" class="avatar-outro">
+
+            <h2>{{u.nome}}, {{u.idade}}</h2>
+            <p>📍 {{u.cidade}}</p>
+            <p>{{u.bio}}</p>
+
+            <div class="acoes">
+                <a href="/curtir/{{u.id}}" class="btn">Curtir</a>
+                
+                <div class="wrapper-chat">
+                    <a href="/chat/{{u.id}}" class="btn">Chat</a>
+                    
+                    {% if notificacoes and notificacoes[u.id] > 0 %}
+                        <span class="badge-notificacao">{{ notificacoes[u.id] }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 
 </body>
