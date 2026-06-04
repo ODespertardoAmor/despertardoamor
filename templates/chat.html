@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat - D/Amor</title>
-    <!-- REMOVI a linha que atualizava sozinha de tempos em tempos -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -154,7 +153,7 @@
     </div>
 
     <script>
-        // Rola para o final ao carregar
+        // Mantém a rolagem sempre no final ao carregar a página
         const chatBox = document.getElementById("chatBox");
         chatBox.scrollTop = chatBox.scrollHeight;
 
@@ -163,7 +162,6 @@
         const viewOnceBtn = document.getElementById("viewOnceBtn");
         const audioInput = document.getElementById("audioInput");
         const hiddenOnceInput = document.getElementById("hiddenOnceInput");
-        const chatForm = document.getElementById("chatForm");
         const msgInput = document.getElementById("msgInput");
 
         let mediaRecorder;
@@ -171,6 +169,7 @@
         let isRecording = false;
         let isViewOnce = false;
 
+        // Alterna o modo de visualização única
         viewOnceBtn.addEventListener("click", () => {
             isViewOnce = !isViewOnce;
             if (isViewOnce) {
@@ -182,23 +181,25 @@
             }
         });
 
+        // Controle de gravação de áudio
         audioBtn.addEventListener("click", async () => {
             if (!isRecording) {
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    alert("Seu navegador não suporta gravação.");
+                    alert("Seu navegador não suporta gravação de áudio.");
                     return;
                 }
-
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                     mediaRecorder = new MediaRecorder(stream);
                     audioChunks = [];
 
-                    mediaRecorder.ondataavailable = (event) => { audioChunks.push(event.data); };
+                    mediaRecorder.ondataavailable = (event) => {
+                        audioChunks.push(event.data);
+                    };
 
                     mediaRecorder.onstop = () => {
                         const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
-                        const file = new File([audioBlob], "audio_message.mp3", { type: "audio/mp3" });
+                        const file = new File([audioBlob], "audio_mensagem.mp3", { type: "audio/mp3" });
                         
                         const dataTransfer = new DataTransfer();
                         dataTransfer.items.add(file);
@@ -215,7 +216,7 @@
                     msgInput.placeholder = "Gravando...";
 
                 } catch (err) {
-                    alert("Permissão de microfone negada.");
+                    alert("Permissão para acessar o microfone foi negada.");
                 }
             } else {
                 mediaRecorder.stop();
@@ -226,6 +227,7 @@
             }
         });
 
+        // Função para autodestruir áudio de visualização única
         function destruirAudio(msgId) {
             const elementoMsg = document.getElementById(`msg-container-${msgId}`);
             if (elementoMsg) {
@@ -233,18 +235,8 @@
                 elementoMsg.style.opacity = "0";
                 setTimeout(() => elementoMsg.remove(), 500);
             }
-
-            fetch(`/apagar_mensagem/${msgId}`)
-                .then(response => console.log("Áudio autodestruído."))
-                .catch(err => console.error("Erro:", err));
+            fetch(`/apagar_mensagem/${msgId}`);
         }
-
-        // ✅ SÓ RECARREGA DEPOIS DO ENVIO
-        chatForm.addEventListener("submit", () => {
-            setTimeout(() => {
-                window.location.reload();
-            }, 400); // Espera só um pouco para salvar antes de recarregar
-        });
     </script>
 </body>
 </html>
