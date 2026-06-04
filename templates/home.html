@@ -16,9 +16,14 @@
             background: #0f172a;
             color: white;
             font-family: Arial, sans-serif;
+            /* Configuração geral para rolagem separada */
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* TOPO COM CAPA */
+        /* TOPO COM CAPA - SEMPRE FIXO */
         .topo {
             position: relative;
             min-height: 320px;
@@ -28,6 +33,8 @@
             background-size: cover;
             background-position: center;
             padding: 20px;
+            flex-shrink: 0; /* Não deixa encolher */
+            z-index: 100;
         }
 
         /* LOGO */
@@ -41,7 +48,7 @@
             text-shadow: 0 0 10px rgba(0,0,0,.4);
         }
 
-        /* PERFIL - COMPORTAMENTO PARA COMPUTADOR */
+        /* PERFIL - SEMPRE FIXO NO CANTO ESQUERDO */
         .area-perfil {
             position: absolute;
             top: 20px;
@@ -129,57 +136,13 @@
             margin-top: 5px;
         }
 
-        /* CONTEÚDO PRINCIPAL - SÓ ROLA NO COMPUTADOR */
-        @media(min-width: 768px) {
-            body {
-                overflow: hidden;
-                height: 100vh;
-                display: flex;
-                flex-direction: column;
-            }
-
-            .topo {
-                flex-shrink: 0;
-            }
-
-            .container {
-                overflow-y: auto;
-                flex: 1;
-                max-width: 900px;
-                margin: 0 auto;
-                padding: 20px;
-            }
-        }
-
-        /* COMPORTAMENTO PARA CELULAR */
-        @media(max-width: 767px) {
-            body {
-                overflow: auto;
-                height: auto;
-            }
-
-            .topo {
-                min-height: auto;
-                padding-bottom: 30px;
-            }
-
-            .logo {
-                position: static;
-                text-align: center;
-                margin: 20px 0;
-                font-size: 28px;
-            }
-
-            .area-perfil {
-                position: static;
-                margin: 0 auto;
-                width: 90%;
-                max-width: 280px;
-            }
-
-            .container {
-                padding: 20px;
-            }
+        /* CONTEÚDO PRINCIPAL - SÓ ESTE ROLA EM QUALQUER TELA */
+        .container {
+            overflow-y: auto;
+            flex: 1; /* Ocupa todo o espaço restante */
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
         .titulo {
@@ -189,7 +152,7 @@
             font-size: 32px;
         }
 
-        /* NOVO ESTILO DOS CARDS - UM EMBAIXO DO OUTRO */
+        /* ESTILO DOS CARDS */
         .card {
             background: #1e293b;
             border: 1px solid #334155;
@@ -274,12 +237,47 @@
             border: 2px solid #1e293b;
         }
 
-        /* ADAPTAÇÃO DO CARD NO CELULAR */
-        @media(max-width: 600px) {
+        /* ADAPTAÇÃO PARA CELULAR - PERFIL CONTINUA FIXO */
+        @media(max-width: 767px) {
+            .topo {
+                min-height: 280px;
+                padding: 15px;
+            }
+
+            .logo {
+                left: auto;
+                right: 15px;
+                top: 15px;
+                font-size: 24px;
+            }
+
+            .area-perfil {
+                width: 150px;
+                top: 15px;
+                left: 15px;
+                gap: 8px;
+            }
+
+            .avatar-user {
+                width: 60px;
+                height: 60px;
+            }
+
+            .nome-user {
+                font-size: 13px;
+            }
+
+            .btn {
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+
+            /* Cards ficam em coluna no celular */
             .card {
                 flex-direction: column;
                 text-align: center;
                 gap: 15px;
+                padding: 20px;
             }
 
             .info-perfil {
@@ -288,6 +286,12 @@
 
             .acoes {
                 width: 100%;
+                min-width: auto;
+            }
+
+            .titulo {
+                font-size: 24px;
+                margin-bottom: 20px;
             }
         }
     </style>
@@ -299,7 +303,7 @@
             💙 D/Amor
         </div>
 
-        <!-- ÁREA DO PERFIL -->
+        <!-- ÁREA DO PERFIL FIXA -->
         <div class="area-perfil">
             <div class="perfil-info">
                 <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-user">
@@ -321,7 +325,7 @@
         </div>
     </div>
 
-    <!-- CONTEÚDO -->
+    <!-- CONTEÚDO QUE ROLA -->
     <div class="container">
         <h1 class="titulo">
             Pessoas disponíveis
