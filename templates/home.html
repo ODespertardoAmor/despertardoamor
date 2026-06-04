@@ -145,19 +145,9 @@
             .container {
                 overflow-y: auto;
                 flex: 1;
-                max-width: 1200px;
+                max-width: 900px;
                 margin: 0 auto;
                 padding: 20px;
-            }
-
-            .container {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-                gap: 20px;
-            }
-
-            .titulo {
-                grid-column: 1 / -1;
             }
         }
 
@@ -199,54 +189,61 @@
             font-size: 32px;
         }
 
-        /* CARDS */
+        /* NOVO ESTILO DOS CARDS - UM EMBAIXO DO OUTRO */
         .card {
             background: #1e293b;
             border: 1px solid #334155;
-            border-radius: 24px;
-            padding: 20px;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            text-align: center;
-            margin-bottom: 20px;
+            gap: 20px;
             transition: .3s;
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,.3);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,.3);
+            border-color: #38bdf8;
         }
 
         .avatar-outro {
-            width: 130px;
-            height: 130px;
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 15px;
-            border: 4px solid #38bdf8;
+            border: 3px solid #38bdf8;
+            flex-shrink: 0;
         }
 
-        .card h2 {
+        .info-perfil {
+            flex: 1;
+            text-align: left;
+        }
+
+        .info-perfil h2 {
             color: #38bdf8;
-            margin-bottom: 10px;
-        }
-
-        .card p {
-            color: #d1d5db;
             margin-bottom: 8px;
+            font-size: 22px;
         }
 
-        /* AÇÕES DOS CARDS */
+        .info-perfil p {
+            color: #d1d5db;
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+
         .acoes {
-            margin-top: 20px;
             display: flex;
-            gap: 10px;
-            width: 100%;
+            gap: 12px;
+            min-width: 180px;
         }
 
         .acoes .btn {
             flex: 1;
+            text-align: center;
+            padding: 12px;
         }
 
         /* NOTIFICAÇÃO CHAT */
@@ -275,6 +272,23 @@
             justify-content: center;
             border-radius: 50%;
             border: 2px solid #1e293b;
+        }
+
+        /* ADAPTAÇÃO DO CARD NO CELULAR */
+        @media(max-width: 600px) {
+            .card {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .info-perfil {
+                text-align: center;
+            }
+
+            .acoes {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -318,9 +332,11 @@
         <div class="card">
             <img src="{{ url_for('static', filename='uploads/' + u.foto) }}" class="avatar-outro">
 
-            <h2>{{u.nome}}, {{u.idade}}</h2>
-            <p>📍 {{u.cidade}}</p>
-            <p>{{u.bio}}</p>
+            <div class="info-perfil">
+                <h2>{{u.nome}}, {{u.idade}}</h2>
+                <p>📍 {{u.cidade}}</p>
+                <p>{{u.bio}}</p>
+            </div>
 
             <div class="acoes">
                 <a href="/curtir/{{u.id}}" class="btn">Curtir</a>
