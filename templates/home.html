@@ -35,51 +35,24 @@
         .logo {
             position: absolute;
             top: 20px;
-            left: 20px;
+            left: 220px; /* Espaço para não sobrepor o perfil */
             font-size: 34px;
             font-weight: bold;
             color: white;
             text-shadow: 0 0 10px rgba(0,0,0,.4);
         }
 
-        /* MENU SUPERIOR */
-        .menu-superior {
-            position: absolute;
-            top: 20px;
-            right: 220px; /* Deixa espaço para o perfil */
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        /* BOTÕES */
-        .btn {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-            padding: 12px 18px;
-            text-decoration: none;
-            border: none;
-            border-radius: 14px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: .3s;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59,130,246,.4);
-        }
-
-        /* PERFIL NO CANTO DIREITO */
+        /* PERFIL NO CANTO ESQUERDO */
         .area-perfil {
             position: absolute;
             top: 20px;
-            right: 20px;
+            left: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             max-width: 180px;
+            z-index: 10;
         }
 
         .perfil-info {
@@ -111,7 +84,7 @@
             text-align: center;
         }
 
-        /* FORM FOTO */
+        /* FORMULÁRIO DE FOTO */
         .avatar-form {
             width: 100%;
             display: flex;
@@ -129,13 +102,35 @@
             font-size: 12px;
         }
 
-        .avatar-form .btn {
-            width: 100%;
-            padding: 8px;
-            font-size: 12px;
+        /* BOTÕES */
+        .btn {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            padding: 10px 14px;
+            text-decoration: none;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: .3s;
+            text-align: center;
         }
 
-        /* CONTEÚDO */
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59,130,246,.4);
+        }
+
+        /* MENU AGORA ABAIXO DO ALTERAR FOTO */
+        .menu-superior {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        /* CONTEÚDO PRINCIPAL */
         .container {
             max-width: 1200px;
             margin: auto;
@@ -187,7 +182,7 @@
             margin-bottom: 8px;
         }
 
-        /* AÇÕES */
+        /* AÇÕES DOS CARDS */
         .acoes {
             margin-top: 20px;
             display: flex;
@@ -197,10 +192,9 @@
 
         .acoes .btn {
             flex: 1;
-            text-align: center;
         }
 
-        /* CHAT */
+        /* NOTIFICAÇÃO CHAT */
         .wrapper-chat {
             position: relative;
             flex: 1;
@@ -230,14 +224,14 @@
 
         /* RESPONSIVO */
         @media(max-width: 768px) {
-            .menu-superior {
-                right: 20px;
-                top: 100px;
+            .logo {
+                left: 20px;
+                top: auto;
+                bottom: 20px;
+                font-size: 24px;
             }
 
             .area-perfil {
-                top: 20px;
-                right: 20px;
                 max-width: 140px;
             }
 
@@ -275,12 +269,7 @@
             💙 D/Amor
         </div>
 
-        <div class="menu-superior">
-            <a href="/" class="btn">Home</a>
-            <a href="/matches" class="btn">Pessoas</a>
-            <a href="/logout" class="btn">Sair</a>
-        </div>
-
+        <!-- ÁREA DO PERFIL NO CANTO ESQUERDO -->
         <div class="area-perfil">
             <div class="perfil-info">
                 <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-user">
@@ -293,6 +282,13 @@
                 <input type="file" name="foto" required>
                 <button type="submit" class="btn">Alterar Foto</button>
             </form>
+
+            <!-- BOTÕES AGORA AQUI, ABAIXO DO ALTERAR FOTO -->
+            <div class="menu-superior">
+                <a href="/" class="btn">Home</a>
+                <a href="/matches" class="btn">Pessoas</a>
+                <a href="/logout" class="btn">Sair</a>
+            </div>
         </div>
     </div>
 
