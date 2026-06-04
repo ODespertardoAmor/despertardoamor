@@ -307,16 +307,19 @@ def chat(id):
         nome_foto = None
         nome_audio = None
 
+        # Salva Foto se houver
         if foto and foto.filename != "":
             filename_foto = secure_filename(f"{uuid.uuid4()}_{foto.filename}")
             foto.save(os.path.join(app.config["UPLOAD_FOLDER"], filename_foto))
             nome_foto = filename_foto
 
+        # Salva Áudio se houver
         if audio and audio.filename != "":
             filename_audio = secure_filename(f"{uuid.uuid4()}_audio.mp3")
             audio.save(os.path.join(app.config["UPLOAD_FOLDER"], filename_audio))
             nome_audio = filename_audio
 
+        # Só cria a mensagem se tiver conteúdo
         if texto or nome_foto or nome_audio:
             try:
                 nova = Mensagem(
@@ -326,32 +329,18 @@ def chat(id):
                     foto=nome_foto,
                     audio=nome_audio,
                     visualizacao_unica=modo_once,
-                    lida=False
+                    lida=False  # Fica como não lida para o outro usuário ver
                 )
                 db.session.add(nova)
-                db.session.commit()
+                db.session.commit()  # Salva DEFINITIVAMENTE no banco
 
-                # ✅ Agora montamos a URL manualmente para evitar erro
-                caminho_base = "/static/uploads/"
-                usuario_logado = Usuario.query.get(meu_id)
-
-                return jsonify({
-                    "sucesso": True,
-                    "id": nova.id,
-                    "mensagem": nova.mensagem,
-                    "foto": bool(nova.foto),
-                    "foto_url": caminho_base + nova.foto if nova.foto else "",
-                    "audio": bool(nova.audio),
-                    "audio_url": caminho_base + nova.audio if nova.audio else "",
-                    "visualizacao_unica": nova.visualizacao_unica,
-                    "avatar_url": caminho_base + usuario_logado.foto
-                })
+                # Após salvar, redireciona para a mesma página (força carregar as mensagens atualizadas)
+                return redirect(f"/chat/{id}")
 
             except Exception as e:
                 db.session.rollback()
-                return jsonify({"sucesso": False, "erro": str(e)})
-
-        return jsonify({"sucesso": False, "erro": "Digite uma mensagem ou envie um arquivo"})
+                print("Erro ao salvar mensagem:", str(e))
+                return redirect(f"/chat/{id}")
 
     # 3. BUSCA HISTÓRICO DE MENSAGENS
     mensagens = Mensagem.query.filter(
@@ -369,7 +358,6 @@ def chat(id):
         usuario_logado=usuario_logado,
         usuario_chat=usuario_chat
     )
-
 
 
 
