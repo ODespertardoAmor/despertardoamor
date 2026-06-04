@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect,session,jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -278,6 +278,8 @@ def matches():
     return render_template("matches.html", matches=lista_matches, notificacoes=notificacoes)
 
 # Rota do Chat Consolidada (Garante marcação de lidas e aceita áudio e visualização única)
+
+
 @app.route("/chat/<int:id>", methods=["GET", "POST"])
 def chat(id):
     if "user_id" not in session:
@@ -321,17 +323,38 @@ def chat(id):
             nome_audio = filename_audio
 
         if texto or nome_foto or nome_audio:
-            nova = Mensagem(
-                de_usuario=meu_id,
-                para_usuario=id,
-                mensagem=texto,
-                foto=nome_foto,
-                audio=nome_audio,
-                visualizacao_unica=modo_once,
-                lida=False
-            )
-            db.session.add(nova)
-            db.session.commit()
+            try:
+                nova = Mensagem(
+                    de_usuario=meu_id,
+                    para_usuario=id,
+                    mensagem=texto,
+                    foto=nome_foto,
+                    audio=nome_audio,
+                    visualizacao_unica=modo_once,
+                    lida=False
+                )
+                db.session.add(nova)
+                db.session.commit()
+
+                # ✅ AGORA RETORNA OS DADOS EM JSON PARA O JAVASCRIPT
+                return jsonify({
+                    "sucesso": True,
+                    "id": nova.id,
+                    "mensagem": nova.mensagem,
+                    "foto": bool(nova.foto),
+                    "foto_url": url_for('static', filename=f'uploads/{nova.foto}') if nova.foto else "",
+                    "audio": bool(nova.audio),
+                    "audio_url": url_for('static', filename=f'uploads/{nova.audio}') if nova.audio else "",
+                    "visualizacao_unica": nova.visualizacao_unica,
+                    "avatar_url": url_for('static', filename=f'uploads/{Usuario.query.get(meu_id).foto}')
+                })
+
+            except Exception as e:
+                db.session.rollback()
+                return jsonify({"sucesso": False, "erro": str(e)})
+
+        # Se não tinha nada para enviar, retorna erro
+        return jsonify({"sucesso": False, "erro": "Digite uma mensagem ou envie um arquivo"})
 
     # 3. BUSCA HISTÓRICO DE MENSAGENS PARA EXIBIR
     mensagens = Mensagem.query.filter(
@@ -350,10 +373,43 @@ def chat(id):
         usuario_chat=usuario_chat
     )
 
+
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/login")
+ # procurar novas mensagens   
+@app.route('/novas_mensagens/<int:id_chat>')
+def novas_mensagens(id_chat):
+    if "user_id" not in session:
+        return jsonify({"novas": []})
+
+    meu_id = session["user_id"]
+    # Pega a última mensagem que já está na tela
+    ultima_id = request.args.get('ultima_id', 0, type=int)
+
+    # Busca apenas mensagens NOVAS que a outra pessoa enviou
+    mensagens_novas = Mensagem.query.filter(
+        Mensagem.de_usuario == id_chat,
+        Mensagem.para_usuario == meu_id,
+        Mensagem.id > ultima_id
+    ).order_by(Mensagem.data.asc()).all()
+
+    lista = []
+    for msg in mensagens_novas:
+        lista.append({
+            "id": msg.id,
+            "mensagem": msg.mensagem,
+            "foto": bool(msg.foto),
+            "foto_url": url_for('static', filename=f'uploads/{msg.foto}') if msg.foto else "",
+            "audio": bool(msg.audio),
+            "audio_url": url_for('static', filename=f'uploads/{msg.audio}') if msg.audio else "",
+            "visualizacao_unica": msg.visualizacao_unica,
+            "avatar_url": url_for('static', filename=f'uploads/{Usuario.query.get(msg.de_usuario).foto}')
+        })
+
+    return jsonify({"novas": lista})
+    
 # ====================================
 # CRIAR BANCO
 # ====================================
