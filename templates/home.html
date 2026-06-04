@@ -16,6 +16,11 @@
             background: #0f172a;
             color: white;
             font-family: Arial, sans-serif;
+            /* Remove rolagem geral da página */
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         /* TOPO COM CAPA */
@@ -28,21 +33,21 @@
             background-size: cover;
             background-position: center;
             padding: 20px;
-            margin-bottom: 30px;
+            flex-shrink: 0; /* Não deixa o topo encolher */
         }
 
         /* LOGO */
         .logo {
             position: absolute;
             top: 20px;
-            left: 220px; /* Espaço para não sobrepor o perfil */
+            left: 220px;
             font-size: 34px;
             font-weight: bold;
             color: white;
             text-shadow: 0 0 10px rgba(0,0,0,.4);
         }
 
-        /* PERFIL NO CANTO ESQUERDO */
+        /* PERFIL FIXO NO CANTO ESQUERDO */
         .area-perfil {
             position: absolute;
             top: 20px;
@@ -51,7 +56,7 @@
             flex-direction: column;
             align-items: center;
             gap: 12px;
-            max-width: 180px;
+            width: 180px;
             z-index: 10;
         }
 
@@ -121,7 +126,7 @@
             box-shadow: 0 5px 15px rgba(59,130,246,.4);
         }
 
-        /* MENU AGORA ABAIXO DO ALTERAR FOTO */
+        /* MENU ABAIXO DO ALTERAR FOTO */
         .menu-superior {
             display: flex;
             flex-direction: column;
@@ -130,11 +135,13 @@
             margin-top: 5px;
         }
 
-        /* CONTEÚDO PRINCIPAL */
+        /* CONTEÚDO PRINCIPAL - SÓ ESTE ROLA */
         .container {
             max-width: 1200px;
-            margin: auto;
+            margin: 0 auto;
             padding: 20px;
+            overflow-y: auto; /* Habilita rolagem apenas aqui */
+            flex: 1; /* Ocupa o espaço restante */
         }
 
         .titulo {
@@ -224,6 +231,11 @@
 
         /* RESPONSIVO */
         @media(max-width: 768px) {
+            body {
+                overflow: auto; /* Em telas pequenas, rola tudo normalmente */
+                height: auto;
+            }
+
             .logo {
                 left: 20px;
                 top: auto;
@@ -232,16 +244,16 @@
             }
 
             .area-perfil {
-                max-width: 140px;
+                position: relative; /* Deixa de ser fixo em telas pequenas */
+                top: auto;
+                left: auto;
+                margin: 0 auto 20px;
+                width: 90%;
+                max-width: 280px;
             }
 
-            .avatar-user {
-                width: 55px;
-                height: 55px;
-            }
-
-            .nome-user {
-                font-size: 12px;
+            .container {
+                overflow: visible;
             }
         }
 
@@ -269,7 +281,7 @@
             💙 D/Amor
         </div>
 
-        <!-- ÁREA DO PERFIL NO CANTO ESQUERDO -->
+        <!-- ÁREA DO PERFIL FIXA NO CANTO ESQUERDO -->
         <div class="area-perfil">
             <div class="perfil-info">
                 <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-user">
@@ -283,7 +295,7 @@
                 <button type="submit" class="btn">Alterar Foto</button>
             </form>
 
-            <!-- BOTÕES AGORA AQUI, ABAIXO DO ALTERAR FOTO -->
+            <!-- BOTÕES ABAIXO -->
             <div class="menu-superior">
                 <a href="/" class="btn">Home</a>
                 <a href="/matches" class="btn">Pessoas</a>
@@ -292,6 +304,7 @@
         </div>
     </div>
 
+    <!-- CONTEÚDO QUE ROLA -->
     <div class="container">
         <h1 class="titulo">
             Pessoas disponíveis
