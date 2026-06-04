@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat - D/Amor</title>
-    <!-- Atualiza a página automaticamente a cada 5 segundos para ver mensagens novas -->
-    <meta http-equiv="refresh" content="5">
+    <!-- REMOVI a linha que atualizava sozinha de tempos em tempos -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -28,7 +27,6 @@
         .delete-btn{ display:block; margin-top:10px; color:white; font-size:12px; text-decoration:none; opacity:0.8; }
         .delete-btn:hover{ opacity:1; }
 
-        /* Banner de aviso para áudio autodestrutivo */
         .once-badge {
             font-size: 11px;
             background: rgba(239, 68, 68, 0.2);
@@ -50,12 +48,10 @@
         .send-btn{ background:#2563eb; color:white; border:none; padding:18px 30px; border-radius:16px; cursor:pointer; font-size:16px; font-weight:600; transition:0.3s; }
         .send-btn:hover{ background:#1d4ed8; }
 
-        /* Botões de Controle */
         .audio-btn { background: #10b981; color: white; border: none; padding: 18px; border-radius: 16px; cursor: pointer; font-size: 18px; transition: 0.3s; display: flex; align-items: center; justify-content: center; width: 58px; height: 58px; }
         .audio-btn:hover { background: #059669; }
         .audio-btn.recording { background: #ef4444; animation: pulse 1.5s infinite; }
 
-        /* Botão Visualização Única */
         .view-once-btn {
             background: #334155;
             color: #94a3b8;
@@ -67,7 +63,7 @@
             transition: 0.3s;
             width: 58px;
             height: 58px;
-            display: none; /* Só aparece quando houver um áudio gravado */
+            display: none;
             align-items: center;
             justify-content: center;
         }
@@ -85,10 +81,10 @@
             .audio-btn, .view-once-btn { height: 54px; }
         }
         
-        .msg-row{ display:flex; align-items:flex-end; gap:10px; }
+        .msg-row{ display:flex; align-items:flex-end; gap:10px; margin: 8px 0; }
         .me-row{ justify-content:flex-end; }
         .other-row{ justify-content:flex-start; }
-        .avatar-chat{ width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #38bdf8; }
+        .avatar-chat{ width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #38bdf8; flex-shrink: 0; }
     </style>
 </head>
 <body>
@@ -158,7 +154,7 @@
     </div>
 
     <script>
-        // Mantém a rolagem sempre no final ao carregar
+        // Rola para o final ao carregar
         const chatBox = document.getElementById("chatBox");
         chatBox.scrollTop = chatBox.scrollHeight;
 
@@ -175,7 +171,6 @@
         let isRecording = false;
         let isViewOnce = false;
 
-        // Alternar o modo de Visualização Única
         viewOnceBtn.addEventListener("click", () => {
             isViewOnce = !isViewOnce;
             if (isViewOnce) {
@@ -210,7 +205,7 @@
                         audioInput.files = dataTransfer.files;
 
                         msgInput.placeholder = "🎙️ Áudio pronto para envio!";
-                        viewOnceBtn.style.display = "flex"; // Mostra o botão de visualização única
+                        viewOnceBtn.style.display = "flex";
                     };
 
                     mediaRecorder.start();
@@ -231,9 +226,7 @@
             }
         });
 
-        // Função executada quando o áudio termina de tocar
         function destruirAudio(msgId) {
-            // 1. Remove visualmente da tela imediatamente
             const elementoMsg = document.getElementById(`msg-container-${msgId}`);
             if (elementoMsg) {
                 elementoMsg.style.transition = "0.5s";
@@ -241,17 +234,16 @@
                 setTimeout(() => elementoMsg.remove(), 500);
             }
 
-            // 2. Avisa o seu servidor em segundo plano para apagar o arquivo definitivo
             fetch(`/apagar_mensagem/${msgId}`)
-                .then(response => console.log("Áudio autodestruído com sucesso no servidor."))
-                .catch(err => console.error("Erro ao deletar arquivo:", err));
+                .then(response => console.log("Áudio autodestruído."))
+                .catch(err => console.error("Erro:", err));
         }
 
-        // ✅ AQUI: Recarrega a página logo depois de enviar
+        // ✅ SÓ RECARREGA DEPOIS DO ENVIO
         chatForm.addEventListener("submit", () => {
             setTimeout(() => {
                 window.location.reload();
-            }, 400); // Espera um pouco para garantir que salvou antes de recarregar
+            }, 400); // Espera só um pouco para salvar antes de recarregar
         });
     </script>
 </body>
