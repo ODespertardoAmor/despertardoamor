@@ -16,11 +16,6 @@
             background: #0f172a;
             color: white;
             font-family: Arial, sans-serif;
-            /* Remove rolagem geral da página */
-            overflow: hidden;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
 
         /* TOPO COM CAPA */
@@ -33,7 +28,6 @@
             background-size: cover;
             background-position: center;
             padding: 20px;
-            flex-shrink: 0; /* Não deixa o topo encolher */
         }
 
         /* LOGO */
@@ -47,7 +41,7 @@
             text-shadow: 0 0 10px rgba(0,0,0,.4);
         }
 
-        /* PERFIL FIXO NO CANTO ESQUERDO */
+        /* PERFIL - COMPORTAMENTO PARA COMPUTADOR */
         .area-perfil {
             position: absolute;
             top: 20px;
@@ -135,13 +129,67 @@
             margin-top: 5px;
         }
 
-        /* CONTEÚDO PRINCIPAL - SÓ ESTE ROLA */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            overflow-y: auto; /* Habilita rolagem apenas aqui */
-            flex: 1; /* Ocupa o espaço restante */
+        /* CONTEÚDO PRINCIPAL - SÓ ROLA NO COMPUTADOR */
+        @media(min-width: 768px) {
+            body {
+                overflow: hidden;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .topo {
+                flex-shrink: 0;
+            }
+
+            .container {
+                overflow-y: auto;
+                flex: 1;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+
+            .container {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                gap: 20px;
+            }
+
+            .titulo {
+                grid-column: 1 / -1;
+            }
+        }
+
+        /* COMPORTAMENTO PARA CELULAR */
+        @media(max-width: 767px) {
+            body {
+                overflow: auto;
+                height: auto;
+            }
+
+            .topo {
+                min-height: auto;
+                padding-bottom: 30px;
+            }
+
+            .logo {
+                position: static;
+                text-align: center;
+                margin: 20px 0;
+                font-size: 28px;
+            }
+
+            .area-perfil {
+                position: static;
+                margin: 0 auto;
+                width: 90%;
+                max-width: 280px;
+            }
+
+            .container {
+                padding: 20px;
+            }
         }
 
         .titulo {
@@ -228,50 +276,6 @@
             border-radius: 50%;
             border: 2px solid #1e293b;
         }
-
-        /* RESPONSIVO */
-        @media(max-width: 768px) {
-            body {
-                overflow: auto; /* Em telas pequenas, rola tudo normalmente */
-                height: auto;
-            }
-
-            .logo {
-                left: 20px;
-                top: auto;
-                bottom: 20px;
-                font-size: 24px;
-            }
-
-            .area-perfil {
-                position: relative; /* Deixa de ser fixo em telas pequenas */
-                top: auto;
-                left: auto;
-                margin: 0 auto 20px;
-                width: 90%;
-                max-width: 280px;
-            }
-
-            .container {
-                overflow: visible;
-            }
-        }
-
-        @media(min-width: 768px) {
-            .container {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-                gap: 20px;
-            }
-
-            .titulo {
-                grid-column: 1 / -1;
-            }
-
-            .card {
-                margin-bottom: 0;
-            }
-        }
     </style>
 </head>
 <body>
@@ -281,7 +285,7 @@
             💙 D/Amor
         </div>
 
-        <!-- ÁREA DO PERFIL FIXA NO CANTO ESQUERDO -->
+        <!-- ÁREA DO PERFIL -->
         <div class="area-perfil">
             <div class="perfil-info">
                 <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-user">
@@ -304,7 +308,7 @@
         </div>
     </div>
 
-    <!-- CONTEÚDO QUE ROLA -->
+    <!-- CONTEÚDO -->
     <div class="container">
         <h1 class="titulo">
             Pessoas disponíveis
