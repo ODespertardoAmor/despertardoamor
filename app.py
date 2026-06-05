@@ -447,35 +447,51 @@ with app.app_context():
        # print("Campos adicionados com sucesso no Postgres do Render!")
     #except Exception as e:
         #print("Os campos provavelmente já existem ou ocorreu um erro:", e)
-# ====================================
-# INICIALIZAÇÃO
-# ====================================
-# ====================================
-# INICIALIZAÇÃO
-# ====================================
+
 # ====================================
 # INICIALIZAÇÃO
 # ====================================
 with app.app_context():
-    db.create_all()  # Cria o banco NOVO com todos os campos
+    db.create_all()  # Cria o banco com todos os campos
 
-    # Cria conta de admin automaticamente
     from werkzeug.security import generate_password_hash
-    email_admin = "admin@despertardoamor.com"
-    senha_admin = "Admin156478!"
 
-    if not Usuario.query.filter_by(email=email_admin).first():
-        admin = Usuario(
-            nome="Administrador",
-            email=email_admin,
-            senha=generate_password_hash(senha_admin),
+    # ====================================
+    # ADMINISTRADOR 1
+    # ====================================
+    email_admin1 = "admin@despertardoamor.com"
+    senha_admin1 = "Admin156478!"
+
+    if not Usuario.query.filter_by(email=email_admin1).first():
+        admin1 = Usuario(
+            nome="Administrador Principal",
+            email=email_admin1,
+            senha=generate_password_hash(senha_admin1),
             admin=True,
             verificado=True
         )
-        db.session.add(admin)
-        db.session.commit()
-        print("✅ Banco recriado e admin criado!")
+        db.session.add(admin1)
+        print("✅ Administrador 1 criado!")
 
+    # ====================================
+    # ADMINISTRADOR 2
+    # ====================================
+    email_admin2 = "admin2@despertardoamor.com"  # E-mail diferente
+    senha_admin2 = "AdminNelma2027!"  # Senha que você quiser
+
+    if not Usuario.query.filter_by(email=email_admin2).first():
+        admin2 = Usuario(
+            nome="Administrador Secundário",
+            email=email_admin2,
+            senha=generate_password_hash(senha_admin2),
+            admin=True,
+            verificado=True
+        )
+        db.session.add(admin2)
+        print("✅ Administrador 2 criado!")
+
+    # Salva tudo no banco
+    db.session.commit()
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
