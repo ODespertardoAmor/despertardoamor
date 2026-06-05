@@ -50,6 +50,7 @@ class Usuario(db.Model):
     foto = db.Column(db.String(300), default="default.png")
     criado_em = db.Column(db.DateTime, default=datetime.utcnow)
     verificado = db.Column(db.Boolean, default=False)  # começa como não verificado
+    admin = db.Column(db.Boolean, default=False)  # ✅ NOVO: define se é admin
 class Curtida(db.Model):
     __tablename__ = "curtidas"
     id = db.Column(db.Integer, primary_key=True)
@@ -438,7 +439,31 @@ with app.app_context():
 # INICIALIZAÇÃO
 # ====================================
 with app.app_context():
+    
     db.create_all()
+    
+# Criação da conta de Administrador
+with app.app_context():
+    db.create_all()  # Garante que as tabelas existam
+    
+    # Dados da conta admin (você pode alterar o e-mail e senha se quiser)
+    email_admin = "admin@despertardoamor.com"
+    senha_admin = "Admin156478!"  # Você pode mudar essa senha depois
+
+    # Verifica se já existe um admin para não criar duplicado
+    if not Usuario.query.filter_by(email=email_admin).first():
+        admin = Usuario(
+            nome="Administrador",
+            email=email_admin,
+            senha=senha_admin,  # ⚠️ Se usar criptografia, coloque aqui a senha já criptografada
+            admin=True,
+            verificado=True
+        )
+        db.session.add(admin)
+        db.session.commit()
+        print("✅ Conta de Administrador criada com sucesso!")
+    else:
+        print("ℹ️ Conta de Administrador já existe.")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
