@@ -165,6 +165,7 @@ def avatar(id):
     db.session.commit()
     return redirect("/")
 
+
 @app.route("/")
 def home():
     if "user_id" not in session:
@@ -184,13 +185,20 @@ def home():
         ).count()
         notificacoes[u.id] = total_nao_lidas
 
+    # ✅ ADICIONE AQUI: Contagem TOTAL de todas as mensagens não lidas
+    total_notificacoes = Mensagem.query.filter_by(
+        para_usuario=meu_id,
+        lida=False
+    ).count()
+
     return render_template(
         "home.html",
         usuarios=usuarios,
         usuario_logado=usuario_logado,
-        notificacoes=notificacoes # Enviando as contagens para o HTML
-        
+        notificacoes=notificacoes,
+        total_notificacoes=total_notificacoes  # ✅ ADICIONE AQUI TAMBÉM
     )
+
 
 @app.route("/cadastro", methods=["GET", "POST"])
 def cadastro():
