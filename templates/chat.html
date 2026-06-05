@@ -121,7 +121,7 @@
                                     src="{{ url_for('static', filename='uploads/' + msg.audio) }}" 
                                     controls 
                                     {% if msg.visualizacao_unica %} onended="destruirAudio('{{ msg.id }}')" {% endif %}>
-                                
+                                </audio>
                             {% endif %}
 
                             {% if msg.de_usuario == session["user_id"] %}
