@@ -23,8 +23,24 @@
 
         .me{ align-self:flex-end; background:#2563eb; color:white; border-bottom-right-radius:5px; }
         .other{ align-self:flex-start; background:#1e293b; color:white; border-bottom-left-radius:5px; border:1px solid #334155; }
-        .delete-btn{ display:block; margin-top:10px; color:#ffcccc; font-size:12px; text-decoration:none; opacity:0.9; background:none; border:none; padding:0; cursor:pointer; text-align:right; width:100%; }
-        .delete-btn:hover{ opacity:1; text-decoration:underline; }
+        
+        /* Estilo do botão Apagar */
+        .delete-btn{ 
+            display: block; 
+            margin-top: 10px; 
+            color: #ffd6d6; 
+            font-size: 12px; 
+            text-decoration: none; 
+            opacity: 0.9; 
+            text-align: right; 
+            width: 100%;
+            transition: 0.2s;
+        }
+        .delete-btn:hover{ 
+            opacity: 1; 
+            text-decoration: underline; 
+            color: #ff9999;
+        }
 
         .once-badge {
             font-size: 11px;
@@ -113,7 +129,7 @@
 
                             <!-- ✅ BOTÃO APARECE SEMPRE PARA SUAS MENSAGENS -->
                             {% if msg.de_usuario == session["user_id"] %}
-                                <a href="/apagar_mensagem/{{msg.id}}" class="delete-btn">Apagar mensagem</a>
+                                <a href="/apagar_mensagem/{{msg.id}}" class="delete-btn">🗑️ Apagar mensagem</a>
                             {% endif %}
                         </div>
                     </div>
@@ -214,7 +230,6 @@
             }
         });
 
-        // Função de autodestruição para áudio de visualização única
         function destruirAudio(msgId) {
             const elementoMsg = document.getElementById(`msg-container-${msgId}`);
             if (elementoMsg) {
@@ -222,7 +237,6 @@
                 elementoMsg.style.opacity = "0";
                 setTimeout(() => elementoMsg.remove(), 500);
             }
-            // Chama a rota para apagar do servidor também
             fetch(`/apagar_mensagem/${msgId}`);
         }
     </script>
