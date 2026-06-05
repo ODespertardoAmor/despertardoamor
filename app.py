@@ -479,8 +479,8 @@ def excluir_usuario(usuario_id):
     db.session.commit()
 
     return redirect(request.referrer or "/")
-  #==========Temporary ======== 
- with app.app_context():
+#==========Temporary ======== 
+with app.app_context():
     db.drop_all()      # APAGA TUDO
     db.create_all()    # CRIA NOVO COM TODOS OS CAMPOS
     
