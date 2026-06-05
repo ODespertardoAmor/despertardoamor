@@ -51,6 +51,9 @@ class Usuario(db.Model):
     criado_em = db.Column(db.DateTime, default=datetime.utcnow)
     verificado = db.Column(db.Boolean, default=False)  # começa como não verificado
     admin = db.Column(db.Boolean, default=False)  # ✅ NOVO: define se é admin
+    assinante = db.Column(db.Boolean, default=False)
+    data_assinatura = db.Column(db.DateTime)
+
 class Curtida(db.Model):
     __tablename__ = "curtidas"
     id = db.Column(db.Integer, primary_key=True)
@@ -486,6 +489,14 @@ with app.app_context():
 
     # Salva tudo no banco
     db.session.commit()
+#========Assinatutas =========    
+@app.route("/assinatura")
+def assinatura():
+    if "user_id" not in session:
+        return redirect("/login")
+    
+    # Você pode passar o valor do plano dinamicamente se quiser
+    return render_template("pagamento.html")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
