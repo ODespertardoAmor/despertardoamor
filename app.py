@@ -545,6 +545,11 @@ def tornar_assinante(usuario_id):
 
     return f"✅ Usuário {usuario.nome} agora é assinante! <br><br> <a href='/'>Voltar</a>"
 
+#====codigo para usar com pagamento real
+#usuario.assinante = True
+#usuario.data_assinatura = datetime.utcnow()
+#db.session.commit()
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
