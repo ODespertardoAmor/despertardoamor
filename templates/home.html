@@ -16,7 +16,6 @@
             background: #0f172a;
             color: white;
             font-family: Arial, sans-serif;
-            /* Configuração geral para rolagem separada */
             height: 100vh;
             overflow: hidden;
             display: flex;
@@ -33,7 +32,7 @@
             background-size: cover;
             background-position: center;
             padding: 20px;
-            flex-shrink: 0; /* Não deixa encolher */
+            flex-shrink: 0;
             z-index: 100;
         }
 
@@ -120,6 +119,7 @@
             font-size: 13px;
             transition: .3s;
             text-align: center;
+            position: relative; /* Para posicionar a notificação dentro */
         }
 
         .btn:hover {
@@ -139,7 +139,7 @@
         /* CONTEÚDO PRINCIPAL - SÓ ESTE ROLA EM QUALQUER TELA */
         .container {
             overflow-y: auto;
-            flex: 1; /* Ocupa todo o espaço restante */
+            flex: 1;
             max-width: 900px;
             margin: 0 auto;
             padding: 20px;
@@ -209,7 +209,7 @@
             padding: 12px;
         }
 
-        /* NOTIFICAÇÃO CHAT */
+        /* NOTIFICAÇÃO CHAT E LOVES */
         .wrapper-chat {
             position: relative;
             flex: 1;
@@ -227,7 +227,7 @@
             font-weight: bold;
             position: absolute;
             top: -8px;
-            right: -5px;
+            right: -8px;
             min-width: 20px;
             height: 20px;
             display: flex;
@@ -235,6 +235,7 @@
             justify-content: center;
             border-radius: 50%;
             border: 2px solid #1e293b;
+            z-index: 10;
         }
 
         /* ADAPTAÇÃO PARA CELULAR - PERFIL CONTINUA FIXO */
@@ -319,7 +320,14 @@
 
             <!-- BOTÕES ABAIXO -->
             <div class="menu-superior">
-                <a href="/matches" class="btn">loves🌹</a>
+                <!-- Botão Loves com notificação -->
+                <div style="position: relative;">
+                    <a href="/matches" class="btn">loves🌹</a>
+                    {% if total_notificacoes and total_notificacoes > 0 %}
+                        <span class="badge-notificacao">{{ total_notificacoes }}</span>
+                    {% endif %}
+                </div>
+                
                 <a href="/logout" class="btn">Sair🏃</a>
             </div>
         </div>
