@@ -238,6 +238,34 @@
     </script>
 
 
+<script>
+// Função para recarregar apenas a área do chat
+function atualizarAposEnvio() {
+    const chatBox = document.getElementById("chatBox");
+    if (!chatBox) return;
+
+    fetch(window.location.href)
+        .then(resp => resp.text())
+        .then(html => {
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            chatBox.innerHTML = temp.querySelector('#chatBox').innerHTML;
+            
+            // Mantém a rolagem no final
+            chatBox.scrollTop = chatBox.scrollHeight;
+        })
+        .catch(erro => console.log("Erro ao atualizar:", erro));
+}
+
+// Conecta a função ao botão de enviar
+const formulario = document.querySelector('form'); // seu formulário de mensagem
+if (formulario) {
+    formulario.addEventListener('submit', function() {
+        // Espera um pouquinho para o servidor salvar a mensagem, depois atualiza
+        setTimeout(atualizarAposEnvio, 500);
+    });
+}
+</script>
 
 
 </body>
