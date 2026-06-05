@@ -49,6 +49,10 @@ class Usuario(db.Model):
     bio = db.Column(db.Text)
     foto = db.Column(db.String(300), default="default.png")
     criado_em = db.Column(db.DateTime, default=datetime.utcnow)
+    verificado = db.Column(db.Boolean, default=False)  # começa como não verificado
+    admin = db.Column(db.Boolean, default=False)  # ✅ NOVO: define se é admin
+    assinante = db.Column(db.Boolean, default=False)
+    data_assinatura = db.Column(db.DateTime)
 
 class Curtida(db.Model):
     __tablename__ = "curtidas"
@@ -94,25 +98,42 @@ def apagar_mensagem(id):
         return redirect("/login")
 
     msg = Mensagem.query.get(id)
-    if msg:
-        # Só quem enviou pode apagar, ou o sistema deleta se for visualização única concluída
-        if msg.de_usuario == session["user_id"] or msg.visualizacao_unica:
-            # Apaga o arquivo físico de foto se existir
-            if msg.foto:
-                caminho_foto = os.path.join(app.config["UPLOAD_FOLDER"], msg.foto)
-                if os.path.exists(caminho_foto):
-                    os.remove(caminho_foto)
-            
-            # Apaga o arquivo físico de áudio se existir
-            if msg.audio:
-                caminho_audio = os.path.join(app.config["UPLOAD_FOLDER"], msg.audio)
-                if os.path.exists(caminho_audio):
-                    os.remove(caminho_audio)
+    if not msg:
+        return redirect(request.referrer or "/")
 
-            db.session.delete(msg)
-            db.session.commit()
+    # Permite apagar se for o dono OU se for visualização única
+    if msg.de_usuario == session["user_id"] or msg.visualizacao_unica:
+        
+        # Caminho completo da pasta de uploads
+        pasta_upload = app.config.get("UPLOAD_FOLDER", "")
+
+        # Apaga foto
+        if msg.foto:
+            caminho_foto = os.path.join(pasta_upload, msg.foto)
+            print(f"Tentando apagar foto: {caminho_foto}")  # Para ver no terminal
+            if os.path.exists(caminho_foto):
+                os.remove(caminho_foto)
+                print("Foto apagada com sucesso")
+            else:
+                print("Foto NÃO encontrada no caminho")
+
+        # Apaga ÁUDIO - AQUI ESTAVA O POSSÍVEL PROBLEMA
+        if msg.audio:
+            caminho_audio = os.path.join(pasta_upload, msg.audio)
+            print(f"Tentando apagar áudio: {caminho_audio}")  # Para ver no terminal
+            if os.path.exists(caminho_audio):
+                os.remove(caminho_audio)
+                print("Áudio apagado com sucesso")
+            else:
+                print("Áudio NÃO encontrado no caminho")
+
+        # Apaga do banco
+        db.session.delete(msg)
+        db.session.commit()
+        print("Mensagem apagada do banco")
 
     return redirect(request.referrer or "/")
+
 
 @app.route("/upload_foto", methods=["POST"])
 def upload_foto():
@@ -148,6 +169,7 @@ def avatar(id):
     db.session.commit()
     return redirect("/")
 
+
 @app.route("/")
 def home():
     if "user_id" not in session:
@@ -167,12 +189,38 @@ def home():
         ).count()
         notificacoes[u.id] = total_nao_lidas
 
+    # ✅ ADICIONE AQUI: Contagem TOTAL de todas as mensagens não lidas
+    total_notificacoes = Mensagem.query.filter_by(
+        para_usuario=meu_id,
+        lida=False
+    ).count()
+
     return render_template(
         "home.html",
         usuarios=usuarios,
         usuario_logado=usuario_logado,
-        notificacoes=notificacoes # Enviando as contagens para o HTML
+        notificacoes=notificacoes,
+        total_notificacoes=total_notificacoes  # ✅ ADICIONE AQUI TAMBÉM
     )
+
+@app.route("/verificar/<int:usuario_id>")
+def verificar_usuario(usuario_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    # Busca o usuário logado
+    usuario_logado = Usuario.query.get(session["user_id"])
+
+    # Agora verifica se ele é admin, não importa o ID
+    if not usuario_logado or not usuario_logado.admin:
+        return "❌ Acesso negado: apenas administradores"
+
+    usuario_alvo = Usuario.query.get_or_404(usuario_id)
+    usuario_alvo.verificado = not usuario_alvo.verificado
+    db.session.commit()
+
+    return redirect(request.referrer or "/")
+
 
 @app.route("/cadastro", methods=["GET", "POST"])
 def cadastro():
@@ -261,13 +309,19 @@ def matches():
     lista_matches = []
     notificacoes = {} # Dicionário contendo o total de não lidas {parceiro_id: total}
 
+    # ✅ Calcula o TOTAL geral de mensagens não lidas uma vez só, fora do laço
+    total_notificacoes = Mensagem.query.filter_by(
+        para_usuario=meu_id,
+        lida=False
+    ).count()
+
     for match in matches_db:
         outro_id = match.user2 if match.user1 == meu_id else match.user1
         usuario = Usuario.query.get(outro_id)
         if usuario:
             lista_matches.append(usuario)
             
-            # Conta mensagens não lidas vindo deste usuário para mim
+            # Conta mensagens não lidas vindo deste usuário específico
             total_nao_lidas = Mensagem.query.filter_by(
                 de_usuario=outro_id, 
                 para_usuario=meu_id, 
@@ -275,7 +329,13 @@ def matches():
             ).count()
             notificacoes[outro_id] = total_nao_lidas
 
-    return render_template("matches.html", matches=lista_matches, notificacoes=notificacoes)
+    # ✅ Retorna passando todas as variáveis corretamente
+    return render_template(
+        "matches.html",
+        matches=lista_matches,
+        notificacoes=notificacoes,
+        total_notificacoes=total_notificacoes
+    )
 
 # Rota do Chat Consolidada (Garante marcação de lidas e aceita áudio e visualização única)
 @app.route("/chat/<int:id>", methods=["GET", "POST"])
@@ -341,7 +401,7 @@ def chat(id):
 
     usuario_logado = Usuario.query.get(meu_id)
     usuario_chat = Usuario.query.get(id)
-
+    
     return render_template(
         "chat.html",
         mensagens=mensagens,
@@ -375,20 +435,151 @@ with app.app_context():
         print("Os campos provavelmente já existem ou ocorreu um erro:", e)
 
 # CÓDIGO TEMPORÁRIO - REMOVA DEPOIS DE SUBIR UMA VEZ
+#with app.app_context():
+    #try:
+       # db.session.execute(db.text("ALTER TABLE mensagens ADD COLUMN lida BOOLEAN DEFAULT FALSE;"))
+        #db.session.execute(db.text("ALTER TABLE mensagens ADD COLUMN visualizacao_unica BOOLEAN DEFAULT FALSE;"))
+        #db.session.execute(db.text("ALTER TABLE mensagens ADD COLUMN audio VARCHAR(300);"))
+        #db.session.commit()
+       # print("Campos adicionados com sucesso no Postgres do Render!")
+    #except Exception as e:
+        #print("Os campos provavelmente já existem ou ocorreu um erro:", e)
+
+
+#========Assinatutas =========    
+@app.route("/assinatura")
+def assinatura():
+    if "user_id" not in session:
+        return redirect("/login")
+    
+    usuario = Usuario.query.get(session["user_id"])
+    
+    # Se já for assinante, não precisa ver a página de pagamento
+    if usuario.assinante:
+        return "✅ Você já é assinante! <br><br> <a href='/'>Voltar ao início</a>"
+
+    return render_template("pagamento.html")
+
+# ========Excluir pessoas 
+@app.route("/excluir-usuario/<int:usuario_id>", methods=["POST"])
+def excluir_usuario(usuario_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    admin_logado = Usuario.query.get(session["user_id"])
+    if not admin_logado or not admin_logado.admin:
+        return "❌ Acesso negado"
+
+    if usuario_id == admin_logado.id:
+        return "❌ Não pode excluir a si mesmo"
+
+    usuario_alvo = Usuario.query.get_or_404(usuario_id)
+    if usuario_alvo.admin:
+        return "❌ Não pode excluir outro admin"
+
+    # Só mantenha essas linhas se as tabelas existirem no seu código:
+    # Match.query.filter(...).delete()
+    # Mensagem.query.filter(...).delete()
+
+    db.session.delete(usuario_alvo)
+    db.session.commit()
+
+    return redirect(request.referrer or "/")
+#==========Temporary ======== 
 with app.app_context():
-    try:
-        db.session.execute(db.text("ALTER TABLE mensagens ADD COLUMN lida BOOLEAN DEFAULT FALSE;"))
-        db.session.execute(db.text("ALTER TABLE mensagens ADD COLUMN visualizacao_unica BOOLEAN DEFAULT FALSE;"))
-        db.session.execute(db.text("ALTER TABLE mensagens ADD COLUMN audio VARCHAR(300);"))
-        db.session.commit()
-        print("Campos adicionados com sucesso no Postgres do Render!")
-    except Exception as e:
-        print("Os campos provavelmente já existem ou ocorreu um erro:", e)
-# ====================================
-# INICIALIZAÇÃO
-# ====================================
-with app.app_context():
-    db.create_all()
+    #db.drop_all()      # APAGA TUDO
+    db.create_all()    # CRIA NOVO COM TODOS OS CAMPOS
+    
+    # Cria os 2 admins automaticamente
+    from werkzeug.security import generate_password_hash
+
+    if not Usuario.query.filter_by(email="admin@despertardoamor.com").first():
+        admin1 = Usuario(
+            nome="Administrador Principal",
+            email="admin@despertardoamor.com",
+            senha=generate_password_hash("Admin156478!"),
+            admin=True, verificado=True
+        )
+        db.session.add(admin1)
+
+    if not Usuario.query.filter_by(email="admin2@despertardoamor.com").first():
+        admin2 = Usuario(
+            nome="Administrador Secundário",
+            email="admin2@despertardoamor.com",
+            senha=generate_password_hash("AdminNelma2026!"),
+            admin=True, verificado=True
+        )
+        db.session.add(admin2)
+
+    db.session.commit()
+    print("✅ Banco recriado e admins criados!")
+#=≠=======Produtos==≠===≠==   
+from datetime import datetime
+
+@app.route("/produto")
+def roleta():
+    # Verifica se está logado
+    if "user_id" not in session:
+        return redirect("/login")
+
+    usuario = Usuario.query.get(session["user_id"])
+
+    # ✅ Verifica se é assinante
+    if usuario.assinante:
+        return render_template("/home.html")  # Acesso liberado
+    else:
+        # ❌ Não é assinante: manda para a página de pagamento
+        return redirect("/assinatura")
+# =========Sumular assinatura=====
+@app.route("/alternar-assinatura/<int:usuario_id>")
+def alternar_assinatura(usuario_id):
+    if "user_id" not in session:
+        return redirect("/login")
+    
+    admin = Usuario.query.get(session["user_id"])
+    if not admin or not admin.admin:
+        return "❌ Acesso negado"
+
+    usuario = Usuario.query.get_or_404(usuario_id)
+
+    # Inverte o valor: se era True vira False, se era False vira True
+    usuario.assinante = not usuario.assinante
+
+    if usuario.assinante:
+        usuario.data_assinatura = datetime.utcnow()
+        mensagem = f"✅ Usuário {usuario.nome} virou ASSINANTE!"
+    else:
+        usuario.data_assinatura = None
+        mensagem = f"❌ Assinatura REMOVIDA de {usuario.nome}"
+
+    db.session.commit()
+    return f"{mensagem} <br><br> <a href='/lista-usuarios'>Ver lista</a>"
+
+#====codigo para usar com pagamento real
+#usuario.assinante = True
+#usuario.data_assinatura = datetime.utcnow()
+#db.session.commit()
+# ========monitorar ips ====≠=
+@app.route("/lista-usuarios")
+def lista_usuarios():
+    if "user_id" not in session:
+        return redirect("/login")
+    
+    admin = Usuario.query.get(session["user_id"])
+    if not admin or not admin.admin:
+        return "Acesso negado"
+
+    usuarios = Usuario.query.all()
+    html = "<h3>Lista de Usuários</h3><table border='1' cellpadding='8'>"
+    html += "<tr><th>ID</th><th>Nome</th><th>E-mail</th><th>Assinante</th></tr>"
+    
+    for u in usuarios:
+        assinante = "✅ Sim" if u.assinante else "❌ Não"
+        html += f"<tr><td>{u.id}</td><td>{u.nome}</td><td>{u.email}</td><td>{assinante}</td></tr>"
+    
+    html += "</table><br><p>Para tornar assinante: <code>/tornar-assinante/ID_AQUI</code></p>"
+    return html
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
