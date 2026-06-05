@@ -453,36 +453,28 @@ with app.app_context():
 # ====================================
 # INICIALIZAÇÃO
 # ====================================
+# ====================================
+# INICIALIZAÇÃO
+# ====================================
 with app.app_context():
-    db.create_all()  # Cria/atualiza as tabelas
+    db.create_all()  # Cria o banco NOVO com todos os campos
 
-    # Dados da conta Administrador
+    # Cria conta de admin automaticamente
+    from werkzeug.security import generate_password_hash
     email_admin = "admin@despertardoamor.com"
     senha_admin = "Admin156478!"
 
-    # Verifica se já existe um admin para não criar duplicado
     if not Usuario.query.filter_by(email=email_admin).first():
-        from werkzeug.security import generate_password_hash
         admin = Usuario(
             nome="Administrador",
             email=email_admin,
-            senha=generate_password_hash(senha_admin),  # Senha criptografada
+            senha=generate_password_hash(senha_admin),
             admin=True,
             verificado=True
         )
         db.session.add(admin)
         db.session.commit()
-        print("✅ Conta de Administrador criada com sucesso!")
-    else:
-        print("ℹ️ Conta de Administrador já existe.")
-
-    # Opcional: garante que o ID 1 seja admin também
-    admin_id1 = Usuario.query.get(1)
-    if admin_id1 and not admin_id1.admin:
-        admin_id1.admin = True
-        admin_id1.verificado = True
-        db.session.commit()
-        print("✅ Usuário ID 1 definido como administrador!")
+        print("✅ Banco recriado e admin criado!")
 
 
 if __name__ == "__main__":
