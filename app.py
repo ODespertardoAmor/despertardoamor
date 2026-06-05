@@ -445,50 +445,7 @@ with app.app_context():
     #except Exception as e:
         #print("Os campos provavelmente já existem ou ocorreu um erro:", e)
 
-# ====================================
-# INICIALIZAÇÃO
-# ====================================
-with app.app_context():
-    db.create_all()  # Cria o banco com todos os campos
 
-    from werkzeug.security import generate_password_hash
-
-    # ====================================
-    # ADMINISTRADOR 1
-    # ====================================
-    email_admin1 = "admin@despertardoamor.com"
-    senha_admin1 = "Admin156478!"
-
-    if not Usuario.query.filter_by(email=email_admin1).first():
-        admin1 = Usuario(
-            nome="Administrador Principal",
-            email=email_admin1,
-            senha=generate_password_hash(senha_admin1),
-            admin=True,
-            verificado=True
-        )
-        db.session.add(admin1)
-        print("✅ Administrador 1 criado!")
-
-    # ====================================
-    # ADMINISTRADOR 2
-    # ====================================
-    email_admin2 = "admin2@despertardoamor.com"  # E-mail diferente
-    senha_admin2 = "AdminNelma2027!"  # Senha que você quiser
-
-    if not Usuario.query.filter_by(email=email_admin2).first():
-        admin2 = Usuario(
-            nome="Administrador Secundário",
-            email=email_admin2,
-            senha=generate_password_hash(senha_admin2),
-            admin=True,
-            verificado=True
-        )
-        db.session.add(admin2)
-        print("✅ Administrador 2 criado!")
-
-    # Salva tudo no banco
-    db.session.commit()
 #========Assinatutas =========    
 @app.route("/assinatura")
 def assinatura():
@@ -522,6 +479,35 @@ def excluir_usuario(usuario_id):
     db.session.commit()
 
     return redirect(request.referrer or "/")
+  #==========Temporary ======== 
+ with app.app_context():
+    db.drop_all()      # APAGA TUDO
+    db.create_all()    # CRIA NOVO COM TODOS OS CAMPOS
+    
+    # Cria os 2 admins automaticamente
+    from werkzeug.security import generate_password_hash
+
+    if not Usuario.query.filter_by(email="admin@despertardoamor.com").first():
+        admin1 = Usuario(
+            nome="Administrador Principal",
+            email="admin@despertardoamor.com",
+            senha=generate_password_hash("Admin156478!"),
+            admin=True, verificado=True
+        )
+        db.session.add(admin1)
+
+    if not Usuario.query.filter_by(email="admin2@despertardoamor.com").first():
+        admin2 = Usuario(
+            nome="Administrador Secundário",
+            email="admin2@despertardoamor.com",
+            senha=generate_password_hash("AdminNelma2026!"),
+            admin=True, verificado=True
+        )
+        db.session.add(admin2)
+
+    db.session.commit()
+    print("✅ Banco recriado e admins criados!")
+   
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
