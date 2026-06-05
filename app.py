@@ -346,31 +346,48 @@ def chat(usuario_id):
     usuario_logado = Usuario.query.get(session["user_id"])
     usuario_chat = Usuario.query.get_or_404(usuario_id)
 
-    # Busca as mensagens entre os dois
+    # Busca as mensagens
     mensagens = Mensagem.query.filter(
         ((Mensagem.de_usuario == session["user_id"]) & (Mensagem.para_usuario == usuario_id)) |
         ((Mensagem.de_usuario == usuario_id) & (Mensagem.para_usuario == session["user_id"]))
     ).order_by(Mensagem.data_hora).all()
 
-    # ✅ Se for uma requisição de atualização, retorna só o HTML do chat
-    if request.args.get("atualizar") == "1":
-        return render_template("parcial_chat.html", 
-            mensagens=mensagens,
-            usuario_logado=usuario_logado,
-            usuario_chat=usuario_chat
-        )
+    # Se for só atualizar, retorna apenas o conteúdo da caixa de mensagens
+    if request.args.get("ajax") == "1":
+        from flask import render_template_string
+        # Usamos o código que você já tem diretamente aqui
+        html = ""
+        if mensagens:
+            for msg in mensagens:
+                eh_meu = msg.de_usuario == session["user_id"]
+                avatar = usuario_logado.foto if eh_meu else usuario_chat.foto
+                html += f'''
+                <div class="msg-row {'me-row' if eh_meu else 'other-row'}" id="msg-container-{msg.id}">
+                    <img src="/static/uploads/{avatar}" class="avatar-chat">
+                    <div class="message {'me' if eh_meu else 'other'}">
+                '''
+                if msg.visualizacao_unica:
+                    html += '<div class="once-badge"><i class="fa-solid fa-eye-slash"></i> Áudio de Visualização Única</div>'
+                if msg.mensagem:
+                    html += f'<p>{msg.mensagem}</p>'
+                if msg.foto:
+                    html += f'<img src="/static/uploads/{msg.foto}">'
+                if msg.audio:
+                    html += f'<audio src="/static/uploads/{msg.audio}" controls {"onended=\"destruirAudio(\'" + str(msg.id) + "\')\"" if msg.visualizacao_unica else ""}>'
+                if eh_meu:
+                    html += f'<a href="/apagar_mensagem/{msg.id}" class="delete-btn">🗑️ Apagar mensagem</a>'
+                html += '</div></div>'
+        else:
+            html = '<div class="empty">Nenhuma mensagem ainda 💙</div>'
+        return html
 
-    # Caso contrário, carrega a página inteira normalmente
+    # Carrega a página inteira normalmente
     return render_template("chat.html",
         usuario_logado=usuario_logado,
         usuario_chat=usuario_chat,
         mensagens=mensagens
     )
 
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect("/login")
 # ====================================
 # CRIAR BANCO
 # ====================================
