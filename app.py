@@ -338,26 +338,82 @@ def matches():
     )
 
 # Rota do Chat Consolidada (Garante marcação de lidas e aceita áudio e visualização única)
-# ROTA ORIGINAL DO CHAT (funcionando 100%)
-@app.route("/chat/<int:usuario_id>")
-def chat(usuario_id):
+@app.route("/chat/<int:id>", methods=["GET", "POST"])
+def chat(id):
     if "user_id" not in session:
         return redirect("/login")
 
-    usuario_logado = Usuario.query.get(session["user_id"])
-    usuario_chat = Usuario.query.get_or_404(usuario_id)
+    meu_id = session["user_id"]
 
+    # 1. MARCAR MENSAGENS RECEBIDAS COMO LIDAS AO ENTRAR
+    mensagens_nao_lidas = Mensagem.query.filter_by(
+        de_usuario=id, 
+        para_usuario=meu_id, 
+        lida=False
+    ).all()
+    for m in mensagens_nao_lidas:
+        m.lida = True
+    db.session.commit()
+
+    # 2. SE FOR ENVIO DE NOVA MENSAGEM (POST)
+    if request.method == "POST":
+        texto = request.form.get("mensagem")
+        foto = request.files.get("foto")
+        audio = request.files.get("audio") # Pega o áudio do gravador
+        
+        # Verifica se ativou o botão de visualização única
+        once_input = request.form.get("visualizacao_unica")
+        modo_once = True if once_input == "1" else False
+
+        nome_foto = None
+        nome_audio = None
+
+        # Salva Foto se houver
+        if foto and foto.filename != "":
+            filename_foto = secure_filename(f"{uuid.uuid4()}_{foto.filename}")
+            foto.save(os.path.join(app.config["UPLOAD_FOLDER"], filename_foto))
+            nome_foto = filename_foto
+
+        # Salva Áudio se houver
+        if audio and audio.filename != "":
+            filename_audio = secure_filename(f"{uuid.uuid4()}_audio.mp3")
+            audio.save(os.path.join(app.config["UPLOAD_FOLDER"], filename_audio))
+            nome_audio = filename_audio
+
+        if texto or nome_foto or nome_audio:
+            nova = Mensagem(
+                de_usuario=meu_id,
+                para_usuario=id,
+                mensagem=texto,
+                foto=nome_foto,
+                audio=nome_audio,
+                visualizacao_unica=modo_once,
+                lida=False
+            )
+            db.session.add(nova)
+            db.session.commit()
+
+    # 3. BUSCA HISTÓRICO DE MENSAGENS PARA EXIBIR
     mensagens = Mensagem.query.filter(
-        ((Mensagem.de_usuario == session["user_id"]) & (Mensagem.para_usuario == usuario_id)) |
-        ((Mensagem.de_usuario == usuario_id) & (Mensagem.para_usuario == session["user_id"]))
-    ).order_by(Mensagem.data_hora).all()
+        ((Mensagem.de_usuario == meu_id) & (Mensagem.para_usuario == id)) |
+        ((Mensagem.de_usuario == id) & (Mensagem.para_usuario == meu_id))
+    ).order_by(Mensagem.data.asc()).all()
 
-    return render_template("chat.html",
+    usuario_logado = Usuario.query.get(meu_id)
+    usuario_chat = Usuario.query.get(id)
+    
+    return render_template(
+        "chat.html",
+        mensagens=mensagens,
+        usuario=usuario_chat,
         usuario_logado=usuario_logado,
-        usuario_chat=usuario_chat,
-        mensagens=mensagens
+        usuario_chat=usuario_chat
     )
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/login")
 # ====================================
 # CRIAR BANCO
 # ====================================
@@ -528,4 +584,3 @@ def lista_usuarios():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
-
