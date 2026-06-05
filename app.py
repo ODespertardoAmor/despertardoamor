@@ -453,12 +453,10 @@ with app.app_context():
 with app.app_context():
     
     db.create_all()
-    
+
+    # Dados da conta    
 # Criação da conta de Administrador
-with app.app_context():
-    db.create_all()  # Garante que as tabelas existam
-    
-    # Dados da conta admin (você pode alterar o e-mail e senha se quiser)
+ admin (você pode alterar o e-mail e senha se quiser)
     email_admin = "admin@despertardoamor.com"
     senha_admin = "Admin156478!"  # Você pode mudar essa senha depois
 
@@ -480,42 +478,15 @@ with app.app_context():
 
 
 #========== Atualização==≠====
-import sqlite3
-
 with app.app_context():
-    db.create_all()
-
-    # Adiciona as colunas sem apagar dados
-    try:
-        conn = sqlite3.connect("site.db")
-        cursor = conn.cursor()
-
-        # Verifica e adiciona campo verificado
-        cursor.execute("PRAGMA table_info(usuario)")
-        colunas = [col[1] for col in cursor.fetchall()]
-        
-        if "verificado" not in colunas:
-            cursor.execute("ALTER TABLE usuario ADD COLUMN verificado BOOLEAN DEFAULT 0")
-            print("✅ Campo verificado adicionado!")
-
-        if "admin" not in colunas:
-            cursor.execute("ALTER TABLE usuario ADD COLUMN admin BOOLEAN DEFAULT 0")
-            print("✅ Campo admin adicionado!")
-
-        conn.commit()
-        conn.close()
-
-        # Deixa o primeiro usuário como admin
-        admin = Usuario.query.get(1)
-        if admin:
-            admin.admin=True
-            admin.verificado=True
-            db.session.commit()
-            print("✅ Usuário ID 1 definido como administrador!")
-
-    except Exception as e:
-        print("ℹ️ Banco já atualizado ou erro:", str(e))
-
+    db.create_all()  # Garante que as tabelas existam
+    
+# Define o primeiro usuário como admin
+    admin = Usuario.query.get(1)
+    if admin:
+        admin.admin=True
+        admin.verificado=True
+        db.session.commit()
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
