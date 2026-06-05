@@ -19,12 +19,12 @@
         
         .message{ max-width:75%; padding:16px 20px; border-radius:20px; word-wrap:break-word; font-size:15px; line-height:1.6; position: relative; }
         .message img{ width:220px; max-width:100%; border-radius:15px; margin-top:10px; }
-        .message audio { max-width: 100%; margin-top: 5px; display: block; }
+        .message audio { max-width: 100%; margin-top: 8px; display: block; }
 
         .me{ align-self:flex-end; background:#2563eb; color:white; border-bottom-right-radius:5px; }
         .other{ align-self:flex-start; background:#1e293b; color:white; border-bottom-left-radius:5px; border:1px solid #334155; }
-        .delete-btn{ display:block; margin-top:10px; color:white; font-size:12px; text-decoration:none; opacity:0.8; }
-        .delete-btn:hover{ opacity:1; }
+        .delete-btn{ display:block; margin-top:10px; color:#ffcccc; font-size:12px; text-decoration:none; opacity:0.9; background:none; border:none; padding:0; cursor:pointer; text-align:right; width:100%; }
+        .delete-btn:hover{ opacity:1; text-decoration:underline; }
 
         .once-badge {
             font-size: 11px;
@@ -56,20 +56,9 @@
             color: #94a3b8;
             border: none;
             padding: 18px;
-            border-radius: 16px;
-            cursor: pointer;
-            font-size: 18px;
-            transition: 0.3s;
-            width: 58px;
-            height: 58px;
-            display: none;
-            align-items: center;
-            justify-content: center;
+            border-radius: 16px; cursor: pointer; font-size: 18px; transition: 0.3s; width: 58px; height: 58px; display: none; align-items: center; justify-content: center;
         }
-        .view-once-btn.active {
-            background: #e11d48;
-            color: white;
-        }
+        .view-once-btn.active { background: #e11d48; color: white; }
 
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         .empty{ color:#94a3b8; text-align:center; margin-top:40px; }
@@ -122,8 +111,9 @@
                                 
                             {% endif %}
 
+                            <!-- ✅ BOTÃO APARECE SEMPRE PARA SUAS MENSAGENS -->
                             {% if msg.de_usuario == session["user_id"] %}
-                                <a href="/apagar_mensagem/{{msg.id}}" class="delete-btn">Apagar</a>
+                                <a href="/apagar_mensagem/{{msg.id}}" class="delete-btn">Apagar mensagem</a>
                             {% endif %}
                         </div>
                     </div>
@@ -153,7 +143,6 @@
     </div>
 
     <script>
-        // Mantém a rolagem sempre no final ao carregar a página
         const chatBox = document.getElementById("chatBox");
         chatBox.scrollTop = chatBox.scrollHeight;
 
@@ -169,7 +158,6 @@
         let isRecording = false;
         let isViewOnce = false;
 
-        // Alterna o modo de visualização única
         viewOnceBtn.addEventListener("click", () => {
             isViewOnce = !isViewOnce;
             if (isViewOnce) {
@@ -181,11 +169,10 @@
             }
         });
 
-        // Controle de gravação de áudio
         audioBtn.addEventListener("click", async () => {
             if (!isRecording) {
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    alert("Seu navegador não suporta gravação de áudio.");
+                    alert("Seu navegador não suporta gravação.");
                     return;
                 }
                 try {
@@ -216,7 +203,7 @@
                     msgInput.placeholder = "Gravando...";
 
                 } catch (err) {
-                    alert("Permissão para acessar o microfone foi negada.");
+                    alert("Permissão de microfone negada.");
                 }
             } else {
                 mediaRecorder.stop();
@@ -227,7 +214,7 @@
             }
         });
 
-        // Função para autodestruir áudio de visualização única
+        // Função de autodestruição para áudio de visualização única
         function destruirAudio(msgId) {
             const elementoMsg = document.getElementById(`msg-container-${msgId}`);
             if (elementoMsg) {
@@ -235,6 +222,7 @@
                 elementoMsg.style.opacity = "0";
                 setTimeout(() => elementoMsg.remove(), 500);
             }
+            // Chama a rota para apagar do servidor também
             fetch(`/apagar_mensagem/${msgId}`);
         }
     </script>
