@@ -1,0 +1,23 @@
+{% for msg in mensagens %}
+    <div style="margin: 8px 0; {% if msg.de_usuario == usuario_id %}text-align: right;{% endif %}">
+        <span style="
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 12px;
+            max-width: 75%;
+            {% if msg.de_usuario == usuario_id %}
+                background: #2563eb;
+                color: white;
+            {% else %}
+                background: #e2e8f0;
+                color: #1e293b;
+            {% endif %}
+        ">
+            {{ msg.texto }}
+            <br>
+            <small style="font-size: 10px; opacity: 0.8;">
+                {{ msg.data_hora.strftime('%H:%M %d/%m') }}
+            </small>
+        </span>
+    </div>
+{% endfor %}
