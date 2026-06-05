@@ -202,25 +202,19 @@ def home():
 
 @app.route("/verificar/<int:usuario_id>")
 def verificar_usuario(usuario_id):
-    # Proteção: só o usuário com ID 1 pode acessar
-    meu_id = session.get("user_id")
-    admin = Usuario.query.get(meu_id)
-    
-    if not admin or admin.id != 1:
-        return "❌ Acesso negado: apenas administrador pode usar essa função"
+    if "user_id" not in session:
+        return redirect("/login")
 
-    # Busca o usuário alvo
-    usuario = Usuario.query.get_or_404(usuario_id)
-    
-    # Inverte o estado: se era True vira False, se era False vira True
-    usuario.verificado = not usuario.verificado
+    # Busca o usuário logado
+    usuario_logado = Usuario.query.get(session["user_id"])
+
+    # Agora verifica se ele é admin, não importa o ID
+    if not usuario_logado or not usuario_logado.admin:
+        return "❌ Acesso negado: apenas administradores"
+
+    usuario_alvo = Usuario.query.get_or_404(usuario_id)
+    usuario_alvo.verificado = not usuario_alvo.verificado
     db.session.commit()
-
-    # Mensagem de retorno e redirecionamento
-    if usuario.verificado:
-        mensagem = "✅ Perfil verificado com sucesso!"
-    else:
-        mensagem = "❌ Verificação removida do perfil!"
 
     return redirect(request.referrer or "/")
 
