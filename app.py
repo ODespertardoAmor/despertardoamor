@@ -526,7 +526,7 @@ def roleta():
 
     # ✅ Verifica se é assinante
     if usuario.assinante:
-        return render_template("home.html")  # Acesso liberado
+        return render_template("/home.html")  # Acesso liberado
     else:
         # ❌ Não é assinante: manda para a página de pagamento
         return redirect("/assinatura")
