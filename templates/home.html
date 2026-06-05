@@ -319,14 +319,13 @@
             </form>
 
             <!-- BOTÕES ABAIXO -->
-            <div class="menu-superior">
-                <!-- Botão Loves com notificação -->
-                <div style="position: relative;">
-                    <a href="/matches" class="btn">loves🌹</a>
-                    {% if total_notificacoes and total_notificacoes > 0 %}
-                        <span class="badge-notificacao">{{ total_notificacoes }}</span>
-                    {% endif %}
-                </div>
+            <div style="position: relative; width: 100%;">
+    <a href="/matches" class="btn" style="width: 100%; display: block; padding: 14px 18px; font-size: 15px;">loves🌹</a>
+    {% if total_notificacoes and total_notificacoes > 0 %}
+        <span class="badge-notificacao">{{ total_notificacoes }}</span>
+    {% endif %}
+</div>
+
                 
                 <a href="/logout" class="btn">Sair🏃</a>
             </div>
