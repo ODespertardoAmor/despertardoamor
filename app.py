@@ -49,7 +49,7 @@ class Usuario(db.Model):
     bio = db.Column(db.Text)
     foto = db.Column(db.String(300), default="default.png")
     criado_em = db.Column(db.DateTime, default=datetime.utcnow)
-
+    verificado = db.Column(db.Boolean, default=False)  # começa como não verificado
 class Curtida(db.Model):
     __tablename__ = "curtidas"
     id = db.Column(db.Integer, primary_key=True)
