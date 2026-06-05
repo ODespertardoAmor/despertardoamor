@@ -452,8 +452,14 @@ def assinatura():
     if "user_id" not in session:
         return redirect("/login")
     
-    # Você pode passar o valor do plano dinamicamente se quiser
+    usuario = Usuario.query.get(session["user_id"])
+    
+    # Se já for assinante, não precisa ver a página de pagamento
+    if usuario.assinante:
+        return "✅ Você já é assinante! <br><br> <a href='/'>Voltar ao início</a>"
+
     return render_template("pagamento.html")
+
 # ========Excluir pessoas 
 @app.route("/excluir-usuario/<int:usuario_id>", methods=["POST"])
 def excluir_usuario(usuario_id):
@@ -507,7 +513,23 @@ with app.app_context():
 
     db.session.commit()
     print("✅ Banco recriado e admins criados!")
-   
+#=≠=======Produtos==≠===≠==   
+from datetime import datetime
+
+@app.route("/produto")
+def roleta():
+    # Verifica se está logado
+    if "user_id" not in session:
+        return redirect("/login")
+
+    usuario = Usuario.query.get(session["user_id"])
+
+    # ✅ Verifica se é assinante
+    if usuario.assinante:
+        return render_template("roleta.html")  # Acesso liberado
+    else:
+        # ❌ Não é assinante: manda para a página de pagamento
+        return redirect("/assinatura")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
