@@ -94,25 +94,42 @@ def apagar_mensagem(id):
         return redirect("/login")
 
     msg = Mensagem.query.get(id)
-    if msg:
-        # Só quem enviou pode apagar, ou o sistema deleta se for visualização única concluída
-        if msg.de_usuario == session["user_id"] or msg.visualizacao_unica:
-            # Apaga o arquivo físico de foto se existir
-            if msg.foto:
-                caminho_foto = os.path.join(app.config["UPLOAD_FOLDER"], msg.foto)
-                if os.path.exists(caminho_foto):
-                    os.remove(caminho_foto)
-            
-            # Apaga o arquivo físico de áudio se existir
-            if msg.audio:
-                caminho_audio = os.path.join(app.config["UPLOAD_FOLDER"], msg.audio)
-                if os.path.exists(caminho_audio):
-                    os.remove(caminho_audio)
+    if not msg:
+        return redirect(request.referrer or "/")
 
-            db.session.delete(msg)
-            db.session.commit()
+    # Permite apagar se for o dono OU se for visualização única
+    if msg.de_usuario == session["user_id"] or msg.visualizacao_unica:
+        
+        # Caminho completo da pasta de uploads
+        pasta_upload = app.config.get("UPLOAD_FOLDER", "")
+
+        # Apaga foto
+        if msg.foto:
+            caminho_foto = os.path.join(pasta_upload, msg.foto)
+            print(f"Tentando apagar foto: {caminho_foto}")  # Para ver no terminal
+            if os.path.exists(caminho_foto):
+                os.remove(caminho_foto)
+                print("Foto apagada com sucesso")
+            else:
+                print("Foto NÃO encontrada no caminho")
+
+        # Apaga ÁUDIO - AQUI ESTAVA O POSSÍVEL PROBLEMA
+        if msg.audio:
+            caminho_audio = os.path.join(pasta_upload, msg.audio)
+            print(f"Tentando apagar áudio: {caminho_audio}")  # Para ver no terminal
+            if os.path.exists(caminho_audio):
+                os.remove(caminho_audio)
+                print("Áudio apagado com sucesso")
+            else:
+                print("Áudio NÃO encontrado no caminho")
+
+        # Apaga do banco
+        db.session.delete(msg)
+        db.session.commit()
+        print("Mensagem apagada do banco")
 
     return redirect(request.referrer or "/")
+
 
 @app.route("/upload_foto", methods=["POST"])
 def upload_foto():
