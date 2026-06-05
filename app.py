@@ -503,25 +503,21 @@ def excluir_usuario(usuario_id):
     if "user_id" not in session:
         return redirect("/login")
 
-    # Verifica se é administrador
     admin_logado = Usuario.query.get(session["user_id"])
     if not admin_logado or not admin_logado.admin:
-        return "❌ Acesso negado: apenas administradores podem excluir usuários"
+        return "❌ Acesso negado"
 
-    # Não deixa excluir a si mesmo nem outros admins (opcional, mas seguro)
     if usuario_id == admin_logado.id:
-        return "❌ Você não pode excluir sua própria conta"
+        return "❌ Não pode excluir a si mesmo"
 
     usuario_alvo = Usuario.query.get_or_404(usuario_id)
     if usuario_alvo.admin:
-        return "❌ Não é permitido excluir outro administrador"
+        return "❌ Não pode excluir outro admin"
 
-    # Exclui também os dados relacionados (matches, mensagens etc.)
-    from models import Match, Mensagem  # ajuste o import conforme sua estrutura
-    Match.query.filter((Match.user1 == usuario_id) | (Match.user2 == usuario_id)).delete()
-    Mensagem.query.filter((Mensagem.de_usuario == usuario_id) | (Mensagem.para_usuario == usuario_id)).delete()
+    # Só mantenha essas linhas se as tabelas existirem no seu código:
+    # Match.query.filter(...).delete()
+    # Mensagem.query.filter(...).delete()
 
-    # Exclui o usuário
     db.session.delete(usuario_alvo)
     db.session.commit()
 
