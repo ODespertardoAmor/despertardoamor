@@ -237,10 +237,11 @@
         }
     </script>
 
-
 <script>
-// Função para recarregar apenas a área do chat
-function atualizarAposEnvio() {
+let temporizador;
+
+// Atualiza só a área do chat
+function atualizarChat() {
     const chatBox = document.getElementById("chatBox");
     if (!chatBox) return;
 
@@ -249,23 +250,49 @@ function atualizarAposEnvio() {
         .then(html => {
             const temp = document.createElement('div');
             temp.innerHTML = html;
-            chatBox.innerHTML = temp.querySelector('#chatBox').innerHTML;
+            const novoConteudo = temp.querySelector('#chatBox').innerHTML;
             
-            // Mantém a rolagem no final
-            chatBox.scrollTop = chatBox.scrollHeight;
+            // Só atualiza se realmente mudou algo
+            if (chatBox.innerHTML !== novoConteudo) {
+                const estaNoFinal = chatBox.scrollHeight - chatBox.scrollTop <= chatBox.clientHeight + 20;
+                chatBox.innerHTML = novoConteudo;
+                if (estaNoFinal) chatBox.scrollTop = chatBox.scrollHeight;
+            }
         })
-        .catch(erro => console.log("Erro ao atualizar:", erro));
+        .catch(erro => console.log("Erro:", erro));
 }
 
-// Conecta a função ao botão de enviar
-const formulario = document.querySelector('form'); // seu formulário de mensagem
+// Quando começa a digitar: para de atualizar
+function pararAtualizacao() {
+    clearTimeout(temporizador);
+}
+
+// Quando para de digitar: espera 3 segundos e atualiza
+function iniciarAtualizacao() {
+    clearTimeout(temporizador);
+    temporizador = setTimeout(atualizarChat, 3000);
+}
+
+// Conecta ao campo de digitação
+const campoTexto = document.querySelector('input[name="mensagem"], textarea[name="mensagem"]');
+if (campoTexto) {
+    campoTexto.addEventListener('input', pararAtualizacao);
+    campoTexto.addEventListener('blur', iniciarAtualizacao);
+    campoTexto.addEventListener('keyup', iniciarAtualizacao);
+}
+
+// Atualiza também quando enviar mensagem
+const formulario = document.querySelector('form');
 if (formulario) {
     formulario.addEventListener('submit', function() {
-        // Espera um pouquinho para o servidor salvar a mensagem, depois atualiza
-        setTimeout(atualizarAposEnvio, 500);
+        setTimeout(atualizarChat, 500);
     });
 }
+
+// Começa a verificar quando abrir a página
+setTimeout(atualizarChat, 3000);
 </script>
+
 
 
 </body>
