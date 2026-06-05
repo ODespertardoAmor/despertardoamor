@@ -188,7 +188,7 @@ def home():
         "home.html",
         usuarios=usuarios,
         usuario_logado=usuario_logado,
-        notificacoes=notificacoes # Enviando as contagens para o HTML
+        notificacoes=notificacoes, # Enviando as contagens para o HTML
         total_notificacoes=total_notificacoes
     )
 
