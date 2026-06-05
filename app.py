@@ -531,19 +531,29 @@ def roleta():
         # ❌ Não é assinante: manda para a página de pagamento
         return redirect("/assinatura")
 # =========Sumular assinatura=====
-@app.route("/tornar-assinante/<int:usuario_id>")
-def tornar_assinante(usuario_id):
-    # Apenas ADMIN pode usar essa rota
-    admin = Usuario.query.get(session.get("user_id"))
+@app.route("/alternar-assinatura/<int:usuario_id>")
+def alternar_assinatura(usuario_id):
+    if "user_id" not in session:
+        return redirect("/login")
+    
+    admin = Usuario.query.get(session["user_id"])
     if not admin or not admin.admin:
-        return "Acesso negado"
+        return "❌ Acesso negado"
 
     usuario = Usuario.query.get_or_404(usuario_id)
-    usuario.assinante = True
-    usuario.data_assinatura = datetime.utcnow()
-    db.session.commit()
 
-    return f"✅ Usuário {usuario.nome} agora é assinante! <br><br> <a href='/'>Voltar</a>"
+    # Inverte o valor: se era True vira False, se era False vira True
+    usuario.assinante = not usuario.assinante
+
+    if usuario.assinante:
+        usuario.data_assinatura = datetime.utcnow()
+        mensagem = f"✅ Usuário {usuario.nome} virou ASSINANTE!"
+    else:
+        usuario.data_assinatura = None
+        mensagem = f"❌ Assinatura REMOVIDA de {usuario.nome}"
+
+    db.session.commit()
+    return f"{mensagem} <br><br> <a href='/lista-usuarios'>Ver lista</a>"
 
 #====codigo para usar com pagamento real
 #usuario.assinante = True
