@@ -450,22 +450,23 @@ with app.app_context():
 # ====================================
 # INICIALIZAÇÃO
 # ====================================
+# ====================================
+# INICIALIZAÇÃO
+# ====================================
 with app.app_context():
-    
-    db.create_all()
+    db.create_all()  # Cria/atualiza as tabelas
 
-    # Dados da conta    
-# Criação da conta de Administrador
- admin (você pode alterar o e-mail e senha se quiser)
+    # Dados da conta Administrador
     email_admin = "admin@despertardoamor.com"
-    senha_admin = "Admin156478!"  # Você pode mudar essa senha depois
+    senha_admin = "Admin156478!"
 
     # Verifica se já existe um admin para não criar duplicado
     if not Usuario.query.filter_by(email=email_admin).first():
+        from werkzeug.security import generate_password_hash
         admin = Usuario(
             nome="Administrador",
             email=email_admin,
-            senha=senha_admin,  # ⚠️ Se usar criptografia, coloque aqui a senha já criptografada
+            senha=generate_password_hash(senha_admin),  # Senha criptografada
             admin=True,
             verificado=True
         )
@@ -475,18 +476,16 @@ with app.app_context():
     else:
         print("ℹ️ Conta de Administrador já existe.")
 
-
-
-#========== Atualização==≠====
-with app.app_context():
-    db.create_all()  # Garante que as tabelas existam
-    
-# Define o primeiro usuário como admin
-    admin = Usuario.query.get(1)
-    if admin:
-        admin.admin=True
-        admin.verificado=True
+    # Opcional: garante que o ID 1 seja admin também
+    admin_id1 = Usuario.query.get(1)
+    if admin_id1 and not admin_id1.admin:
+        admin_id1.admin = True
+        admin_id1.verificado = True
         db.session.commit()
+        print("✅ Usuário ID 1 definido como administrador!")
+
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
+
