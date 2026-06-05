@@ -236,5 +236,51 @@
             fetch(`/apagar_mensagem/${msgId}`);
         }
     </script>
+    <script>
+// Guarda o texto digitado e posição da rolagem antes de atualizar
+async function atualizarChat() {
+    const campoMensagem = document.querySelector('input[name="mensagem"]') || document.querySelector('textarea[name="mensagem"]');
+    const textoSalvo = campoMensagem ? campoMensagem.value : "";
+
+    const chatBox = document.getElementById("chatBox");
+    if (!chatBox) return;
+
+    // Verifica se o usuário está no final da conversa
+    const estaNoFinal = chatBox.scrollHeight - chatBox.scrollTop <= chatBox.clientHeight + 20;
+
+    try {
+        // Busca apenas as mensagens atualizadas
+        const resposta = await fetch(window.location.href + "?atualizar=1");
+        
+        if (!resposta.ok) throw new Error("Erro ao carregar");
+        
+        const novoHtml = await resposta.text();
+
+        // Atualiza só o conteúdo do chat
+        chatBox.innerHTML = novoHtml;
+
+        // Restaura o texto que estava sendo digitado
+        if (campoMensagem) campoMensagem.value = textoSalvo;
+
+        // Mantém a rolagem no final se o usuário estava lá
+        if (estaNoFinal) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+    } catch (erro) {
+        console.log("Erro ao atualizar chat:", erro);
+    }
+}
+
+// Atualiza a cada 3 segundos (pode mudar para 2000 = 2s ou 5000 = 5s)
+setInterval(atualizarChat, 3000);
+
+// Rolagem automática na primeira abertura
+window.addEventListener("load", () => {
+    const chatBox = document.getElementById("chatBox");
+    if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+});
+</script>
+
 </body>
 </html>
