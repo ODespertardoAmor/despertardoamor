@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assinatura Premium - D/Amor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #0f172a;
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .voltar {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #38bdf8;
+            text-decoration: none;
+            margin-bottom: 30px;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .voltar:hover {
+            color: #7dd3fc;
+            transform: translateX(-3px);
+        }
+
+        .container {
+            max-width: 550px;
+            margin: 0 auto;
+        }
+
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .cabecalho h1 {
+            color: #38bdf8;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .cabecalho p {
+            color: #94a3b8;
+            font-size: 16px;
+        }
+
+        .plano {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        .plano h2 {
+            color: #38bdf8;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .preco {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .preco span {
+            font-size: 16px;
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+        .vantagens {
+            list-style: none;
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .vantagens li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            color: #e2e8f0;
+        }
+
+        .vantagens i {
+            color: #10b981;
+            font-size: 18px;
+        }
+
+        .abas-pagamento {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .aba {
+            flex: 1;
+            padding: 15px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        .aba.ativa {
+            background: #2563eb;
+            border-color: #38bdf8;
+            color: white;
+        }
+
+        .conteudo-pagamento {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        /* Área PIX */
+        .pix-info {
+            text-align: center;
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            background: white;
+            margin: 20px auto;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-weight: 500;
+        }
+
+        .chave-pix {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .chave-pix span {
+            font-family: monospace;
+            font-size: 14px;
+            color: #e2e8f0;
+            word-break: break-all;
+        }
+
+        .btn-copiar {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-copiar:hover {
+            background: #1d4ed8;
+        }
+
+        /* Área Cartão */
+        .form-cartao {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .grupo-campo {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .grupo-campo label {
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .grupo-campo input {
+            padding: 14px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .grupo-campo input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+        }
+
+        .linha-dupla {
+            display: flex;
+            gap: 15px;
+        }
+
+        .linha-dupla .grupo-campo {
+            flex: 1;
+        }
+
+        .btn-finalizar {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-finalizar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+        }
+
+        .seguranca {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .seguranca i {
+            color: #10b981;
+        }
+
+        @media(max-width: 480px) {
+            .linha-dupla {
+                flex-direction: column;
+            }
+
+            .qr-code {
+                width: 160px;
+                height: 160px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="voltar">
+            <i class="fa-solid fa-arrow-left"></i> Voltar para a página inicial
+        </a>
+
+        <div class="cabecalho">
+            <h1>💙 Assinatura Premium</h1>
+            <p>Desbloqueie todas as funcionalidades e encontre mais pessoas</p>
+        </div>
+
+        <div class="plano">
+            <h2>Plano Premium</h2>
+            <div class="preco">R$ 19,90 <span>/mês</span></div>
+            
+            <ul class="vantagens">
+                <li><i class="fa-solid fa-check-circle"></i> Ver quem curtiu seu perfil</li>
+                <li><i class="fa-solid fa-check-circle"></i> Enviar mensagens ilimitadas</li>
+                <li><i class="fa-solid fa-check-circle"></i> Aparecer em destaque nas buscas</li>
+                <li><i class="fa-solid fa-check-circle"></i> Sem anúncios</li>
+                <li><i class="fa-solid fa-check-circle"></i> Suporte prioritário</li>
+            </ul>
+        </div>
+
+        <div class="abas-pagamento">
+            <div class="aba ativa" onclick="trocarPagamento('pix')">
+                <i class="fa-solid fa-pix"></i> PIX
+            </div>
+            <div class="aba" onclick="trocarPagamento('cartao')">
+                <i class="fa-solid fa-credit-card"></i> Cartão
+            </div>
+        </div>
+
+        <!-- Área PIX -->
+        <div class="conteudo-pagamento" id="pagamento-pix">
+            <div class="pix-info">
+                <h3 style="color: #38bdf8; margin-bottom: 15px;">Pagamento via PIX</h3>
+                <p style="color: #94a3b8; margin-bottom: 20px;">Escaneie o QR Code ou copie a chave abaixo</p>
+
+                <!-- Aqui você vai colocar a imagem real do QR Code -->
+                <div class="qr-code">
+                    <img src="{{ url_for('static', filename='imagens/qr_pix.png') }}" alt="QR Code PIX" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+
+                <div class="chave-pix">
+                    <span>00020126360014BR.GOV.BCB.PIX0114+5511999998888520400005303986540519.905802BR5925Despertar do Amor6009Sao Paulo62070503***6304E2CA</span>
+                    <button class="btn-copiar" onclick="copiarChave()">
+                        <i class="fa-solid fa-copy"></i> Copiar
+                    </button>
+                </div>
+
+                <p style="color: #94a3b8; font-size: 13px; margin-top: 15px;">
+                    Após o pagamento, a liberação é automática em até 5 minutos.
+                </p>
+            </div>
+        </div>
+
+        <!-- Área Cartão -->
+        <div class="conteudo-pagamento" id="pagamento-cartao" style="display: none;">
+            <h3 style="color: #38bdf8; margin-bottom: 20px; text-align: center;">Pagamento com Cartão</h3>
+            
+            <form class="form-cartao" action="/processar-pagamento" method="POST">
+                <div class="grupo-campo">
+                    <label>Nome no cartão</label>
+                    <input type="text" name="nome_cartao" placeholder="Como está escrito no cartão" required>
+                </div>
+
+                <div class="grupo-campo">
+                    <label>Número do cartão</label>
+                    <input type="text" name="numero_cartao" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                </div>
+
+                <div class="linha-dupla">
+                    <div class="grupo-campo">
+                        <label>Validade</label>
+                        <input type="text" name="validade" placeholder="MM/AA" maxlength="5" required>
+                    </div>
+                    <div class="grupo-campo">
+                        <label>CVV</label>
+                        <input type="text" name="cvv" placeholder="123" maxlength="4" required>
+                    </div>
+                </div>
+
+                <div class="grupo-campo">
+                    <label>CPF do titular</label>
+                    <input type="text" name="cpf" placeholder="000.000.000-00" maxlength="14" required>
+                </div>
+
+                <button type="submit" class="btn-finalizar">
+                    Finalizar Pagamento - R$ 19,90
+                </button>
+            </form>
+
+            <div class="seguranca">
+                <i class="fa-solid fa-lock"></i>
+                <span>Pagamento 100% seguro e criptografado</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function trocarPagamento(tipo) {
+            // Remove classe ativa de todas as abas
+            document.querySelectorAll('.aba').forEach(aba => aba.classList.remove('ativa'));
+            
+            // Esconde todos os conteúdos
+            document.getElementById('pagamento-pix').style.display = 'none';
+            document.getElementById('pagamento-cartao').style.display = 'none';
+
+            // Mostra o conteúdo selecionado
+            if (tipo === 'pix') {
+                document.querySelector('.aba:nth-child(1)').classList.add('ativa');
+                document.getElementById('pagamento-pix').style.display = 'block';
+            } else {
+                document.querySelector('.aba:nth-child(2)').classList.add('ativa');
+                document.getElementById('pagamento-cartao').style.display = 'block';
+            }
+        }
+
+        function copiarChave() {
+            const chave = document.querySelector('.chave-pix span').textContent;
+            navigator.clipboard.writeText(chave).then(() => {
+                const btn = document.querySelector('.btn-copiar');
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copiado!';
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fa-solid fa-copy"></i> Copiar';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
