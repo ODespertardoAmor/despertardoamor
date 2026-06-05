@@ -375,20 +375,24 @@
     </h2>
     <p>📍 {{u.cidade}}</p>
     <p>{{u.bio}}</p>
-        <!-- ✅ BOTÃO SÓ APARECE PARA O ADMIN (ID = 1) -->
+                 <!-- Botão Excluir Usuário - só para admin -->
 {% if usuario_logado and usuario_logado.admin %}
-
-    <div style="margin-top: 12px;">
+    <div style="margin-top: 12px; display: flex; gap: 10px;">
+        <!-- Botão Verificar que já existe -->
         <a href="/verificar/{{u.id}}" class="btn-verificar">
-            {% if u.verificado %}
-                ❌ Remover Verificação
-            {% else %}
-                ✅ Verificar Perfil
-            {% endif %}
+            {% if u.verificado %}❌ Remover Verificação{% else %}✅ Verificar{% endif %}
         </a>
+
+        <!-- Botão Excluir -->
+        <form action="/excluir-usuario/{{u.id}}" method="POST" onsubmit="return confirm('Tem certeza que deseja EXCLUIR este usuário? Essa ação não pode ser desfeita!');">
+            <button type="submit" class="btn-excluir">
+                🗑️ Excluir
+            </button>
+        </form>
     </div>
 {% endif %}
-         
+
+
 </div>
 
             
