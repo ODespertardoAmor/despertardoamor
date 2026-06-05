@@ -128,9 +128,17 @@
                             {% endif %}
 
                             <!-- ✅ BOTÃO APARECE SEMPRE PARA SUAS MENSAGENS -->
-                            {% if msg.de_usuario == session["user_id"] %}
-                                <a href="/apagar_mensagem/{{msg.id}}" class="delete-btn">🗑️ Apagar mensagem</a>
-                            {% endif %}
+                            <!-- TESTE TEMPORÁRIO -->
+<p style="font-size: 9px; color: yellow;">
+   ID msg: {{ msg.de_usuario }} | ID sessão: {{ session["user_id"] }}
+   {% if msg.de_usuario == session["user_id"] %} ✅ IGUAL {% else %} ❌ DIFERENTE {% endif %}
+</p>
+
+<!-- Botão de apagar -->
+{% if msg.de_usuario == session["user_id"] %}
+    <a href="/apagar_mensagem/{{msg.id}}" class="delete-btn">🗑️ Apagar mensagem</a>
+{% endif %}
+
                         </div>
                     </div>
                 {% endfor %}
