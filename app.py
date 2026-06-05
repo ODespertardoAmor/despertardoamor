@@ -279,24 +279,33 @@ def matches():
     lista_matches = []
     notificacoes = {} # Dicionário contendo o total de não lidas {parceiro_id: total}
 
+    # ✅ Calcula o TOTAL geral de mensagens não lidas uma vez só, fora do laço
+    total_notificacoes = Mensagem.query.filter_by(
+        para_usuario=meu_id,
+        lida=False
+    ).count()
+
     for match in matches_db:
         outro_id = match.user2 if match.user1 == meu_id else match.user1
         usuario = Usuario.query.get(outro_id)
         if usuario:
             lista_matches.append(usuario)
             
-            # Conta mensagens não lidas vindo deste usuário para mim
+            # Conta mensagens não lidas vindo deste usuário específico
             total_nao_lidas = Mensagem.query.filter_by(
                 de_usuario=outro_id, 
                 para_usuario=meu_id, 
                 lida=False
             ).count()
             notificacoes[outro_id] = total_nao_lidas
-            total_notificacoes = Mensagem.query.filter_by(
-            para_usuario=session["user_id"],
-            lida=False
-            ).count()
-    return render_template("matches.html", matches=lista_matches, notificacoes=notificacoes,total_notificacoes=total_notificacoes)
+
+    # ✅ Retorna passando todas as variáveis corretamente
+    return render_template(
+        "matches.html",
+        matches=lista_matches,
+        notificacoes=notificacoes,
+        total_notificacoes=total_notificacoes
+    )
 
 # Rota do Chat Consolidada (Garante marcação de lidas e aceita áudio e visualização única)
 @app.route("/chat/<int:id>", methods=["GET", "POST"])
