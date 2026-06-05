@@ -199,6 +199,18 @@ def home():
         total_notificacoes=total_notificacoes  # ✅ ADICIONE AQUI TAMBÉM
     )
 
+@app.route("/verificar/<int:usuario_id>")
+def verificar_usuario(usuario_id):
+    # Proteção: só admin pode verificar
+    meu_id = session.get("user_id")
+    admin = Usuario.query.get(meu_id)
+    if not admin or admin.id != 1:  # Troque "1" pelo ID do seu admin
+        return "Acesso negado"
+
+    usuario = Usuario.query.get_or_404(usuario_id)
+    usuario.verificado = True
+    db.session.commit()
+    return redirect(request.referrer or "/")
 
 @app.route("/cadastro", methods=["GET", "POST"])
 def cadastro():
