@@ -188,8 +188,8 @@ def home():
         "home.html",
         usuarios=usuarios,
         usuario_logado=usuario_logado,
-        notificacoes=notificacoes, # Enviando as contagens para o HTML
-        total_notificacoes=total_notificacoes
+        notificacoes=notificacoes # Enviando as contagens para o HTML
+        
     )
 
 @app.route("/cadastro", methods=["GET", "POST"])
@@ -292,8 +292,11 @@ def matches():
                 lida=False
             ).count()
             notificacoes[outro_id] = total_nao_lidas
-
-    return render_template("matches.html", matches=lista_matches, notificacoes=notificacoes)
+            total_notificacoes = Mensagem.query.filter_by(
+            para_usuario=session["user_id"],
+            lida=False
+            ).count()
+    return render_template("matches.html", matches=lista_matches, notificacoes=notificacoes,total_notificacoes=total_notificacoes)
 
 # Rota do Chat Consolidada (Garante marcação de lidas e aceita áudio e visualização única)
 @app.route("/chat/<int:id>", methods=["GET", "POST"])
@@ -359,7 +362,7 @@ def chat(id):
 
     usuario_logado = Usuario.query.get(meu_id)
     usuario_chat = Usuario.query.get(id)
-
+    
     return render_template(
         "chat.html",
         mensagens=mensagens,
