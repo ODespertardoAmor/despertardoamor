@@ -549,6 +549,27 @@ def tornar_assinante(usuario_id):
 #usuario.assinante = True
 #usuario.data_assinatura = datetime.utcnow()
 #db.session.commit()
+# ========monitorar ips ====≠=
+@app.route("/lista-usuarios")
+def lista_usuarios():
+    if "user_id" not in session:
+        return redirect("/login")
+    
+    admin = Usuario.query.get(session["user_id"])
+    if not admin or not admin.admin:
+        return "Acesso negado"
+
+    usuarios = Usuario.query.all()
+    html = "<h3>Lista de Usuários</h3><table border='1' cellpadding='8'>"
+    html += "<tr><th>ID</th><th>Nome</th><th>E-mail</th><th>Assinante</th></tr>"
+    
+    for u in usuarios:
+        assinante = "✅ Sim" if u.assinante else "❌ Não"
+        html += f"<tr><td>{u.id}</td><td>{u.nome}</td><td>{u.email}</td><td>{assinante}</td></tr>"
+    
+    html += "</table><br><p>Para tornar assinante: <code>/tornar-assinante/ID_AQUI</code></p>"
+    return html
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
