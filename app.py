@@ -530,6 +530,20 @@ def roleta():
     else:
         # ❌ Não é assinante: manda para a página de pagamento
         return redirect("/assinatura")
+# =========Sumular assinatura=====
+@app.route("/tornar-assinante/<int:usuario_id>")
+def tornar_assinante(usuario_id):
+    # Apenas ADMIN pode usar essa rota
+    admin = Usuario.query.get(session.get("user_id"))
+    if not admin or not admin.admin:
+        return "Acesso negado"
+
+    usuario = Usuario.query.get_or_404(usuario_id)
+    usuario.assinante = True
+    usuario.data_assinatura = datetime.utcnow()
+    db.session.commit()
+
+    return f"✅ Usuário {usuario.nome} agora é assinante! <br><br> <a href='/'>Voltar</a>"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
