@@ -237,37 +237,46 @@
         }
     </script>
     <script>
-<script>
-function atualizarChat() {
-    // Guarda o texto que está sendo digitado
-    const campoMensagem = document.querySelector('input[name="mensagem"], textarea[name="mensagem"]');
-    const textoSalvo = campoMensagem ? campoMensagem.value : "";
+// Atualiza as mensagens sem recarregar a página
+async function atualizarMensagens() {
+    // Guarda o texto que o usuário está escrevendo
+    const campoTexto = document.querySelector('input[name="mensagem"], textarea[name="mensagem"]');
+    const textoSalvo = campoTexto ? campoTexto.value : "";
 
     const chatBox = document.getElementById("chatBox");
     if (!chatBox) return;
 
-    // Verifica se está no final da rolagem
+    // Verifica se o usuário está no final da conversa
     const estaNoFinal = chatBox.scrollHeight - chatBox.scrollTop <= chatBox.clientHeight + 20;
 
-    // Busca as mensagens novas
-    fetch(window.location.href + "?ajax=1")
-        .then(resp => resp.text())
-        .then(novoHtml => {
-            chatBox.innerHTML = novoHtml;
-            
-            // Restaura o texto
-            if (campoMensagem) campoMensagem.value = textoSalvo;
-            
-            // Mantém rolagem no final
-            if (estaNoFinal) {
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }
-        })
-        .catch(erro => console.log("Erro:", erro));
+    try {
+        // Busca a página inteira, mas pega só o conteúdo do chat
+        const resposta = await fetch(window.location.href);
+        const html = await resposta.text();
+        
+        // Cria um elemento temporário para extrair só o chat
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        const novoConteudo = temp.querySelector('#chatBox').innerHTML;
+
+        // Atualiza só a área das mensagens
+        chatBox.innerHTML = novoConteudo;
+
+        // Restaura o texto digitado
+        if (campoTexto) campoTexto.value = textoSalvo;
+
+        // Mantém a rolagem no final
+        if (estaNoFinal) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+    } catch (erro) {
+        console.log("Erro ao atualizar:", erro);
+    }
 }
 
-// Atualiza a cada 3 segundos
-setInterval(atualizarChat, 3000);
+// Executa a cada 3 segundos
+setInterval(atualizarMensagens, 3000);
 
 // Rolagem automática ao abrir
 window.addEventListener("load", () => {
@@ -275,6 +284,7 @@ window.addEventListener("load", () => {
     if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
 });
 </script>
+
 
 
 </body>
