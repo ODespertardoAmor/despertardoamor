@@ -376,7 +376,8 @@
     <p>📍 {{u.cidade}}</p>
     <p>{{u.bio}}</p>
         <!-- ✅ BOTÃO SÓ APARECE PARA O ADMIN (ID = 1) -->
-{% if session['user_id'] == 1 %}
+{% if usuario_logado and usuario_logado.admin %}
+
     <div style="margin-top: 12px;">
         <a href="/verificar/{{u.id}}" class="btn-verificar">
             {% if u.verificado %}
