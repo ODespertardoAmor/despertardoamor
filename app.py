@@ -580,6 +580,8 @@ def alternar_assinatura(usuario_id):
 #usuario.data_assinatura = datetime.utcnow()
 #db.session.commit()
 # ========monitorar ips ====≠=
+
+
 @app.route("/lista-usuarios")
 def lista_usuarios():
     if "user_id" not in session:
@@ -589,9 +591,30 @@ def lista_usuarios():
     if not admin or not admin.admin:
         return "Acesso negado"
 
-    usuarios = Usuario.query.all()
-    html = "<h3>Lista de Usuários</h3><table border='1' cellpadding='8'>"
-    html += "<tr><th>ID</th><th>Nome</th><th>E-mail</th><th>Assinante</th></tr>"
+    # Obtém o termo de pesquisa da URL (se houver)
+    termo_pesquisa = request.args.get("pesquisa", "").strip()
+    
+    # Filtra os usuários se houver um termo digitado
+    if termo_pesquisa:
+        usuarios = Usuario.query.filter(
+            (Usuario.nome.ilike(f"%{termo_pesquisa}%")) | 
+            (Usuario.email.ilike(f"%{termo_pesquisa}%"))
+        ).all()
+    else:
+        usuarios = Usuario.query.all()
+
+    # Adiciona o formulário de pesquisa no início do HTML
+    html = "<h3>Lista de Usuários</h3>"
+    html += f"""
+    <form method="GET" action="/lista-usuarios">
+        <input type="text" name="pesquisa" placeholder="Pesquisar por nome ou e-mail..." 
+               value="{termo_pesquisa}" required>
+        <button type="submit">🔍 Pesquisar</button>
+        <a href="/lista-usuarios">🔄 Limpar</a>
+    </form><br>
+    """
+    html += "<table border='1' cellpadding='8'>"
+    html += "<tr><<th>ID</</th><<th>Nome</</th><<th>E-mail</</th><<th>Assinante</</th></tr>"
     
     for u in usuarios:
         assinante = "✅ Sim" if u.assinante else "❌ Não"
