@@ -177,24 +177,37 @@ def home():
     meu_id = session["user_id"]
     usuario_logado = Usuario.query.get(meu_id)
 
+    # ===== LÓGICA DE PESQUISA =====
     termo_pesquisa = request.args.get("pesquisa", "").strip()
     
     if termo_pesquisa:
-        # Mesma lógica que funciona na /lista-usuarios, só adicionamos o filtro de não ser o próprio usuário
         usuarios = Usuario.query.filter(
             Usuario.id != meu_id,
             (Usuario.nome.ilike(f"%{termo_pesquisa}%")) |
             (Usuario.cidade.ilike(f"%{termo_pesquisa}%")) |
             (Usuario.email.ilike(f"%{termo_pesquisa}%")) |
             (Usuario.bio.ilike(f"%{termo_pesquisa}%")) |
-            # Para idade, usamos cast para transformar em texto e poder usar ilike
             (Usuario.idade.cast(db.String).ilike(f"%{termo_pesquisa}%"))
         ).all()
     else:
         usuarios = Usuario.query.filter(Usuario.id != meu_id).all()
 
-    # ... resto do código (notificacoes e total_notificacoes) permanece igual ...
+    # ===== CÓDIGO DAS NOTIFICAÇÕES =====
+    notificacoes = {}
+    for u in usuarios:
+        total_nao_lidas = Mensagem.query.filter_by(
+            de_usuario=u.id, 
+            para_usuario=meu_id, 
+            lida=False
+        ).count()
+        notificacoes[u.id] = total_nao_lidas
 
+    total_notificacoes = Mensagem.query.filter_by(
+        para_usuario=meu_id,
+        lida=False
+    ).count()
+
+    # ===== RETURN QUE FALTAVA =====
     return render_template(
         "home.html",
         usuarios=usuarios,
@@ -202,6 +215,7 @@ def home():
         notificacoes=notificacoes,
         total_notificacoes=total_notificacoes
     )
+
 
 
 
