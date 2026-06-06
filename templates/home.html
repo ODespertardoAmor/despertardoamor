@@ -427,19 +427,17 @@
             </div>
         </div>
     </div>
-
-    <!-- CONTEÚDO QUE ROLA -->
-    <div class="container">
-        <h1 class="titulo">
-            Pessoas disponíveis
-        </h1>
-
-        <!-- BARRA DE PESQUISA - ADICIONADA AQUI -->
+   <!-- BARRA DE PESQUISA - ADICIONADA AQUI -->
         <form class="form-pesquisa" method="GET" action="{{ request.path }}">
             <input type="text" name="pesquisa" placeholder="Pesquisar por nome, cidade..." value="{{ request.args.get('pesquisa', '') }}" required>
             <button type="submit" class="btn-pesquisar">🔍 Pesquisar</button>
             <a href="{{ request.path }}" class="btn-limpar">🔄 Limpar</a>
         </form>
+    <!-- CONTEÚDO QUE ROLA -->
+    <div class="container">
+        <h1 class="titulo">
+            Pessoas disponíveis
+        </h1>
 
         {% for u in usuarios %}
         <div class="card">
