@@ -169,17 +169,30 @@ def avatar(id):
     db.session.commit()
     return redirect("/")
 
-
 @app.route("/")
 def home():
     if "user_id" not in session:
         return redirect("/login")
 
     meu_id = session["user_id"]
-    usuarios = Usuario.query.filter(Usuario.id != meu_id).all()
     usuario_logado = Usuario.query.get(meu_id)
 
-    # Criamos o dicionário para contar as mensagens não lidas de cada usuário na Home
+    # ===== LÓGICA DE PESQUISA =====
+    termo_pesquisa = request.args.get("pesquisa", "").strip()
+    
+    if termo_pesquisa:
+        usuarios = Usuario.query.filter(
+            Usuario.id != meu_id,
+            (Usuario.nome.ilike(f"%{termo_pesquisa}%")) |
+            (Usuario.cidade.ilike(f"%{termo_pesquisa}%")) |
+            (Usuario.email.ilike(f"%{termo_pesquisa}%")) |
+            (Usuario.bio.ilike(f"%{termo_pesquisa}%")) |
+            (Usuario.idade.cast(db.String).ilike(f"%{termo_pesquisa}%"))
+        ).all()
+    else:
+        usuarios = Usuario.query.filter(Usuario.id != meu_id).all()
+
+    # ===== CÓDIGO DAS NOTIFICAÇÕES =====
     notificacoes = {}
     for u in usuarios:
         total_nao_lidas = Mensagem.query.filter_by(
@@ -189,19 +202,23 @@ def home():
         ).count()
         notificacoes[u.id] = total_nao_lidas
 
-    # ✅ ADICIONE AQUI: Contagem TOTAL de todas as mensagens não lidas
     total_notificacoes = Mensagem.query.filter_by(
         para_usuario=meu_id,
         lida=False
     ).count()
 
+    # ===== RETURN QUE FALTAVA =====
     return render_template(
         "home.html",
         usuarios=usuarios,
         usuario_logado=usuario_logado,
         notificacoes=notificacoes,
-        total_notificacoes=total_notificacoes  # ✅ ADICIONE AQUI TAMBÉM
+        total_notificacoes=total_notificacoes
     )
+
+
+
+
 
 @app.route("/verificar/<int:usuario_id>")
 def verificar_usuario(usuario_id):
@@ -515,7 +532,7 @@ with app.app_context():
 
     if not Usuario.query.filter_by(email="admin@despertardoamor.com").first():
         admin1 = Usuario(
-            nome="Administrador Principal",
+            nome="Suporte",
             email="admin@despertardoamor.com",
             senha=generate_password_hash("Admin156478!"),
             admin=True, verificado=True
@@ -524,7 +541,7 @@ with app.app_context():
 
     if not Usuario.query.filter_by(email="admin2@despertardoamor.com").first():
         admin2 = Usuario(
-            nome="Administrador Secundário",
+            nome="Suporte02",
             email="admin2@despertardoamor.com",
             senha=generate_password_hash("AdminNelma2026!"),
             admin=True, verificado=True
@@ -580,6 +597,8 @@ def alternar_assinatura(usuario_id):
 #usuario.data_assinatura = datetime.utcnow()
 #db.session.commit()
 # ========monitorar ips ====≠=
+
+
 @app.route("/lista-usuarios")
 def lista_usuarios():
     if "user_id" not in session:
@@ -589,9 +608,30 @@ def lista_usuarios():
     if not admin or not admin.admin:
         return "Acesso negado"
 
-    usuarios = Usuario.query.all()
-    html = "<h3>Lista de Usuários</h3><table border='1' cellpadding='8'>"
-    html += "<tr><th>ID</th><th>Nome</th><th>E-mail</th><th>Assinante</th></tr>"
+    # Obtém o termo de pesquisa da URL (se houver)
+    termo_pesquisa = request.args.get("pesquisa", "").strip()
+    
+    # Filtra os usuários se houver um termo digitado
+    if termo_pesquisa:
+        usuarios = Usuario.query.filter(
+            (Usuario.nome.ilike(f"%{termo_pesquisa}%")) | 
+            (Usuario.email.ilike(f"%{termo_pesquisa}%"))
+        ).all()
+    else:
+        usuarios = Usuario.query.all()
+
+    # Adiciona o formulário de pesquisa no início do HTML
+    html = "<h3>Lista de Usuários</h3>"
+    html += f"""
+    <form method="GET" action="/lista-usuarios">
+        <input type="text" name="pesquisa" placeholder="Pesquisar por nome ou e-mail..." 
+               value="{termo_pesquisa}" required>
+        <button type="submit">🔍 Pesquisar</button>
+        <a href="/lista-usuarios">🔄 Limpar</a>
+    </form><br>
+    """
+    html += "<table border='1' cellpadding='8'>"
+    html += "<tr><<th>ID</</th><<th>Nome</</th><<th>E-mail</</th><<th>Assinante</</th></tr>"
     
     for u in usuarios:
         assinante = "✅ Sim" if u.assinante else "❌ Não"
