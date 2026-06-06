@@ -144,7 +144,22 @@
                 <div class="empty">Nenhuma mensagem ainda 💙</div>
             {% endif %}
         </div>
-         
+         <button type="button" id="btnPresentes" class="btn-presente">🎁</button>
+
+<!-- Janela de Presentes -->
+<div id="janelaPresentes" class="janela-presentes" style="display: none;">
+    <h4>Escolha um presente 💝</h4>
+    <div class="lista-presentes">
+        <span class="item-presente" data-valor="🌹">🌹 Rosa</span>
+        <span class="item-presente" data-valor="🍫">🍫 Chocolate</span>
+        <span class="item-presente" data-valor="🧸">🧸 Urso</span>
+        <span class="item-presente" data-valor="💍">💍 Anel</span>
+        <span class="item-presente" data-valor="💐">💐 Buquê</span>
+        <span class="item-presente" data-valor="🍷">🍷 Vinho</span>
+        <span class="item-presente" data-valor="💎">💎 Diamante</span>
+        <span class="item-presente" data-valor="🎀">🎀 Laço</span>
+    </div>
+</div>
         <form method="POST" enctype="multipart/form-data" class="form-area" id="chatForm">
             <input type="text" name="mensagem" id="msgInput" placeholder="Digite uma mensagem" class="msg-input">
             <input type="file" name="foto" class="file-input" accept="image/*">
@@ -163,23 +178,8 @@
             <button type="submit" class="send-btn">Enviar</button>
         </form>
     
-    <!-- Botão de Presentes -->
-<button type="button" id="btnPresentes" class="btn-presente">🎁</button>
 
-<!-- Janela de Presentes -->
-<div id="janelaPresentes" class="janela-presentes" style="display: none;">
-    <h4>Escolha um presente 💝</h4>
-    <div class="lista-presentes">
-        <span class="item-presente" data-valor="🌹">🌹 Rosa</span>
-        <span class="item-presente" data-valor="🍫">🍫 Chocolate</span>
-        <span class="item-presente" data-valor="🧸">🧸 Urso</span>
-        <span class="item-presente" data-valor="💍">💍 Anel</span>
-        <span class="item-presente" data-valor="💐">💐 Buquê</span>
-        <span class="item-presente" data-valor="🍷">🍷 Vinho</span>
-        <span class="item-presente" data-valor="💎">💎 Diamante</span>
-        <span class="item-presente" data-valor="🎀">🎀 Laço</span>
-    </div>
-</div>
+
 </div>
 <style>
 .btn-presente {
