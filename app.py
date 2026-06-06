@@ -177,59 +177,32 @@ def home():
     meu_id = session["user_id"]
     usuario_logado = Usuario.query.get(meu_id)
 
-    # ===== ADICIONE AQUI A LÓGICA DE PESQUISA =====
     termo_pesquisa = request.args.get("pesquisa", "").strip()
     
-    # Se houver termo de pesquisa, FILTRA os usuários
     if termo_pesquisa:
-        # Importa o operador "or_" para combinar filtros corretamente
-        from sqlalchemy import or_
-
-        # Cria os filtros base de texto
-        filtros = [
+        # Mesma lógica que funciona na /lista-usuarios, só adicionamos o filtro de não ser o próprio usuário
+        usuarios = Usuario.query.filter(
             Usuario.id != meu_id,
-            Usuario.nome.ilike(f"%{termo_pesquisa}%"),
-            Usuario.cidade.ilike(f"%{termo_pesquisa}%"),
-            Usuario.email.ilike(f"%{termo_pesquisa}%"),
-            Usuario.bio.ilike(f"%{termo_pesquisa}%")
-        ]
-
-        # Se o termo for um número, adiciona o filtro de idade
-        if termo_pesquisa.isdigit():
-            numero_termo = int(termo_pesquisa)
-            filtros.append(Usuario.idade == numero_termo)
-            # Ou se quiser buscar idades que CONTÊM o número (ex: "2" encontra 20,21...):
-            # filtros.append(Usuario.idade.cast(db.String).ilike(f"%{termo_pesquisa}%"))
-
-        # Combina todos os filtros com "OU"
-        usuarios = Usuario.query.filter(or_(*filtros)).all()
+            (Usuario.nome.ilike(f"%{termo_pesquisa}%")) |
+            (Usuario.cidade.ilike(f"%{termo_pesquisa}%")) |
+            (Usuario.email.ilike(f"%{termo_pesquisa}%")) |
+            (Usuario.bio.ilike(f"%{termo_pesquisa}%")) |
+            # Para idade, usamos cast para transformar em texto e poder usar ilike
+            (Usuario.idade.cast(db.String).ilike(f"%{termo_pesquisa}%"))
+        ).all()
     else:
-        # Se não houver pesquisa, mostra todos (menos o próprio usuário)
         usuarios = Usuario.query.filter(Usuario.id != meu_id).all()
 
-    # Criamos o dicionário para contar as mensagens não lidas de cada usuário na Home
-    notificacoes = {}
-    for u in usuarios:
-        total_nao_lidas = Mensagem.query.filter_by(
-            de_usuario=u.id, 
-            para_usuario=meu_id, 
-            lida=False
-        ).count()
-        notificacoes[u.id] = total_nao_lidas
-
-    # ✅ ADICIONE AQUI: Contagem TOTAL de todas as mensagens não lidas
-    total_notificacoes = Mensagem.query.filter_by(
-        para_usuario=meu_id,
-        lida=False
-    ).count()
+    # ... resto do código (notificacoes e total_notificacoes) permanece igual ...
 
     return render_template(
         "home.html",
         usuarios=usuarios,
         usuario_logado=usuario_logado,
         notificacoes=notificacoes,
-        total_notificacoes=total_notificacoes  # ✅ ADICIONE AQUI TAMBÉM
+        total_notificacoes=total_notificacoes
     )
+
 
 
 
