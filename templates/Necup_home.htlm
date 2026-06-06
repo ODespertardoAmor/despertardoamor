@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D/Amor</title>
+    <meta http-equiv="refresh" content="60">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* TOPO COM CAPA - SEMPRE FIXO */
+        .topo {
+            position: relative;
+            min-height: 320px;
+            background:
+                linear-gradient(rgba(0,0,0,.35), rgba(15,23,42,.95)),
+                url("{{ url_for('static', filename='imagens/capa.png') }}");
+            background-size: cover;
+            background-position: center;
+            padding: 20px;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        /* LOGO */
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 220px;
+            font-size: 34px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 10px rgba(0,0,0,.4);
+        }
+
+        /* PERFIL - SEMPRE FIXO NO CANTO ESQUERDO */
+        .area-perfil {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 180px;
+            z-index: 10;
+        }
+
+        .perfil-info {
+            background: rgba(255,255,255,.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,.15);
+            padding: 12px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .avatar-user {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #38bdf8;
+            box-shadow: 0 0 15px rgba(56,189,248,.4);
+        }
+
+        .nome-user {
+            margin-top: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #38bdf8;
+            text-align: center;
+        }
+
+        /* FORMULÁRIO DE FOTO */
+        .avatar-form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .avatar-form input[type="file"] {
+            width: 100%;
+            background: #1e293b;
+            color: white;
+            border: 1px solid #334155;
+            padding: 8px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        /* BOTÕES */
+        .btn {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            padding: 10px 14px;
+            text-decoration: none;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: .3s;
+            text-align: center;
+            position: relative; /* Para posicionar a notificação dentro */
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59,130,246,.4);
+        }
+        .btn-verificar {
+    display: inline-block;
+    padding: 8px 14px;
+    background: #0095ff;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 13px;
+    transition: 0.3s;
+    border: none;
+}
+
+.btn-verificar:hover {
+    background: #0077cc;
+    transform: translateY(-1px);
+}
+
+
+        /* MENU ABAIXO DO ALTERAR FOTO */
+        .menu-superior {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        /* CONTEÚDO PRINCIPAL - SÓ ESTE ROLA EM QUALQUER TELA */
+        .container {
+            overflow-y: auto;
+            flex: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .titulo {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #38bdf8;
+            font-size: 32px;
+        }
+
+        /* ESTILO DOS CARDS */
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: .3s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,.3);
+            border-color: #38bdf8;
+        }
+
+        .avatar-outro {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #38bdf8;
+            flex-shrink: 0;
+        }
+
+        .info-perfil {
+            flex: 1;
+            text-align: left;
+        }
+
+        .info-perfil h2 {
+            color: #38bdf8;
+            margin-bottom: 8px;
+            font-size: 22px;
+        }
+
+        .info-perfil p {
+            color: #d1d5db;
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+
+        .acoes {
+            display: flex;
+            gap: 12px;
+            min-width: 180px;
+        }
+
+        .acoes .btn {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+        }
+
+        /* NOTIFICAÇÃO CHAT E LOVES */
+        .wrapper-chat {
+            position: relative;
+            flex: 1;
+            display: flex;
+        }
+
+        .wrapper-chat .btn {
+            width: 100%;
+        }
+
+        .badge-notificacao {
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            min-width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2px solid #1e293b;
+            z-index: 10;
+        }
+
+        /* ADAPTAÇÃO PARA CELULAR - PERFIL CONTINUA FIXO */
+        @media(max-width: 767px) {
+            .topo {
+                min-height: 280px;
+                padding: 15px;
+            }
+
+            .logo {
+                left: auto;
+                right: 15px;
+                top: 15px;
+                font-size: 24px;
+            }
+
+            .area-perfil {
+                width: 150px;
+                top: 15px;
+                left: 15px;
+                gap: 8px;
+            }
+
+            .avatar-user {
+                width: 60px;
+                height: 60px;
+            }
+
+            .nome-user {
+                font-size: 13px;
+            }
+
+            .btn {
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+
+            /* Cards ficam em coluna no celular */
+            .card {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+                padding: 20px;
+            }
+
+            .info-perfil {
+                text-align: center;
+            }
+
+            .acoes {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .titulo {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+        }
+    .verificado {
+    color: #0095ff;
+    font-size: 18px;
+    margin-left: 6px;
+    vertical-align: middle;
+    font-weight: bold;
+}
+
+    </style>
+</head>
+<body>
+
+    <div class="topo">
+        <div class="logo">
+            💙 D/Amor
+        </div>
+
+        <!-- ÁREA DO PERFIL FIXA -->
+        <div class="area-perfil">
+            <div class="perfil-info">
+                <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-user">
+                <div class="nome-user">
+                    {{usuario_logado.nome}}
+                </div>
+            </div>
+
+            <form action="/upload_foto" method="POST" enctype="multipart/form-data" class="avatar-form">
+                <input type="file" name="foto" required>
+                <button type="submit" class="btn">Alterar Foto📸</button>
+            </form>
+
+            <!-- BOTÕES ABAIXO -->
+            <div style="position: relative; width: 100%;">
+    <a href="/matches" class="btn" style="width: 100%; display: block; padding: 14px 18px; font-size: 15px;">loves🌹</a>
+    {% if total_notificacoes and total_notificacoes > 0 %}
+        <span class="badge-notificacao">{{ total_notificacoes }}</span>
+    {% endif %}
+</div>
+
+                
+                <a href="/logout" class="btn">Sair🏃</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTEÚDO QUE ROLA -->
+    <div class="container">
+        <h1 class="titulo">
+            Pessoas disponíveis
+        </h1>
+
+        {% for u in usuarios %}
+        <div class="card">
+            <img src="{{ url_for('static', filename='uploads/' + u.foto) }}" class="avatar-outro">
+             <div class="info-perfil">
+    <h2>
+        {{u.nome}}, {{u.idade}}
+        {% if u.verificado %}
+            <span class="verificado" title="Perfil verificado">✅</span>
+        {% endif %}
+    </h2>
+    <p>📍 {{u.cidade}}</p>
+    <p>{{u.bio}}</p>
+                 <!-- Botão Excluir Usuário - só para admin -->
+{% if usuario_logado and usuario_logado.admin %}
+    <div style="margin-top: 12px; display: flex; gap: 10px;">
+        <!-- Botão Verificar que já existe -->
+        <a href="/verificar/{{u.id}}" class="btn-verificar">
+            {% if u.verificado %}❌ Remover Verificação{% else %}✅ Verificar{% endif %}
+        </a>
+
+        <!-- Botão Excluir -->
+        <form action="/excluir-usuario/{{u.id}}" method="POST" onsubmit="return confirm('Tem certeza que deseja EXCLUIR este usuário? Essa ação não pode ser desfeita!');">
+            <button type="submit" class="btn-excluir">
+                🗑️ Excluir
+            </button>
+        </form>
+    </div>
+{% endif %}
+
+
+</div>
+
+            
+
+            <div class="acoes">
+                <a href="/curtir/{{u.id}}" class="btn">Curtir</a>
+                
+                <div class="wrapper-chat">
+                    <a href="/chat/{{u.id}}" class="btn">Chat</a>
+                    
+                    {% if notificacoes and notificacoes[u.id] > 0 %}
+                        <span class="badge-notificacao">{{ notificacoes[u.id] }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</body>
+</html>
