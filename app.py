@@ -186,7 +186,9 @@ def home():
             Usuario.id != meu_id, # Não mostra o próprio usuário
             (Usuario.nome.ilike(f"%{termo_pesquisa}%")) |  # Busca no nome
             (Usuario.cidade.ilike(f"%{termo_pesquisa}%")) | # Busca na cidade
-            (Usuario.email.ilike(f"%{termo_pesquisa}%"))    # Busca no e-mail
+            (Usuario.email.ilike(f"%{termo_pesquisa}%")) |# Busca no e-mail
+            (Usuario.idade.ilike(f"%{termo_pesquisa}%")) | # idade
+            (Usuario.bio.ilike(f"%{termo_pesquisa}%"))  # bio
         ).all()
     else:
         # Se não houver pesquisa, mostra todos (menos o próprio usuário)
@@ -529,7 +531,7 @@ with app.app_context():
 
     if not Usuario.query.filter_by(email="admin@despertardoamor.com").first():
         admin1 = Usuario(
-            nome="Administrador Principal",
+            nome="Suporte",
             email="admin@despertardoamor.com",
             senha=generate_password_hash("Admin156478!"),
             admin=True, verificado=True
@@ -538,7 +540,7 @@ with app.app_context():
 
     if not Usuario.query.filter_by(email="admin2@despertardoamor.com").first():
         admin2 = Usuario(
-            nome="Administrador Secundário",
+            nome="Suporte02",
             email="admin2@despertardoamor.com",
             senha=generate_password_hash("AdminNelma2026!"),
             admin=True, verificado=True
