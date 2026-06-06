@@ -266,16 +266,16 @@ def login():
         return "Login inválido"
 
         if "user_id" not in session:
-        return redirect("/login")
+            return redirect("/login")
 
-    usuario = Usuario.query.get(session["user_id"])
+       #usuario = Usuario.query.get(session["user_id"])
 
     # ✅ Verifica se é assinante
-    if usuario.assinante:
-        return render_template("/login.html")  # Acesso liberado
-    else:
+       if usuario.assinante:
+           return render_template("/login.html")  # Acesso liberado
+       else:
         # ❌ Não é assinante: manda para a página de pagamento
-        return redirect("/assinatura")
+           return redirect("/assinatura")
 
     #return render_template("login.html")
 
