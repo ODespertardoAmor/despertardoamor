@@ -523,7 +523,7 @@ def excluir_usuario(usuario_id):
     return redirect(request.referrer or "/")
 #==========Temporary ======== 
 with app.app_context():
-    #db.drop_all()      # APAGA TUDO
+    db.drop_all()      # APAGA TUDO
     db.create_all()    # CRIA NOVO COM TODOS OS CAMPOS
     
     # Cria os 2 admins automaticamente
