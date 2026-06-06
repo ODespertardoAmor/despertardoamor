@@ -252,32 +252,39 @@ def cadastro():
 
     return render_template("cadastro.html")
 
+#from flask import render_template, request, redirect, session
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
-     # Verifica se está logado
+    # 1. Se for uma requisição POST (usuário tentando logar)
     if request.method == "POST":
         email = request.form["email"]
         senha = request.form["senha"]
         user = Usuario.query.filter_by(email=email).first()
 
+        # Verifica as credenciais
         if user and check_password_hash(user.senha, senha):
             session["user_id"] = user.id
-            return redirect("/")
-        return "Login inválido"
+            
+            # ✅ Login feito com sucesso! Agora verifica a assinatura:
+            if user.assinante:
+                return redirect("/")  # É assinante? Vai para a home (ou página interna)
+            else:
+                return redirect("/assinatura")  # Não é assinante? Vai para vendas
+                
+        return "Login inválido"  # Se errar a senha ou email
 
-        if "user_id" not in session:
-            return redirect("/login")
-
-      #usuario = Usuario.query.get(session["user_id"])
-
-    #   ✅ Verifica se é assinante
-        if usuario.assinante:
-            return render_template("/login.html")  # Acesso liberado
-        else:
-        # ❌ Não é assinante: manda para a página de pagamento
+    # 2. Se for uma requisição GET (acessando a página de login)
+    # Caso ele já esteja logado e tente entrar na página de login, podemos redirecionar direto
+    if "user_id" in session:
+        usuario = Usuario.query.get(session["user_id"])
+        if usuario:
+            if usuario.assinante:
+                return redirect("/")
             return redirect("/assinatura")
 
-    #return render_template("login.html")
+    # Se não estiver logado e for GET, apenas renderiza a página de login
+    return render_template("login.html")
 
 @app.route("/curtir/<int:id>")
 def curtir(id):
