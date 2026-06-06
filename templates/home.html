@@ -312,72 +312,7 @@
             border: 2px solid #1e293b;
             z-index: 10;
         }
-        /*barra de pesquisa fixa*/
-        /* CONTEÚDO PRINCIPAL - AJUSTADO PARA FIXAR A PESQUISA */
-.container {
-    overflow-y: auto;
-    flex: 1;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-    /* Adiciona espaço no topo para a barra fixa */
-    padding-top: 90px; 
-    position: relative;
-}
 
-/* Título ajustado para ficar acima da barra fixa */
-.titulo {
-    text-align: center;
-    color: #38bdf8;
-    font-size: 32px;
-    /* Posiciona o título acima da barra fixa */
-    position: absolute;
-    top: 20px;
-    left: 0;
-    right: 0;
-    margin: 0;
-}
-
-/* ESTILO DA BARRA DE PESQUISA - AGORA FIXA */
-.form-pesquisa {
-    display: flex;
-    gap: 10px;
-    max-width: 600px;
-    margin: 0 auto;
-    align-items: center;
-    /* Faz a barra ficar fixa no topo do container */
-    position: sticky;
-    top: 20px;
-    /* Coloca acima dos cards */
-    z-index: 50;
-    /* Adiciona fundo para cobrir os cards ao rolar */
-    background: rgba(15, 23, 42, 0.95);
-    backdrop-filter: blur(10px);
-    padding: 15px 20px;
-    border-radius: 16px;
-    border: 1px solid rgba(56, 189, 248, 0.2);
-}
-
-/* Ajuste no celular para a barra fixa */
-@media(max-width: 767px) {
-    .container {
-        padding-top: 120px;
-    }
-
-    .titulo {
-        font-size: 24px;
-        top: 15px;
-    }
-
-    .form-pesquisa {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-        max-width: 100%;
-        top: 15px;
-        padding: 12px 15px;
-    }
-}
         /* ADAPTAÇÃO PARA CELULAR - PERFIL CONTINUA FIXO */
         @media(max-width: 767px) {
             .topo {
@@ -481,7 +416,7 @@
 
             <!-- BOTÕES ABAIXO -->
             <div style="position: relative; width: 100%;">
-    <a href="/matches" class="btn" style="width: 100%; display: block; padding: 14px 18px; font-size: 15px;">Pessoas</a>
+    <a href="/matches" class="btn" style="width: 100%; display: block; padding: 14px 18px; font-size: 15px;">loves🌹</a>
     {% if total_notificacoes and total_notificacoes > 0 %}
         <span class="badge-notificacao">{{ total_notificacoes }}</span>
     {% endif %}
@@ -500,12 +435,12 @@
         </h1>
 
         <!-- BARRA DE PESQUISA - ADICIONADA AQUI -->
-     
-<form class="form-pesquisa" method="GET" action="/">
-    <input type="text" name="pesquisa" placeholder="Pesquisar por nome, cidade, idade ou bio..." value="{{ request.args.get('pesquisa', '') }}" required>
-    <button type="submit" class="btn-pesquisar">🔍 Pesquisar</button>
-    <a href="/" class="btn-limpar">🔄 Limpar</a>
-</form>
+        <form class="form-pesquisa" method="GET" action="{{ request.path }}">
+            <input type="text" name="pesquisa" placeholder="Pesquisar por nome, cidade..." value="{{ request.args.get('pesquisa', '') }}" required>
+            <button type="submit" class="btn-pesquisar">🔍 Pesquisar</button>
+            <a href="{{ request.path }}" class="btn-limpar">🔄 Limpar</a>
+        </form>
+
         {% for u in usuarios %}
         <div class="card">
             <img src="{{ url_for('static', filename='uploads/' + u.foto) }}" class="avatar-outro">
