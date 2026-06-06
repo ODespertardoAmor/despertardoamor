@@ -254,6 +254,7 @@ def cadastro():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+     # Verifica se está logado
     if request.method == "POST":
         email = request.form["email"]
         senha = request.form["senha"]
@@ -264,7 +265,19 @@ def login():
             return redirect("/")
         return "Login inválido"
 
-    return render_template("login.html")
+        if "user_id" not in session:
+        return redirect("/login")
+
+    usuario = Usuario.query.get(session["user_id"])
+
+    # ✅ Verifica se é assinante
+    if usuario.assinante:
+        return render_template("/login.html")  # Acesso liberado
+    else:
+        # ❌ Não é assinante: manda para a página de pagamento
+        return redirect("/assinatura")
+
+    #return render_template("login.html")
 
 @app.route("/curtir/<int:id>")
 def curtir(id):
