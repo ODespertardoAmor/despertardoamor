@@ -170,6 +170,63 @@
             font-size: 32px;
         }
 
+        /* ESTILO DA BARRA DE PESQUISA - NOVO */
+        .form-pesquisa {
+            display: flex;
+            gap: 10px;
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+            align-items: center;
+        }
+
+        .form-pesquisa input[type="text"] {
+            flex: 1;
+            padding: 12px 18px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-pesquisa input[type="text"]:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+        }
+
+        .form-pesquisa .btn-pesquisar,
+        .form-pesquisa .btn-limpar {
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .form-pesquisa .btn-pesquisar {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        .form-pesquisa .btn-pesquisar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59,130,246,.4);
+        }
+
+        .form-pesquisa .btn-limpar {
+            background: #1e293b;
+            color: #d1d5db;
+            border: 1px solid #334155;
+        }
+
+        .form-pesquisa .btn-limpar:hover {
+            background: #273449;
+            color: white;
+        }
+
         /* ESTILO DOS CARDS */
         .card {
             background: #1e293b;
@@ -312,6 +369,19 @@
                 font-size: 24px;
                 margin-bottom: 20px;
             }
+
+            /* Ajuste da barra de pesquisa no celular */
+            .form-pesquisa {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+                max-width: 100%;
+            }
+
+            .form-pesquisa .btn-pesquisar,
+            .form-pesquisa .btn-limpar {
+                width: 100%;
+            }
         }
     .verificado {
     color: #0095ff;
@@ -363,6 +433,13 @@
         <h1 class="titulo">
             Pessoas disponíveis
         </h1>
+
+        <!-- BARRA DE PESQUISA - ADICIONADA AQUI -->
+        <form class="form-pesquisa" method="GET" action="{{ request.path }}">
+            <input type="text" name="pesquisa" placeholder="Pesquisar por nome, cidade..." value="{{ request.args.get('pesquisa', '') }}" required>
+            <button type="submit" class="btn-pesquisar">🔍 Pesquisar</button>
+            <a href="{{ request.path }}" class="btn-limpar">🔄 Limpar</a>
+        </form>
 
         {% for u in usuarios %}
         <div class="card">
