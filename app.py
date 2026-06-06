@@ -169,15 +169,28 @@ def avatar(id):
     db.session.commit()
     return redirect("/")
 
-
 @app.route("/")
 def home():
     if "user_id" not in session:
         return redirect("/login")
 
     meu_id = session["user_id"]
-    usuarios = Usuario.query.filter(Usuario.id != meu_id).all()
     usuario_logado = Usuario.query.get(meu_id)
+
+    # ===== ADICIONE AQUI A LÓGICA DE PESQUISA =====
+    termo_pesquisa = request.args.get("pesquisa", "").strip()
+    
+    # Se houver termo de pesquisa, FILTRA os usuários
+    if termo_pesquisa:
+        usuarios = Usuario.query.filter(
+            Usuario.id != meu_id, # Não mostra o próprio usuário
+            (Usuario.nome.ilike(f"%{termo_pesquisa}%")) |  # Busca no nome
+            (Usuario.cidade.ilike(f"%{termo_pesquisa}%")) | # Busca na cidade
+            (Usuario.email.ilike(f"%{termo_pesquisa}%"))    # Busca no e-mail
+        ).all()
+    else:
+        # Se não houver pesquisa, mostra todos (menos o próprio usuário)
+        usuarios = Usuario.query.filter(Usuario.id != meu_id).all()
 
     # Criamos o dicionário para contar as mensagens não lidas de cada usuário na Home
     notificacoes = {}
@@ -202,6 +215,7 @@ def home():
         notificacoes=notificacoes,
         total_notificacoes=total_notificacoes  # ✅ ADICIONE AQUI TAMBÉM
     )
+
 
 @app.route("/verificar/<int:usuario_id>")
 def verificar_usuario(usuario_id):
