@@ -313,26 +313,25 @@
         .wrapper-chat .btn {
             width: 100%;
         }
-    /* BADGE DA FOTO DE PERFIL (SO ESSA VAI SER AJUSTADA) */
-
-.badge-notificacao {
+      /* BADGE DA FOTO DE PERFIL (SO ESSA VAI SER AJUSTADA) */
+.badge-perfil {
     background: #ef4444;
     color: white;
     font-size: 11px;
     font-weight: bold;
     position: absolute;
-    top: 0px; /* Alinha com o topo da foto */
-    right: -3px; /* Desloca um pouco para fora */
-    transform: translateY(8px); /* Desce ela em 8px */
-    min-width: 18px;
-    height: 18px;
+    /* AJUSTE AQUI PARA COLOCAR ONDE QUISER */
+    top: 5px;       /* Desce um pouco do topo da foto */
+    right: -5px;    /* Mantém no canto direito */
+    /* Ou se quiser mais para baixo: top: 10px; */
+    min-width: 20px;
+    height: 20px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 2px solid #0f172a;
 }
-
 
 /* BADGE DOS CARDS (CONTINUA IGUAL ANTES - NÃO MUDA) */
 .badge-notificacao {
@@ -341,8 +340,8 @@
     font-size: 11px;
     font-weight: bold;
     position: absolute;
-    top: -8px;
-    right: -8px;
+    top: 2px;
+    right: -3px;
     min-width: 20px;
     height: 20px;
     border-radius: 50%;
@@ -351,26 +350,26 @@
     justify-content: center;
     border: 2px solid #1e293b;
 }
-    
 
-   .badge-notificacao {
-    background: #ef4444;
-    color: white;
-    font-size: 11px;
-    font-weight: bold;
-    position: absolute;
-    top: 0px; /* Alinha com o topo da foto */
-    right: -3px; /* Desloca um pouco para fora */
-    transform: translateY(8px); /* Desce ela em 8px */
-    min-width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #0f172a;
-}
 
+        
+        .badge-notificacao {
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            min-width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2px solid #1e293b;
+            z-index: 10;
+        }
 
         .verificado {
             color: #0095ff;
@@ -479,14 +478,17 @@
         </div>
 
         <!-- ÁREA DO PERFIL -->
-<div class="area-perfil" style="position: relative;">
-    <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-user">
-    {% if total_notificacoes > 0 %}
-        <!-- BADGE DA FOTO DE PERFIL COM NOME ÚNICO -->
-        <span class="badge-perfil">{{ total_notificacoes }}</span>
-    {% endif %}
-</div>
-
+        <div class="area-perfil">
+            {% if total_notificacoes and total_notificacoes > 0 %}
+                <span class="badge-notificacao">{{ total_notificacoes }}</span>
+            {% endif %}
+            
+            <div class="perfil-info">
+                <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-user">
+                <div class="nome-user">
+                    {{usuario_logado.nome}}
+                </div>
+            </div>
 
             <form action="/upload_foto" method="POST" enctype="multipart/form-data" class="avatar-form">
                 <input type="file" name="foto" required>
@@ -495,18 +497,19 @@
 
             <div class="menu-superior">
                 <a href="/matches" class="btn">Curtidas❤️</a>
-                
                 <a href="/logout" class="btn">Sair🏃</a>
             </div>
         </div>
 
-        <!-- BARRA DE PESQUISA CENTRALIZADA E PEQUENA -->
-        <form class="form-pesquisa" method="GET" action="{{ request.path }}">
-            <input type="text" name="pesquisa" placeholder="Pesquisar..." value="{{ request.args.get('pesquisa', '') }}" required>
-            <button type="submit" class="btn-pesquisar">🔍 Buscar</button>
-            <a href="{{ request.path }}" class="btn-limpar">🔄 Limpar</a>
-        </form>
-    </div>
+        <!-- ÁREA DO PERFIL -->
+<div class="area-perfil" style="position: relative;">
+    <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-user">
+    {% if total_notificacoes > 0 %}
+        <!-- BADGE DA FOTO DE PERFIL COM NOME ÚNICO -->
+        <span class="badge-perfil">{{ total_notificacoes }}</span>
+    {% endif %}
+</div>
+
    
     <!-- CONTEÚDO DOS CARDS -->
     <div class="container">
