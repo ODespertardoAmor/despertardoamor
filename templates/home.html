@@ -314,24 +314,25 @@
             width: 100%;
         }
     /* BADGE DA FOTO DE PERFIL (SO ESSA VAI SER AJUSTADA) */
-.badge-perfil {
+
+.badge-notificacao {
     background: #ef4444;
     color: white;
     font-size: 11px;
     font-weight: bold;
     position: absolute;
-    /* AJUSTE AQUI PARA COLOCAR ONDE QUISER */
-    top: 5px;       /* Desce um pouco do topo da foto */
-    right: -5px;    /* Mantém no canto direito */
-    /* Ou se quiser mais para baixo: top: 10px; */
-    min-width: 20px;
-    height: 20px;
+    top: 0px; /* Alinha com o topo da foto */
+    right: -3px; /* Desloca um pouco para fora */
+    transform: translateY(8px); /* Desce ela em 8px */
+    min-width: 18px;
+    height: 18px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 2px solid #0f172a;
 }
+
 
 /* BADGE DOS CARDS (CONTINUA IGUAL ANTES - NÃO MUDA) */
 .badge-notificacao {
