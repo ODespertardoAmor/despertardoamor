@@ -396,15 +396,22 @@
 <body>
 
     <div class="topo">
+        <!-- BARRA DE PESQUISA - ADICIONADA AQUI -->
+        <form class="form-pesquisa" method="GET" action="{{ request.path }}">
+            <input type="text" name="pesquisa" placeholder="Pesquisar por nome, cidade..." value="{{ request.args.get('pesquisa', '') }}" required>
+            <button type="submit" class="btn-pesquisar">🔍 Pesquisar</button>
+            <a href="{{ request.path }}" class="btn-limpar">🔄 Limpar</a>
+        </form>
         <div class="logo">
             💙 D/Amor
-            {% if total_notificacoes and total_notificacoes > 0 %}
-        <span class="badge-notificacao">{{ total_notificacoes }}</span>
-    {% endif %}
+            
         </div>
 
         <!-- ÁREA DO PERFIL FIXA -->
         <div class="area-perfil">
+            {% if total_notificacoes and total_notificacoes > 0 %}
+        <span class="badge-notificacao">{{ total_notificacoes }}</span>
+    {% endif %}
             <div class="perfil-info">
                 <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-user">
                 <div class="nome-user">
@@ -418,8 +425,8 @@
             </form>
 
             <!-- BOTÕES ABAIXO -->
-            <div style="position: relative; width: 80%;">
-    <a href="/matches" class="btn" style="width: 80%; display: block; padding: 14px 18px; font-size: 15px;">Curtidas❤️</a>
+            <div style="position: relative; width: 100%;">
+    <a href="/matches" class="btn" style="width: 100%; display: block; padding: 14px 18px; font-size: 15px;">Curtidas❤️</a>
     
 </div>
 
@@ -428,12 +435,7 @@
             </div>
         </div>
     </div>
-   <!-- BARRA DE PESQUISA - ADICIONADA AQUI -->
-        <form class="form-pesquisa" method="GET" action="{{ request.path }}">
-            <input type="text" name="pesquisa" placeholder="Pesquisar por nome, cidade..." value="{{ request.args.get('pesquisa', '') }}" required>
-            <button type="submit" class="btn-pesquisar">🔍 Pesquisar</button>
-            <a href="{{ request.path }}" class="btn-limpar">🔄 Limpar</a>
-        </form>
+   
     <!-- CONTEÚDO QUE ROLA -->
     <div class="container">
         <h1 class="titulo">
