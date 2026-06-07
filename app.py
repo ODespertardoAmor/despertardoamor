@@ -553,7 +553,7 @@ with app.app_context():
 #=≠=======Produtos==≠===≠==   
 from datetime import datetime
 
-@app.route("/produto")
+@app.route("/luna")
 def roleta():
     # Verifica se está logado
     if "user_id" not in session:
@@ -563,7 +563,7 @@ def roleta():
 
     # ✅ Verifica se é assinante
     if usuario.assinante:
-        return render_template("/home.html")  # Acesso liberado
+        return render_template("/luna.html")  # Acesso liberado
     else:
         # ❌ Não é assinante: manda para a página de pagamento
         return redirect("/assinatura")
