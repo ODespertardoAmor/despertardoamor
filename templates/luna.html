@@ -132,7 +132,7 @@ button {
 <header>
     <h3>🌙 Luna</h3>
     <div id="avatar">
-        <img id="avatarImg" src="{{ url_for('static', filename='imagens/1771554426131.png') }}" alt="Luna">
+        <img id="avatarImg" src="{{ url_for('static', filename='imagens/luno02.png') }}" alt="Luna">
     </div>
 </header>
 
@@ -146,9 +146,9 @@ button {
 
 <div class="menu">
     <a href="/"><div>🏠<br>Início</div></a>
-    <a href="/perfil"><div>🖼️<br>Foto</div></a>
-    <a href="/chat"><div>💬<br>Chat</div></a>
-    <a href="/curtidas"><div>❤️<br>Curtidas</div></a>
+    <a href="/"><div>🖼️<br>voltar</div></a>
+    <a href="/machets"><div>💬<br>Chat</div></a>
+    <a href="/machets"><div>❤️<br>Curtidas</div></a>
     <a href="/logout"><div>🏃<br>Sair</div></a>
 </div>
 
@@ -159,14 +159,14 @@ button {
 const API = "https://luna-ad4s.onrender.com/chat";
 
 // FLASK: Links dos avatares mapeados pelo url_for do servidor
-const AVATAR_IDLE = "{{ url_for('static', filename='imagens/1771555838106.png') }}";
-const AVATAR_ACTIVE = "{{ url_for('static', filename='imagens/1771554415763.png') }}";
+const AVATAR_IDLE = "{{ url_for('static', filename='imagens/luna01.jpg') }}";
+const AVATAR_ACTIVE = "{{ url_for('static', filename='imagens/luna03.png') }}";
 
 // FLASK: Banco de imagens dinâmicas localizados na pasta static/imagens/
 const imagens = {
-    "joao": "{{ url_for('static', filename='imagens/joao.jpg') }}",
-    "cachorro": "{{ url_for('static', filename='imagens/cachorro.jpg') }}",
-    "gato": "{{ url_for('static', filename='imagens/gato.png') }}"
+    "ajuda": "{{ url_for('static', filename='imagens/ajuda.jpg') }}",
+    "site": "{{ url_for('static', filename='imagens/site.jpg') }}",
+    "obrigad": "{{ url_for('static', filename='imagens/coracao.png') }}"
 };
 
 function removerEmojis(texto) {
