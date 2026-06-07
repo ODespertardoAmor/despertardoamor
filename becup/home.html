@@ -396,12 +396,22 @@
 <body>
 
     <div class="topo">
+        <!-- BARRA DE PESQUISA - ADICIONADA AQUI -->
+        <form class="form-pesquisa" method="GET" action="{{ request.path }}">
+            <input type="text" name="pesquisa" placeholder="Pesquisar por nome, cidade..." value="{{ request.args.get('pesquisa', '') }}" required>
+            <button type="submit" class="btn-pesquisar">🔍 Pesquisar</button>
+            <a href="{{ request.path }}" class="btn-limpar">🔄 Limpar</a>
+        </form>
         <div class="logo">
             💙 D/Amor
+            
         </div>
 
         <!-- ÁREA DO PERFIL FIXA -->
         <div class="area-perfil">
+            {% if total_notificacoes and total_notificacoes > 0 %}
+        <span class="badge-notificacao">{{ total_notificacoes }}</span>
+    {% endif %}
             <div class="perfil-info">
                 <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-user">
                 <div class="nome-user">
@@ -416,10 +426,8 @@
 
             <!-- BOTÕES ABAIXO -->
             <div style="position: relative; width: 100%;">
-    <a href="/matches" class="btn" style="width: 100%; display: block; padding: 14px 18px; font-size: 15px;">loves🌹</a>
-    {% if total_notificacoes and total_notificacoes > 0 %}
-        <span class="badge-notificacao">{{ total_notificacoes }}</span>
-    {% endif %}
+    <a href="/matches" class="btn" style="width: 100%; display: block; padding: 14px 18px; font-size: 15px;">Curtidas❤️</a>
+    
 </div>
 
                 
@@ -427,19 +435,12 @@
             </div>
         </div>
     </div>
-
+   
     <!-- CONTEÚDO QUE ROLA -->
     <div class="container">
         <h1 class="titulo">
             Pessoas disponíveis
         </h1>
-
-        <!-- BARRA DE PESQUISA - ADICIONADA AQUI -->
-        <form class="form-pesquisa" method="GET" action="{{ request.path }}">
-            <input type="text" name="pesquisa" placeholder="Pesquisar por nome, cidade..." value="{{ request.args.get('pesquisa', '') }}" required>
-            <button type="submit" class="btn-pesquisar">🔍 Pesquisar</button>
-            <a href="{{ request.path }}" class="btn-limpar">🔄 Limpar</a>
-        </form>
 
         {% for u in usuarios %}
         <div class="card">
