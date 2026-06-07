@@ -320,7 +320,7 @@
             font-size: 11px;
             font-weight: bold;
             position: absolute;
-            top: 6px;
+            top: 8px;
             right: -8px;
             min-width: 20px;
             height: 20px;
@@ -429,6 +429,19 @@
                 min-width: auto;
             }
         }
+       /* MENU INFERIOR */
+    .menu {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background: rgba(10, 10, 10, 0.95);
+        backdrop-filter: blur(10px);
+        display: flex;
+        justify-content: space-around;
+        padding: 12px 0;
+        border-top: 1px solid #333;
+        z-index: 100;
+    }
     </style>
 </head>
 <body>
@@ -453,23 +466,24 @@
                 <input type="file" name="foto" required>
                 <button type="submit" class="btn">Alterar Foto📸</button>
             </form>
-
-            <div class="menu-superior">
-                <a href="/matches" class="btn">Curtidas❤️</a>
-                <a href="/logout" class="btn">Sair🏃</a>
-                {% if total_notificacoes and total_notificacoes > 0 %}
-                <span class="badge-notificacao">{{ total_notificacoes }}</span>
-            {% endif %}
-            </div>
-        </div>
-
-        <!-- BARRA DE PESQUISA CENTRALIZADA E PEQUENA -->
+            <!-- BARRA DE PESQUISA CENTRALIZADA E PEQUENA -->
         <form class="form-pesquisa" method="GET" action="{{ request.path }}">
             <input type="text" name="pesquisa" placeholder="Pesquisar..." value="{{ request.args.get('pesquisa', '') }}" required>
             <button type="submit" class="btn-pesquisar">🔍 Buscar</button>
             <a href="{{ request.path }}" class="btn-limpar">🔄 Limpar</a>
         </form>
     </div>
+
+            <div class="menu-superior">
+                
+                
+                {% if total_notificacoes and total_notificacoes > 0 %}
+                <span class="badge-notificacao">{{ total_notificacoes }}</span>
+            {% endif %}
+            </div>
+        </div>
+
+        
    
     <!-- CONTEÚDO DOS CARDS -->
     <div class="container">
@@ -515,6 +529,13 @@
         </div>
         {% endfor %}
     </div>
-
+<!-- MENU INFERIOR -->
+<div class="menu">
+    <a href="/index"><div>🏠<br>Início</div></a>
+    <a href="/slot"><div>🖼️<br>foto</div></a>
+    <a href="/frutas"><div>👩‍❤️‍👨<br>Chat</div></a>
+    <a href="/matches"><div>❤️<br>curtidas</div></a>
+    <a href="/logout"><div>🏃<br>Sair</div></a>
+</div>
 </body>
 </html>
