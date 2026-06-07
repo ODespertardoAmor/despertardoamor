@@ -429,19 +429,21 @@
                 min-width: auto;
             }
         }
-       /* MENU INFERIOR */
-    .menu {
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        background: rgba(10, 10, 10, 0.95);
-        backdrop-filter: blur(10px);
-        display: flex;
-        justify-content: space-around;
-        padding: 12px 0;
-        border-top: 1px solid #333;
-        z-index: 100;
-    }
+       /* MENU INFERIOR FIXO E ALINHADO AO APP */
+.menu {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    max-width: 420px; /* Mantém o mesmo tamanho do app */
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    border-top: 1px solid #334155;
+    z-index: 100;
+    box-sizing: border-box;
+}
     </style>
 </head>
 <body>
