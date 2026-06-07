@@ -161,13 +161,65 @@
             box-shadow: 0 5px 15px rgba(239,68,68,.4);
         }
 
-        /* MENU ABAIXO DO ALTERAR FOTO */
-        .menu-superior {
+        /* BARRA DE PESQUISA MENOR E AJUSTADA */
+        .form-pesquisa {
             display: flex;
-            flex-direction: column;
             gap: 8px;
-            width: 100%;
-            margin-top: 5px;
+            max-width: 500px; /* DIMINUIDO O TAMANHO MÁXIMO */
+            margin: 0 auto 20px auto;
+            align-items: center;
+            position: relative;
+            z-index: 110;
+        }
+
+        .form-pesquisa input[type="text"] {
+            flex: 1;
+            padding: 10px 16px; /* DIMINUIDO O PADDING */
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            color: white;
+            font-size: 13px; /* FONTE MENOR */
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-pesquisa input[type="text"]:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+        }
+
+        .form-pesquisa .btn-pesquisar {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .form-pesquisa .btn-pesquisar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59,130,246,.4);
+        }
+
+        .form-pesquisa .btn-limpar {
+            background: #1e293b;
+            color: #d1d5db;
+            border: 1px solid #334155;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .form-pesquisa .btn-limpar:hover {
+            background: #273449;
+            color: white;
         }
 
         /* CONTEÚDO PRINCIPAL - SÓ ESTE ROLA */
@@ -184,67 +236,6 @@
             margin-bottom: 30px;
             color: #38bdf8;
             font-size: 32px;
-        }
-
-        /* BARRA DE PESQUISA FIXA NO TOPO DO TOPO */
-        .form-pesquisa {
-            display: flex;
-            gap: 10px;
-            max-width: 600px;
-            margin: 0 auto 20px auto;
-            align-items: center;
-            position: relative;
-            z-index: 110;
-        }
-
-        .form-pesquisa input[type="text"] {
-            flex: 1;
-            padding: 12px 18px;
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            color: white;
-            font-size: 14px;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .form-pesquisa input[type="text"]:focus {
-            border-color: #38bdf8;
-            box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
-        }
-
-        .form-pesquisa .btn-pesquisar {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-            padding: 12px 18px;
-            border-radius: 12px;
-            font-size: 14px;
-            border: none;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .form-pesquisa .btn-pesquisar:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59,130,246,.4);
-        }
-
-        .form-pesquisa .btn-limpar {
-            background: #1e293b;
-            color: #d1d5db;
-            border: 1px solid #334155;
-            padding: 12px 18px;
-            border-radius: 12px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: 0.3s;
-            text-decoration: none;
-        }
-
-        .form-pesquisa .btn-limpar:hover {
-            background: #273449;
-            color: white;
         }
 
         /* ESTILO DOS CARDS */
@@ -304,14 +295,30 @@
             padding: 12px;
         }
 
-        /* NOTIFICAÇÃO CHAT E LOVES */
-        .wrapper-chat {
-            position: relative;
-            flex: 1;
-            display: flex;
+        /* BOTÃO CURTIDAS AFINADO */
+        .btn-curtidas {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            transition: .3s;
+            border: none;
+            cursor: pointer;
         }
 
-        .wrapper-chat .btn {
+        .btn-curtidas:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59,130,246,.4);
+        }
+
+        /* NOTIFICAÇÕES */
+        .wrapper-curtidas {
+            position: relative;
             width: 100%;
         }
 
@@ -368,13 +375,12 @@
                 padding: 8px 10px;
             }
 
-            /* Barra de pesquisa em coluna no celular */
+            /* BARRA DE PESQUISA NO CELULAR */
             .form-pesquisa {
                 flex-direction: column;
                 align-items: stretch;
                 gap: 8px;
                 max-width: 100%;
-                margin-bottom: 15px;
             }
 
             .form-pesquisa .btn-pesquisar,
@@ -382,7 +388,6 @@
                 width: 100%;
             }
 
-            /* Cards em coluna */
             .card {
                 flex-direction: column;
                 text-align: center;
@@ -417,16 +422,16 @@
 <body>
 
     <div class="topo">
-        <!-- BARRA DE PESQUISA FIXA NO TOPO (SEMPRE VISÍVEL) -->
+        <!-- BARRA DE PESQUISA MENOR -->
         <form class="form-pesquisa" method="GET" action="/">
-            <input type="text" name="pesquisa" placeholder="Pesquisar por nome, cidade, idade ou bio..." value="{{ request.args.get('pesquisa', '') }}" required>
+            <input type="text" name="pesquisa" placeholder="Pesquisar por nome, cidade..." value="{{ request.args.get('pesquisa', '') }}" required>
             <button type="submit" class="btn-pesquisar">🔍 Pesquisar</button>
             <a href="/" class="btn-limpar">🔄 Limpar</a>
         </form>
 
         <div class="logo">💙 D/Amor</div>
 
-        <!-- ÁREA DO PERFIL FIXA -->
+        <!-- ÁREA DO PERFIL -->
         <div class="area-perfil">
             <div class="perfil-info">
                 <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-user">
@@ -438,9 +443,9 @@
                 <button type="submit" class="btn">Alterar Foto📸</button>
             </form>
 
-            <!-- BOTÕES ABAIXO -->
-            <div style="position: relative; width: 100%;">
-                <a href="/matches" class="btn" style="width: 100%; display: block; padding: 14px 18px; font-size: 15px;">Curtidas❤️</a>
+            <!-- BOTÃO CURTIDAS AFINADO E MENOR -->
+            <div class="wrapper-curtidas">
+                <a href="/matches" class="btn-curtidas">Curtidas❤️</a>
                 {% if total_notificacoes and total_notificacoes > 0 %}
                     <span class="badge-notificacao">{{ total_notificacoes }}</span>
                 {% endif %}
@@ -468,13 +473,12 @@
                 <p>📍 {{u.cidade}}</p>
                 <p>{{u.bio}}</p>
 
-                <!-- Botão Excluir Usuário - só para admin -->
                 {% if usuario_logado and usuario_logado.admin %}
                     <div style="margin-top: 12px; display: flex; gap: 10px;">
                         <a href="/verificar/{{u.id}}" class="btn-verificar">
                             {% if u.verificado %}❌ Remover Verificação{% else %}✅ Verificar{% endif %}
                         </a>
-                        <form action="/excluir-usuario/{{u.id}}" method="POST" onsubmit="return confirm('Tem certeza que deseja EXCLUIR este usuário? Essa ação não pode ser desfeita!');">
+                        <form action="/excluir-usuario/{{u.id}}" method="POST" onsubmit="return confirm('Tem certeza que deseja EXCLUIR este usuário?');">
                             <button type="submit" class="btn-excluir">🗑️ Excluir</button>
                         </form>
                     </div>
