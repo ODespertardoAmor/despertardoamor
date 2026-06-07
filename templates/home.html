@@ -35,17 +35,19 @@
             padding: 20px;
             flex-shrink: 0;
             z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-end;
         }
 
         /* LOGO */
         .logo {
-            position: absolute;
-            top: 20px;
-            left: 220px;
             font-size: 34px;
             font-weight: bold;
             color: white;
             text-shadow: 0 0 10px rgba(0,0,0,.4);
+            margin-bottom: 10px;
         }
 
         /* PERFIL - SEMPRE FIXO NO CANTO ESQUERDO */
@@ -108,7 +110,7 @@
             font-size: 12px;
         }
 
-        /* BOTÕES - PADRONIZADOS */
+        /* BOTÕES */
         .btn {
             background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: white;
@@ -121,6 +123,7 @@
             transition: .3s;
             text-align: center;
             position: relative;
+            display: inline-block;
         }
 
         .btn:hover {
@@ -129,15 +132,16 @@
         }
 
         .btn-verificar {
+            display: inline-block;
+            padding: 8px 14px;
             background: #0095ff;
             color: white;
-            padding: 8px 14px;
             text-decoration: none;
-            border-radius: 12px;
+            border-radius: 8px;
             font-size: 13px;
             transition: 0.3s;
             border: none;
-            display: inline-block;
+            cursor: pointer;
         }
 
         .btn-verificar:hover {
@@ -146,10 +150,12 @@
         }
 
         .btn-excluir {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
+            display: inline-block;
             padding: 8px 14px;
-            border-radius: 12px;
+            background: #ef4444;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
             font-size: 13px;
             transition: 0.3s;
             border: none;
@@ -157,29 +163,58 @@
         }
 
         .btn-excluir:hover {
+            background: #dc2626;
             transform: translateY(-1px);
-            box-shadow: 0 5px 15px rgba(239,68,68,.4);
         }
 
-        /* BARRA DE PESQUISA MENOR E AJUSTADA */
+        /* MENU ABAIXO DO ALTERAR FOTO */
+        .menu-superior {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            margin-top: 5px;
+        }
+        
+        .menu-superior .btn {
+            width: 100%;
+        }
+
+        /* CONTEÚDO PRINCIPAL */
+        .container {
+            overflow-y: auto;
+            flex: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .titulo {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #38bdf8;
+            font-size: 32px;
+        }
+
+        /* ESTILO DA BARRA DE PESQUISA - MENOR E AJUSTADA */
         .form-pesquisa {
             display: flex;
             gap: 8px;
-            max-width: 500px; /* DIMINUIDO O TAMANHO MÁXIMO */
-            margin: 0 auto 20px auto;
+            max-width: 450px; /* Deixou a barra menor */
+            width: 100%;
             align-items: center;
-            position: relative;
-            z-index: 110;
+            margin-top: auto;
         }
 
         .form-pesquisa input[type="text"] {
             flex: 1;
-            padding: 10px 16px; /* DIMINUIDO O PADDING */
+            padding: 10px 14px;
             background: #1e293b;
             border: 1px solid #334155;
             border-radius: 12px;
             color: white;
-            font-size: 13px; /* FONTE MENOR */
+            font-size: 13px;
             outline: none;
             transition: border-color 0.3s;
         }
@@ -189,15 +224,20 @@
             box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
         }
 
-        .form-pesquisa .btn-pesquisar {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-            padding: 10px 16px;
+        .form-pesquisa .btn-pesquisar,
+        .form-pesquisa .btn-limpar {
+            padding: 10px 14px;
             border-radius: 12px;
             font-size: 13px;
             border: none;
             cursor: pointer;
             transition: 0.3s;
+            white-space: nowrap;
+        }
+
+        .form-pesquisa .btn-pesquisar {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
         }
 
         .form-pesquisa .btn-pesquisar:hover {
@@ -209,33 +249,14 @@
             background: #1e293b;
             color: #d1d5db;
             border: 1px solid #334155;
-            padding: 10px 16px;
-            border-radius: 12px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: 0.3s;
             text-decoration: none;
+            display: inline-block;
+            text-align: center;
         }
 
         .form-pesquisa .btn-limpar:hover {
             background: #273449;
             color: white;
-        }
-
-        /* CONTEÚDO PRINCIPAL - SÓ ESTE ROLA */
-        .container {
-            overflow-y: auto;
-            flex: 1;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .titulo {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #38bdf8;
-            font-size: 32px;
         }
 
         /* ESTILO DOS CARDS */
@@ -295,30 +316,14 @@
             padding: 12px;
         }
 
-        /* BOTÃO CURTIDAS AFINADO */
-        .btn-curtidas {
-            width: 100%;
-            padding: 12px 16px;
-            font-size: 14px;
-            font-weight: 500;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-            text-decoration: none;
-            text-align: center;
-            transition: .3s;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-curtidas:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59,130,246,.4);
-        }
-
-        /* NOTIFICAÇÕES */
-        .wrapper-curtidas {
+        /* NOTIFICAÇÃO CHAT E LOVES */
+        .wrapper-chat {
             position: relative;
+            flex: 1;
+            display: flex;
+        }
+
+        .wrapper-chat .btn {
             width: 100%;
         }
 
@@ -340,25 +345,35 @@
             z-index: 10;
         }
 
+        .verificado {
+            color: #0095ff;
+            font-size: 18px;
+            margin-left: 6px;
+            vertical-align: middle;
+            font-weight: bold;
+        }
+
         /* ADAPTAÇÃO PARA CELULAR */
         @media(max-width: 767px) {
             .topo {
-                min-height: 350px;
+                min-height: 280px;
                 padding: 15px;
+                align-items: center;
+                justify-content: center;
             }
 
             .logo {
-                left: auto;
-                right: 15px;
-                top: 80px;
                 font-size: 24px;
+                margin-bottom: 15px;
             }
 
             .area-perfil {
                 width: 150px;
-                top: 80px;
+                top: 15px;
                 left: 15px;
                 gap: 8px;
+                position: relative;
+                margin: 0 auto 15px auto;
             }
 
             .avatar-user {
@@ -373,19 +388,6 @@
             .btn {
                 font-size: 12px;
                 padding: 8px 10px;
-            }
-
-            /* BARRA DE PESQUISA NO CELULAR */
-            .form-pesquisa {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 8px;
-                max-width: 100%;
-            }
-
-            .form-pesquisa .btn-pesquisar,
-            .form-pesquisa .btn-limpar {
-                width: 100%;
             }
 
             .card {
@@ -408,34 +410,44 @@
                 font-size: 24px;
                 margin-bottom: 20px;
             }
-        }
 
-        .verificado {
-            color: #0095ff;
-            font-size: 18px;
-            margin-left: 6px;
-            vertical-align: middle;
-            font-weight: bold;
+            .form-pesquisa {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+                max-width: 100%;
+            }
+
+            .form-pesquisa .btn-pesquisar,
+            .form-pesquisa .btn-limpar {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 
     <div class="topo">
-        <!-- BARRA DE PESQUISA MENOR -->
-        <form class="form-pesquisa" method="GET" action="/">
+        <div class="logo">
+            💙 D/Amor
+        </div>
+
+        <form class="form-pesquisa" method="GET" action="{{ request.path }}">
             <input type="text" name="pesquisa" placeholder="Pesquisar por nome, cidade..." value="{{ request.args.get('pesquisa', '') }}" required>
             <button type="submit" class="btn-pesquisar">🔍 Pesquisar</button>
-            <a href="/" class="btn-limpar">🔄 Limpar</a>
+            <a href="{{ request.path }}" class="btn-limpar">🔄 Limpar</a>
         </form>
 
-        <div class="logo">💙 D/Amor</div>
-
-        <!-- ÁREA DO PERFIL -->
         <div class="area-perfil">
+            {% if total_notificacoes and total_notificacoes > 0 %}
+                <span class="badge-notificacao">{{ total_notificacoes }}</span>
+            {% endif %}
+            
             <div class="perfil-info">
                 <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-user">
-                <div class="nome-user">{{usuario_logado.nome}}</div>
+                <div class="nome-user">
+                    {{usuario_logado.nome}}
+                </div>
             </div>
 
             <form action="/upload_foto" method="POST" enctype="multipart/form-data" class="avatar-form">
@@ -443,26 +455,19 @@
                 <button type="submit" class="btn">Alterar Foto📸</button>
             </form>
 
-            <!-- BOTÃO CURTIDAS AFINADO E MENOR -->
-            <div class="wrapper-curtidas">
-                <a href="/matches" class="btn-curtidas">Curtidas❤️</a>
-                {% if total_notificacoes and total_notificacoes > 0 %}
-                    <span class="badge-notificacao">{{ total_notificacoes }}</span>
-                {% endif %}
+            <div class="menu-superior">
+                <a href="/matches" class="btn">Curtidas❤️</a>
+                <a href="/logout" class="btn">Sair🏃</a>
             </div>
-
-            <a href="/logout" class="btn">Sair🏃</a>
         </div>
     </div>
-
-    <!-- CONTEÚDO QUE ROLA -->
+   
     <div class="container">
         <h1 class="titulo">Pessoas disponíveis</h1>
 
         {% for u in usuarios %}
         <div class="card">
             <img src="{{ url_for('static', filename='uploads/' + u.foto) }}" class="avatar-outro">
-            
             <div class="info-perfil">
                 <h2>
                     {{u.nome}}, {{u.idade}}
@@ -472,14 +477,17 @@
                 </h2>
                 <p>📍 {{u.cidade}}</p>
                 <p>{{u.bio}}</p>
-
+                
                 {% if usuario_logado and usuario_logado.admin %}
                     <div style="margin-top: 12px; display: flex; gap: 10px;">
                         <a href="/verificar/{{u.id}}" class="btn-verificar">
                             {% if u.verificado %}❌ Remover Verificação{% else %}✅ Verificar{% endif %}
                         </a>
-                        <form action="/excluir-usuario/{{u.id}}" method="POST" onsubmit="return confirm('Tem certeza que deseja EXCLUIR este usuário?');">
-                            <button type="submit" class="btn-excluir">🗑️ Excluir</button>
+
+                        <form action="/excluir-usuario/{{u.id}}" method="POST" onsubmit="return confirm('Tem certeza que deseja EXCLUIR este usuário? Essa ação não pode ser desfeita!');">
+                            <button type="submit" class="btn-excluir">
+                                🗑️ Excluir
+                            </button>
                         </form>
                     </div>
                 {% endif %}
@@ -487,6 +495,7 @@
 
             <div class="acoes">
                 <a href="/curtir/{{u.id}}" class="btn">Curtir</a>
+                
                 <div class="wrapper-chat">
                     <a href="/chat/{{u.id}}" class="btn">Chat</a>
                     {% if notificacoes and notificacoes[u.id] > 0 %}
