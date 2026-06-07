@@ -190,18 +190,11 @@
             width: 100%;
         }
 
-        .titulo {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #38bdf8;
-            font-size: 32px;
-        }
-
-        /* ESTILO DA BARRA DE PESQUISA */
+        /* BARRA DE PESQUISA SUPER REDUZIDA */
         .form-pesquisa {
             display: flex;
-            gap: 8px;
-            max-width: 450px;
+            gap: 6px;
+            max-width: 320px; /* Reduzida drasticamente de 450px para 320px */
             width: 100%;
             align-items: center;
             margin-top: auto;
@@ -209,12 +202,12 @@
 
         .form-pesquisa input[type="text"] {
             flex: 1;
-            padding: 10px 14px;
+            padding: 8px 12px; /* Padding menor para reduzir altura */
             background: #1e293b;
             border: 1px solid #334155;
-            border-radius: 12px;
+            border-radius: 10px;
             color: white;
-            font-size: 13px;
+            font-size: 12px;
             outline: none;
             transition: border-color 0.3s;
         }
@@ -226,9 +219,9 @@
 
         .form-pesquisa .btn-pesquisar,
         .form-pesquisa .btn-limpar {
-            padding: 10px 14px;
-            border-radius: 12px;
-            font-size: 13px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 12px;
             border: none;
             cursor: pointer;
             transition: 0.3s;
@@ -348,12 +341,10 @@
             font-weight: bold;
         }
 
-        /* =======================================================
-           MUDANÇAS CRUTIAIS DE ADAPTAÇÃO PARA CELULAR (RESPONSIVO)
-           ======================================================= */
+        /* ADAPTAÇÃO PARA CELULAR */
         @media(max-width: 767px) {
             body {
-                overflow-y: auto; /* Permite rolagem geral se necessário */
+                overflow-y: auto;
             }
 
             .topo {
@@ -370,7 +361,6 @@
                 align-self: center;
             }
 
-            /* Transforma o perfil fixo em um bloco normal centralizado no celular */
             .area-perfil {
                 position: static; 
                 width: 100%;
@@ -379,7 +369,7 @@
             }
 
             .perfil-info {
-                flex-direction: row; /* Foto ao lado do nome economiza espaço */
+                flex-direction: row; 
                 justify-content: center;
                 gap: 15px;
                 padding: 10px;
@@ -395,7 +385,6 @@
                 font-size: 15px;
             }
 
-            /* Deixa os botões lado a lado no celular para não virar uma lista gigante */
             .menu-superior {
                 flex-direction: row;
                 gap: 10px;
@@ -406,18 +395,17 @@
                 padding: 10px;
             }
 
-            /* Barra de pesquisa expande no mobile mas respeita as margens */
+            /* Mantém a barra pequena também no mobile */
             .form-pesquisa {
                 margin-top: 5px;
-                max-width: 100%;
+                max-width: 280px; 
                 flex-direction: row; 
             }
 
             .form-pesquisa input[type="text"] {
-                padding: 10px;
+                padding: 8px 10px;
             }
 
-            /* Cards empilhados perfeitamente */
             .card {
                 flex-direction: column;
                 text-align: center;
@@ -433,11 +421,6 @@
                 width: 100%;
                 min-width: auto;
             }
-
-            .titulo {
-                font-size: 24px;
-                margin-bottom: 20px;
-            }
         }
     </style>
 </head>
@@ -448,6 +431,7 @@
             💙 D/Amor
         </div>
 
+        <!-- ÁREA DO PERFIL -->
         <div class="area-perfil">
             {% if total_notificacoes and total_notificacoes > 0 %}
                 <span class="badge-notificacao">{{ total_notificacoes }}</span>
@@ -471,15 +455,16 @@
             </div>
         </div>
 
+        <!-- BARRA DE PESQUISA SUPER REDUZIDA -->
         <form class="form-pesquisa" method="GET" action="{{ request.path }}">
-            <input type="text" name="pesquisa" placeholder="Pesquisar por nome, cidade..." value="{{ request.args.get('pesquisa', '') }}" required>
+            <input type="text" name="pesquisa" placeholder="Pesquisar..." value="{{ request.args.get('pesquisa', '') }}" required>
             <button type="submit" class="btn-pesquisar">🔍 Buscar</button>
             <a href="{{ request.path }}" class="btn-limpar">🔄 Limpar</a>
         </form>
     </div>
    
+    <!-- CONTEÚDO DOS CARDS (SEM O TÍTULO ANTERIOR) -->
     <div class="container">
-        <h1 class="titulo">Pessoas disponíveis</h1>
 
         {% for u in usuarios %}
         <div class="card">
