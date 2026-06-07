@@ -440,9 +440,7 @@
 
         <!-- ÁREA DO PERFIL -->
         <div class="area-perfil">
-            {% if total_notificacoes and total_notificacoes > 0 %}
-                <span class="badge-notificacao">{{ total_notificacoes }}</span>
-            {% endif %}
+            
             
             <div class="perfil-info">
                 <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-user">
@@ -459,6 +457,9 @@
             <div class="menu-superior">
                 <a href="/matches" class="btn">Curtidas❤️</a>
                 <a href="/logout" class="btn">Sair🏃</a>
+                {% if total_notificacoes and total_notificacoes > 0 %}
+                <span class="badge-notificacao">{{ total_notificacoes }}</span>
+            {% endif %}
             </div>
         </div>
 
