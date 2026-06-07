@@ -1,126 +1,435 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Diamante Tropical - Diversão Online</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D/Amor</title>
+    <meta http-equiv="refresh" content="60">
 
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Segoe UI', Arial, sans-serif;
-    }
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-        background: #0a0a0a;
-        color: white;
-        padding-bottom: 80px;
-    }
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
 
-    /* TOPO */
-    .header {
-        background: linear-gradient(180deg, #000, #111);
-        padding: 15px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 2px solid #ff7a00;
-    }
+        /* TOPO COM CAPA - SEMPRE FIXO */
+        .topo {
+            position: relative;
+            min-height: 320px;
+            background:
+                linear-gradient(rgba(0,0,0,.35), rgba(15,23,42,.95)),
+                url("{{ url_for('static', filename='imagens/capa.png') }}");
+            background-size: cover;
+            background-position: center;
+            padding: 20px;
+            flex-shrink: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
 
-    /* ANIMAÇÃO PISCANTE DO LOGO */
-    .logo {
-        font-size: 22px;
-        font-weight: 900;
-        text-transform: uppercase;
-        color: #ff7a00;
-        text-shadow: 0 0 5px #ff7a00;
-        animation: piscar 1.5s infinite alternate;
-    }
+        /* LOGO */
+        .logo {
+            font-size: 34px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 10px rgba(0,0,0,.4);
+            margin-bottom: 10px;
+        }
 
-    @keyframes piscar {
-        0% { opacity: 1; text-shadow: 0 0 20px #ff7a00, 0 0 30px #ffea00; }
-        50% { opacity: 0.7; text-shadow: 0 0 5px #ff7a00; }
-        100% { opacity: 1; text-shadow: 0 0 20px #ff7a00, 0 0 40px #ffea00; }
-    }
+        /* PERFIL - SEMPRE FIXO NO CANTO ESQUERDO (PC) */
+        .area-perfil {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 180px;
+            z-index: 10;
+        }
 
-    .login {
-        background: linear-gradient(to bottom, #ff9d00, #ff7a00);
-        padding: 8px 18px;
-        border-radius: 20px;
-        color: white;
-        font-weight: bold;
-        text-decoration: none;
-        box-shadow: 0 0 10px rgba(255, 122, 0, 0.5);
-    }
+        .perfil-info {
+            background: rgba(255,255,255,.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,.15);
+            padding: 12px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
 
-    /* BANNER COM TRANSIÇÃO */
-    .banner {
-        width: 100%;
-        padding: 10px;
-        height: 200px;
-        overflow: hidden;
-    }
+        .avatar-user {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #38bdf8;
+            box-shadow: 0 0 15px rgba(56,189,248,.4);
+        }
 
-    .banner img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 15px;
-        border: 1px solid #333;
-        transition: opacity 0.5s ease-in-out;
-    }
+        .nome-user {
+            margin-top: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #38bdf8;
+            text-align: center;
+        }
 
-    /* TITULO */
-    .titulo {
-        padding: 15px;
-        font-size: 18px;
-        font-weight: bold;
-        color: #ffea00;
-        display: flex;
-        align-items: center;
-    }
+        /* FORMULÁRIO DE FOTO */
+        .avatar-form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
 
-    /* GRID DE JOGOS */
-    .jogos {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 15px;
-        padding: 10px;
-    }
+        .avatar-form input[type="file"] {
+            width: 100%;
+            background: #1e293b;
+            color: white;
+            border: 1px solid #334155;
+            padding: 8px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
 
-    .card {
-        position: relative;
-        overflow: hidden;
-        border-radius: 12px;
-        border: 1px solid #222;
-        background: #151515;
-    }
+        /* BOTÕES */
+        .btn {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            padding: 10px 14px;
+            text-decoration: none;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: .3s;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+        }
 
-    .card img {
-        width: 100%;
-        display: block;
-        transition: 0.4s;
-    }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59,130,246,.4);
+        }
 
-    .card:hover img {
-        transform: scale(1.15);
-        filter: brightness(1.2);
-    }
+        .btn-verificar {
+            display: inline-block;
+            padding: 8px 14px;
+            background: #0095ff;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 13px;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+        }
 
-    .nome {
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        padding: 8px;
-        font-size: 12px;
-        text-align: center;
-        font-weight: bold;
-    }
+        .btn-verificar:hover {
+            background: #0077cc;
+            transform: translateY(-1px);
+        }
 
-    /* MENU INFERIOR */
+        .btn-excluir {
+            display: inline-block;
+            padding: 8px 14px;
+            background: #ef4444;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 13px;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-excluir:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        /* MENU ABAIXO DO ALTERAR FOTO */
+        .menu-superior {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            margin-top: 5px;
+        }
+        
+        .menu-superior .btn {
+            width: 100%;
+        }
+
+        /* CONTEÚDO PRINCIPAL */
+        .container {
+            overflow-y: auto;
+            flex: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+
+        /* BARRA DE PESQUISA COMPACTA */
+        .form-pesquisa {
+            display: flex;
+            gap: 6px;
+            max-width: 320px;
+            width: 100%;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .form-pesquisa input[type="text"] {
+            flex: 1;
+            padding: 8px 12px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            color: white;
+            font-size: 12px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-pesquisa input[type="text"]:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+        }
+
+        .form-pesquisa .btn-pesquisar,
+        .form-pesquisa .btn-limpar {
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+
+        .form-pesquisa .btn-pesquisar {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        .form-pesquisa .btn-pesquisar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59,130,246,.4);
+        }
+
+        .form-pesquisa .btn-limpar {
+            background: #1e293b;
+            color: #d1d5db;
+            border: 1px solid #334155;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        /* ESTILO DOS CARDS */
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: .3s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,.3);
+            border-color: #38bdf8;
+        }
+
+        .avatar-outro {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #38bdf8;
+            flex-shrink: 0;
+        }
+
+        .info-perfil {
+            flex: 1;
+            text-align: left;
+        }
+
+        .info-perfil h2 {
+            color: #38bdf8;
+            margin-bottom: 8px;
+            font-size: 22px;
+        }
+
+        .info-perfil p {
+            color: #d1d5db;
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+
+        .acoes {
+            display: flex;
+            gap: 12px;
+            min-width: 180px;
+        }
+
+        .acoes .btn {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+        }
+
+        .wrapper-chat {
+            position: relative;
+            flex: 1;
+            display: flex;
+        }
+
+        .wrapper-chat .btn {
+            width: 100%;
+        }
+
+        .badge-notificacao {
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            position: absolute;
+            top: 6px;
+            right: -8px;
+            min-width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2px solid #1e293b;
+            z-index: 10;
+        }
+
+        .verificado {
+            color: #0095ff;
+            font-size: 18px;
+            margin-left: 6px;
+            vertical-align: middle;
+            font-weight: bold;
+        }
+
+        /* =======================================================
+           CORREÇÃO DE ALINHAMENTO E TAMANHOS PARA CELULAR
+           ======================================================= */
+        @media(max-width: 767px) {
+            body {
+                overflow-y: auto;
+            }
+
+            .topo {
+                min-height: auto;
+                padding: 20px 15px;
+                align-items: center; /* Centraliza tudo horizontalmente no topo */
+                justify-content: flex-start;
+                gap: 15px;
+            }
+
+            .logo {
+                font-size: 28px;
+                margin-bottom: 5px;
+                align-self: center;
+            }
+
+            /* Garante que a área do perfil ocupe o centro sem esmagar */
+            .area-perfil {
+                position: static; 
+                width: 100%;
+                max-width: 320px;
+                gap: 12px;
+                align-items: center;
+            }
+
+            /* Força os dados a ficarem em coluna, mantendo a foto grande */
+            .perfil-info {
+                flex-direction: column; 
+                justify-content: center;
+                padding: 12px;
+                width: 100%;
+            }
+
+            /* Mantém o avatar do usuário com tamanho de destaque no mobile */
+            .avatar-user {
+                width: 75px; 
+                height: 75px;
+            }
+
+            .nome-user {
+                margin-top: 6px;
+                font-size: 14px;
+            }
+
+            /* Deixa os botões organizados lado a lado de forma simétrica */
+            .menu-superior {
+                flex-direction: row;
+                gap: 10px;
+                width: 100%;
+            }
+
+            .menu-superior .btn {
+                flex: 1;
+            }
+
+            /* Centraliza perfeitamente a barra de pesquisa no mobile */
+            .form-pesquisa {
+                margin: 5px auto 0 auto;
+                max-width: 300px; 
+                flex-direction: row; 
+                justify-content: center;
+            }
+
+            .form-pesquisa input[type="text"] {
+                padding: 8px 12px;
+            }
+
+            .card {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+                padding: 20px;
+            }
+
+            .info-perfil {
+                text-align: center;
+            }
+
+            .acoes {
+                width: 100%;
+                min-width: auto;
+            }
+        }
+       /* MENU INFERIOR */
     .menu {
         position: fixed;
         bottom: 0;
@@ -133,72 +442,92 @@
         border-top: 1px solid #333;
         z-index: 100;
     }
-
-    .menu a { text-decoration: none; }
-
-    .menu div {
-        text-align: center;
-        font-size: 11px;
-        color: #888;
-    }
-
-    .menu div:hover { color: #ff7a00; }
-
-    @media(max-width:700px){
-        .jogos { grid-template-columns: repeat(2, 1fr); }
-        .logo { font-size: 18px; }
-    }
-</style>
+    </style>
 </head>
-
 <body>
 
-<div class="header">
-    <div class="logo" id="logo">DIAMANTE TROPICAL</div>
-    <a href="/admin" class="login">LOGIN</a>
-</div>
-
-<!-- BANNER DINÂMICO -->
-<div class="banner">
-    <img id="bannerImg" src="/static/banner.jpg" alt="Banner">
-</div>
-
-<div class="titulo">🔥 JOGOS EM ALTA</div>
-
-<div class="jogos">
-    <!-- Jogo 1 -->
-    <a href="/slot">
-        <div class="card">
-            <img src="/static/img/Jogo1.jpg">
-            <div class="nome">Sloty Clássico</div>
+    <div class="topo">
+        <div class="logo">
+            💙 D/Amor
         </div>
-    </a>
 
-    <!-- Jogo 2 -->
-    <a href="/frutas">
-        <div class="card">
-            <img src="/static/img/jogo2.jpg">
-            <div class="nome">Fruit Slot</div>
+        <!-- ÁREA DO PERFIL -->
+        <div class="area-perfil">
+            
+            
+            <div class="perfil-info">
+                <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-user">
+                <div class="nome-user">
+                    {{usuario_logado.nome}}
+                </div>
+            </div>
+
+            <form action="/upload_foto" method="POST" enctype="multipart/form-data" class="avatar-form">
+                <input type="file" name="foto" required>
+                <button type="submit" class="btn">Alterar Foto📸</button>
+            </form>
+
+            <div class="menu-superior">
+                <a href="/matches" class="btn">Curtidas❤️</a>
+                <a href="/logout" class="btn">Sair🏃</a>
+                {% if total_notificacoes and total_notificacoes > 0 %}
+                <span class="badge-notificacao">{{ total_notificacoes }}</span>
+            {% endif %}
+            </div>
         </div>
-    </a>
 
-    <!-- Jogo 3 -->
-    <a href="/diamantino">
+        <!-- BARRA DE PESQUISA CENTRALIZADA E PEQUENA -->
+        <form class="form-pesquisa" method="GET" action="{{ request.path }}">
+            <input type="text" name="pesquisa" placeholder="Pesquisar..." value="{{ request.args.get('pesquisa', '') }}" required>
+            <button type="submit" class="btn-pesquisar">🔍 Buscar</button>
+            <a href="{{ request.path }}" class="btn-limpar">🔄 Limpar</a>
+        </form>
+    </div>
+   
+    <!-- CONTEÚDO DOS CARDS -->
+    <div class="container">
+
+        {% for u in usuarios %}
         <div class="card">
-            <img src="/static/img/dq.jpg">
-            <div class="nome">Diamantino</div>
-        </div>
-    </a>
+            <img src="{{ url_for('static', filename='uploads/' + u.foto) }}" class="avatar-outro">
+            <div class="info-perfil">
+                <h2>
+                    {{u.nome}}, {{u.idade}}
+                    {% if u.verificado %}
+                        <span class="verificado" title="Perfil verificado">✅</span>
+                    {% endif %}
+                </h2>
+                <p>📍 {{u.cidade}}</p>
+                <p>{{u.bio}}</p>
+                
+                {% if usuario_logado and usuario_logado.admin %}
+                    <div style="margin-top: 12px; display: flex; gap: 10px; justify-content: center;">
+                        <a href="/verificar/{{u.id}}" class="btn-verificar">
+                            {% if u.verificado %}❌ Desverificar{% else %}✅ Verificar{% endif %}
+                        </a>
 
-    <!-- Jogo 4 -->
-    <a href="/hellow">
-        <div class="card">
-            <img src="/static/slot2/capetinha.png">
-            <div class="nome">Helloween Special</div>
-        </div>
-    </a>
-</div>
+                        <form action="/excluir-usuario/{{u.id}}" method="POST" onsubmit="return confirm('Tem certeza que deseja EXCLUIR este usuário?');">
+                            <button type="submit" class="btn-excluir">
+                                🗑️ Excluir
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
 
+            <div class="acoes">
+                <a href="/curtir/{{u.id}}" class="btn">Curtir</a>
+                
+                <div class="wrapper-chat">
+                    <a href="/chat/{{u.id}}" class="btn">Chat</a>
+                    {% if notificacoes and notificacoes[u.id] > 0 %}
+                        <span class="badge-notificacao">{{ notificacoes[u.id] }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 <!-- MENU INFERIOR -->
 <div class="menu">
     <a href="/index"><div>🏠<br>Início</div></a>
@@ -207,36 +536,5 @@
     <a href="/diamantino"><div>💎<br>Diamante</div></a>
     <a href="/index"><div>👤<br>Perfil</div></a>
 </div>
-
-<script>
-    // LISTA DE IMAGENS PARA O BANNER (Coloque os nomes das fotos que estão na sua pasta static/img)
-    const imagensBanner = [
-        "/static/banner.jpg",
-        "/static/img/jogo5.jpg",
-        "/static/img/jogo6.jpg"
-    ];
-
-    let indexAtual = 0;
-    const bannerElemento = document.getElementById('bannerImg');
-
-    function trocarBanner() {
-        indexAtual++;
-        if (indexAtual >= imagensBanner.length) {
-            indexAtual = 0;
-        }
-        
-        // Efeito suave de troca
-        bannerElemento.style.opacity = 0;
-        
-        setTimeout(() => {
-            bannerElemento.src = imagensBanner[indexAtual];
-            bannerElemento.style.opacity = 1;
-        }, 500);
-    }
-
-    // Troca a imagem a cada 4 segundos
-    setInterval(trocarBanner, 4000);
-</script>
-
 </body>
 </html>
