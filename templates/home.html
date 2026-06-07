@@ -398,6 +398,9 @@
     <div class="topo">
         <div class="logo">
             💙 D/Amor
+            {% if total_notificacoes and total_notificacoes > 0 %}
+        <span class="badge-notificacao">{{ total_notificacoes }}</span>
+    {% endif %}
         </div>
 
         <!-- ÁREA DO PERFIL FIXA -->
@@ -415,11 +418,9 @@
             </form>
 
             <!-- BOTÕES ABAIXO -->
-            <div style="position: relative; width: 100%;">
-    <a href="/matches" class="btn" style="width: 100%; display: block; padding: 14px 18px; font-size: 15px;">loves🌹</a>
-    {% if total_notificacoes and total_notificacoes > 0 %}
-        <span class="badge-notificacao">{{ total_notificacoes }}</span>
-    {% endif %}
+            <div style="position: relative; width: 80%;">
+    <a href="/matches" class="btn" style="width: 80%; display: block; padding: 14px 18px; font-size: 15px;">Curtidas❤️</a>
+    
 </div>
 
                 
