@@ -313,6 +313,44 @@
         .wrapper-chat .btn {
             width: 100%;
         }
+    /* BADGE DA FOTO DE PERFIL (SO ESSA VAI SER AJUSTADA) */
+.badge-perfil {
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    position: absolute;
+    /* AJUSTE AQUI PARA COLOCAR ONDE QUISER */
+    top: 5px;       /* Desce um pouco do topo da foto */
+    right: -5px;    /* Mantém no canto direito */
+    /* Ou se quiser mais para baixo: top: 10px; */
+    min-width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #0f172a;
+}
+
+/* BADGE DOS CARDS (CONTINUA IGUAL ANTES - NÃO MUDA) */
+.badge-notificacao {
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #1e293b;
+}
+    
 
    .badge-notificacao {
     background: #ef4444;
@@ -440,17 +478,14 @@
         </div>
 
         <!-- ÁREA DO PERFIL -->
-        <div class="area-perfil">
-            {% if total_notificacoes and total_notificacoes > 0 %}
-                <span class="badge-notificacao">{{ total_notificacoes }}</span>
-            {% endif %}
-            
-            <div class="perfil-info">
-                <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-user">
-                <div class="nome-user">
-                    {{usuario_logado.nome}}
-                </div>
-            </div>
+<div class="area-perfil" style="position: relative;">
+    <img src="{{ url_for('static', filename='uploads/' + usuario_logado.foto) }}" class="avatar-user">
+    {% if total_notificacoes > 0 %}
+        <!-- BADGE DA FOTO DE PERFIL COM NOME ÚNICO -->
+        <span class="badge-perfil">{{ total_notificacoes }}</span>
+    {% endif %}
+</div>
+
 
             <form action="/upload_foto" method="POST" enctype="multipart/form-data" class="avatar-form">
                 <input type="file" name="foto" required>
