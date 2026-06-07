@@ -23,7 +23,6 @@ body {
     flex-direction: column;
     background: #020617;
     position: relative;
-    /* Evita que o menu inferior cubra o campo de texto */
     padding-bottom: 75px; 
     box-sizing: border-box;
 }
@@ -98,12 +97,11 @@ button {
     font-weight: bold;
 }
 
-/* MENU INFERIOR FIXO E ALINHADO AO APP */
 .menu {
     position: fixed;
     bottom: 0;
     width: 100%;
-    max-width: 420px; /* Mantém o mesmo tamanho do app */
+    max-width: 420px; 
     background: rgba(15, 23, 42, 0.95);
     backdrop-filter: blur(10px);
     display: flex;
@@ -134,7 +132,7 @@ button {
 <header>
     <h3>🌙 Luna</h3>
     <div id="avatar">
-        <img id="avatarImg" src="luna01.jpg" alt="Luna">
+        <img id="avatarImg" src="{{ url_for('static', filename='imagens/1771554426131.png') }}" alt="Luna">
     </div>
 </header>
 
@@ -148,8 +146,8 @@ button {
 
 <div class="menu">
     <a href="/"><div>🏠<br>Início</div></a>
-    <a href="/"><div>🛴<br>voltar</div></a>
-    <a href="/matches"><div>💬<br>Chat</div></a>
+    <a href="/perfil"><div>🖼️<br>Foto</div></a>
+    <a href="/chat"><div>💬<br>Chat</div></a>
     <a href="/curtidas"><div>❤️<br>Curtidas</div></a>
     <a href="/logout"><div>🏃<br>Sair</div></a>
 </div>
@@ -160,21 +158,22 @@ button {
 // API da Luna
 const API = "https://luna-ad4s.onrender.com/chat";
 
-// Avatar
-const AVATAR_IDLE = "luna03.png";
-const AVATAR_ACTIVE = "luna02.png";
+// FLASK: Links dos avatares mapeados pelo url_for do servidor
+const AVATAR_IDLE = "{{ url_for('static', filename='imagens/1771555838106.png') }}";
+const AVATAR_ACTIVE = "{{ url_for('static', filename='imagens/1771554415763.png') }}";
 
-// Palavras-chave para imagens
+// FLASK: Banco de imagens dinâmicas localizados na pasta static/imagens/
 const imagens = {
-    "site": "site.jpg",
-    "ajuda": "ajuda.jpg",
-    "obrigad": "coracao.png"
+    "joao": "{{ url_for('static', filename='imagens/joao.jpg') }}",
+    "cachorro": "{{ url_for('static', filename='imagens/cachorro.jpg') }}",
+    "gato": "{{ url_for('static', filename='imagens/gato.png') }}"
 };
 
 function removerEmojis(texto) {
     return texto.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, "").trim();
 }
 
+// Garante que o sistema reconheça a palavra chave mesmo com acentos diferentes
 function removerAcentos(texto) {
     return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
@@ -259,7 +258,6 @@ function falar(texto) {
     window.speechSynthesis.speak(voz);
 }
 
-// Controla o brilho e a imagem do Avatar
 function setAvatar(ativo) {
     const avatar = document.getElementById("avatar");
     const img = document.getElementById("avatarImg");
@@ -292,8 +290,7 @@ function add(nome, texto, cls, userTexto=null) {
         div.innerHTML = `<b>${nome}:</b> ${texto}`;
     }
 
-    const msg = document.getElementById("messages");
-    box = document.getElementById("messages");
+    const box = document.getElementById("messages");
     box.appendChild(div);
     
     setTimeout(() => {
