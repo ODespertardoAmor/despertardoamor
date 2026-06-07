@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luna Mobile</title>
+
+<style>
+body {
+    margin: 0;
+    background: #0f172a;
+    font-family: Arial, sans-serif;
+    color: white;
+    display: flex;
+    justify-content: center;
+}
+
+#app {
+    width: 100%;
+    max-width: 420px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #020617;
+}
+
+header {
+    text-align: center;
+    padding: 12px;
+}
+
+#avatar {
+    width: 120px;
+    height: 120px;
+    margin: 10px auto;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(167,139,250,0.5);
+    transition: box-shadow 0.3s ease;
+}
+
+#avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.msg {
+    margin: 6px 0;
+    font-size: 14px;
+}
+.user { color: #38bdf8; }
+.luna { color: #a78bfa; }
+
+.msg-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 6px;
+}
+
+#controls {
+    display: flex;
+    gap: 6px;
+    padding: 10px;
+}
+
+input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+}
+
+button {
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+<header>
+    <h3>🌙 Luna</h3>
+    <div id="avatar">
+        <img id="avatarImg" src="1771554426131.png" alt="Luna">
+    </div>
+</header>
+
+<div id="messages"></div>
+
+<div id="controls">
+    <input id="texto" placeholder="Digite ou fale">
+    <button onclick="enviar()">➤</button>
+    <button onclick="ouvir()">🎤</button>
+</div>
+
+</div>
+
+<script>
+// API da Luna
+const API = "https://luna-ad4s.onrender.com/chat";
+
+// Avatar
+const AVATAR_IDLE = "1771555838106.png";
+const AVATAR_ACTIVE = "1771554415763.png";
+
+// Palavras-chave para imagens (adicione mais)
+const imagens = {
+    "joao": "joao.jpg",
+    "cachorro": "cachorro.jpg",
+    "gato": "gato.png"
+};
+
+// =========================
+// FUNÇÃO PARA REMOVER EMOJIS
+// =========================
+function removerEmojis(texto) {
+    return texto.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, "").trim();
+}
+
+// =========================
+// FUNÇÃO PARA REMOVER ACENTOS
+// =========================
+function removerAcentos(texto) {
+    return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+// =========================
+// ENVIAR TEXTO
+// =========================
+function enviar(textoManual = null) {
+    const input = document.getElementById("texto");
+    let textoOriginal = textoManual || input.value.trim();
+    if (!textoOriginal) return;
+
+    add("Você", textoOriginal, "user");
+
+    const textoLimpo = removerEmojis(textoOriginal);
+
+    setAvatar(true);
+
+    fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ texto: textoLimpo })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const resposta = data.resposta || data.response || "🌙 Recebi, mas não sei responder agora.";
+        add("Luna", resposta, "luna", textoOriginal); // passamos o texto original para checar imagem
+        falar(resposta);
+    })
+    .catch(() => {
+        add("Luna", "Erro de conexão 😢", "luna", textoOriginal);
+        setAvatar(false);
+    });
+
+    input.value = "";
+}
+
+// =========================
+// MICROFONE
+// =========================
+function ouvir() {
+    if (!("webkitSpeechRecognition" in window)) {
+        alert("Microfone não suportado");
+        return;
+    }
+
+    const rec = new webkitSpeechRecognition();
+    rec.lang = "pt-BR";
+
+    setAvatar(true);
+    rec.start();
+
+    rec.onresult = e => {
+        const textoFalado = e.results[0][0].transcript;
+        enviar(textoFalado);
+    };
+
+    rec.onerror = () => {
+        setAvatar(false);
+        add("Sistema", "Erro ao ouvir 😢", "luna");
+    };
+}
+
+// =========================
+// VOZ DA LUNA (SEM EMOJI)
+// =========================
+function falar(texto) {
+    if (!("speechSynthesis" in window)) {
+        setAvatar(false);
+        return;
+    }
+
+    const textoLimpo = removerEmojis(texto);
+    if (!textoLimpo) {
+        setAvatar(false);
+        return;
+    }
+
+    const voz = new SpeechSynthesisUtterance(textoLimpo);
+    voz.lang = "pt-BR";
+
+    voz.onstart = () => setAvatar(true);
+    voz.onend = () => setAvatar(false);
+
+    speechSynthesis.speak(voz);
+}
+
+// =========================
+// AVATAR (ESTADOS)
+ // =========================
+function setAvatar(ativo) {
+    const avatar = document.getElementById("avatar");
+    const img = document.getElementById("avatarImg");
+
+    if (ativo) {
+        img.src = AVATAR_ACTIVE;
+        avatar.style.boxShadow = "0 0 35px #a78bfa";
+    } else {
+        img.src = AVATAR_IDLE;
+        avatar.style.boxShadow = "0 0 15px rgba(167,139,250,0.5)";
+    }
+}
+
+// =========================
+// ADD MENSAGEM + IMAGEM
+// =========================
+function add(nome, texto, cls, userTexto=null) {
+    const div = document.createElement("div");
+    div.className = "msg " + cls;
+
+    const verificar = removerAcentos(userTexto || texto).toLowerCase();
+
+    let encontrouImagem = false;
+    for (const key in imagens) {
+        if (verificar.includes(removerAcentos(key).toLowerCase())) {
+            div.innerHTML = `<b>${nome}:</b> ${texto}<br><img class="msg-img" src="${imagens[key]}">`;
+            encontrouImagem = true;
+            break;
+        }
+    }
+
+    if (!encontrouImagem) {
+        div.innerHTML = `<b>${nome}:</b> ${texto}`;
+    }
+
+    const msg = document.getElementById("messages");
+    msg.appendChild(div);
+    msg.scrollTop = msg.scrollHeight;
+}
+</script>
+
+</body>
+</html>
