@@ -1,394 +1,242 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-
+<html lang="pt-BR">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diamante Tropical - Diversão Online</title>
 
-    <meta charset="UTF-8">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Arial, sans-serif;
+    }
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    body {
+        background: #0a0a0a;
+        color: white;
+        padding-bottom: 80px;
+    }
 
-    <title>Motorista Uber Clone</title>
+    /* TOPO */
+    .header {
+        background: linear-gradient(180deg, #000, #111);
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #ff7a00;
+    }
 
-    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    /* ANIMAÇÃO PISCANTE DO LOGO */
+    .logo {
+        font-size: 22px;
+        font-weight: 900;
+        text-transform: uppercase;
+        color: #ff7a00;
+        text-shadow: 0 0 5px #ff7a00;
+        animation: piscar 1.5s infinite alternate;
+    }
 
-    <style>
+    @keyframes piscar {
+        0% { opacity: 1; text-shadow: 0 0 20px #ff7a00, 0 0 30px #ffea00; }
+        50% { opacity: 0.7; text-shadow: 0 0 5px #ff7a00; }
+        100% { opacity: 1; text-shadow: 0 0 20px #ff7a00, 0 0 40px #ffea00; }
+    }
 
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:Arial, Helvetica, sans-serif;
-        }
+    .login {
+        background: linear-gradient(to bottom, #ff9d00, #ff7a00);
+        padding: 8px 18px;
+        border-radius: 20px;
+        color: white;
+        font-weight: bold;
+        text-decoration: none;
+        box-shadow: 0 0 10px rgba(255, 122, 0, 0.5);
+    }
 
-        body{
-            background:#111827;
-            color:white;
-        }
+    /* BANNER COM TRANSIÇÃO */
+    .banner {
+        width: 100%;
+        padding: 10px;
+        height: 200px;
+        overflow: hidden;
+    }
 
-        .container{
-            width:100%;
-            min-height:100vh;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            padding:20px;
-        }
+    .banner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 15px;
+        border: 1px solid #333;
+        transition: opacity 0.5s ease-in-out;
+    }
 
-        .card{
-            width:100%;
-            max-width:400px;
-            background:#1f2937;
-            padding:30px;
-            border-radius:20px;
-            box-shadow:0 0 20px rgba(0,0,0,0.5);
-        }
+    /* TITULO */
+    .titulo {
+        padding: 15px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #ffea00;
+        display: flex;
+        align-items: center;
+    }
 
-        h1{
-            margin-bottom:25px;
-            text-align:center;
-            font-size:32px;
-        }
+    /* GRID DE JOGOS */
+    .jogos {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        padding: 10px;
+    }
 
-        input{
-            width:100%;
-            padding:15px;
-            margin-bottom:15px;
-            border:none;
-            border-radius:10px;
-            background:#374151;
-            color:white;
-            font-size:16px;
-        }
+    .card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px;
+        border: 1px solid #222;
+        background: #151515;
+    }
 
-        button{
-            width:100%;
-            padding:15px;
-            border:none;
-            border-radius:10px;
-            background:#10b981;
-            color:white;
-            font-size:16px;
-            font-weight:bold;
-            cursor:pointer;
-            transition:0.3s;
-        }
+    .card img {
+        width: 100%;
+        display: block;
+        transition: 0.4s;
+    }
 
-        button:hover{
-            opacity:0.9;
-        }
+    .card:hover img {
+        transform: scale(1.15);
+        filter: brightness(1.2);
+    }
 
-        .dashboard{
-            display:none;
-        }
+    .nome {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        padding: 8px;
+        font-size: 12px;
+        text-align: center;
+        font-weight: bold;
+    }
 
-        .online{
-            background:#059669;
-            margin-bottom:20px;
-        }
+    /* MENU INFERIOR */
+    .menu {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background: rgba(10, 10, 10, 0.95);
+        backdrop-filter: blur(10px);
+        display: flex;
+        justify-content: space-around;
+        padding: 12px 0;
+        border-top: 1px solid #333;
+        z-index: 100;
+    }
 
-        .corrida{
-            background:#374151;
-            padding:20px;
-            border-radius:15px;
-            margin-top:20px;
-        }
+    .menu a { text-decoration: none; }
 
-        .corrida h2{
-            margin-bottom:15px;
-        }
+    .menu div {
+        text-align: center;
+        font-size: 11px;
+        color: #888;
+    }
 
-        .corrida p{
-            margin-bottom:10px;
-        }
+    .menu div:hover { color: #ff7a00; }
 
-        .aceitar{
-            margin-top:15px;
-            background:#22c55e;
-        }
-
-        .status{
-            text-align:center;
-            margin-top:20px;
-            color:#9ca3af;
-        }
-
-    </style>
-
+    @media(max-width:700px){
+        .jogos { grid-template-columns: repeat(2, 1fr); }
+        .logo { font-size: 18px; }
+    }
+</style>
 </head>
 
 <body>
 
-    <div class="container">
+<div class="header">
+    <div class="logo" id="logo">DIAMANTE TROPICAL</div>
+    <a href="/admin" class="login">LOGIN</a>
+</div>
 
-        <!-- LOGIN -->
+<!-- BANNER DINÂMICO -->
+<div class="banner">
+    <img id="bannerImg" src="/static/banner.jpg" alt="Banner">
+</div>
 
-        <div class="card" id="loginCard">
+<div class="titulo">🔥 JOGOS EM ALTA</div>
 
-            <h1>Motorista</h1>
-
-            <input
-                type="email"
-                id="email"
-                placeholder="Email"
-            >
-
-            <input
-                type="password"
-                id="senha"
-                placeholder="Senha"
-            >
-
-            <button onclick="login()">
-                Entrar
-            </button>
-
-            <p class="status" id="loginStatus"></p>
-
+<div class="jogos">
+    <!-- Jogo 1 -->
+    <a href="/slot">
+        <div class="card">
+            <img src="/static/img/Jogo1.jpg">
+            <div class="nome">Sloty Clássico</div>
         </div>
+    </a>
 
-        <!-- DASHBOARD -->
-
-        <div class="card dashboard" id="dashboard">
-
-            <h1>Painel Motorista</h1>
-
-            <button
-                class="online"
-                onclick="ficarOnline()"
-            >
-                FICAR ONLINE
-            </button>
-
-            <div id="corridaArea"></div>
-
+    <!-- Jogo 2 -->
+    <a href="/frutas">
+        <div class="card">
+            <img src="/static/img/jogo2.jpg">
+            <div class="nome">Fruit Slot</div>
         </div>
+    </a>
 
-    </div>
+    <!-- Jogo 3 -->
+    <a href="/diamantino">
+        <div class="card">
+            <img src="/static/img/dq.jpg">
+            <div class="nome">Diamantino</div>
+        </div>
+    </a>
 
-    <script>
+    <!-- Jogo 4 -->
+    <a href="/hellow">
+        <div class="card">
+            <img src="/static/slot2/capetinha.png">
+            <div class="nome">Helloween Special</div>
+        </div>
+    </a>
+</div>
 
-        const API =
-        "http://127.0.0.1:5000"
+<!-- MENU INFERIOR -->
+<div class="menu">
+    <a href="/index"><div>🏠<br>Início</div></a>
+    <a href="/slot"><div>🎃<br>Helloween</div></a>
+    <a href="/frutas"><div>🍎<br>Frut Slot</div></a>
+    <a href="/diamantino"><div>💎<br>Diamante</div></a>
+    <a href="/index"><div>👤<br>Perfil</div></a>
+</div>
 
-        const socket = io(API)
+<script>
+    // LISTA DE IMAGENS PARA O BANNER (Coloque os nomes das fotos que estão na sua pasta static/img)
+    const imagensBanner = [
+        "/static/banner.jpg",
+        "/static/img/jogo5.jpg",
+        "/static/img/jogo6.jpg"
+    ];
 
-        let user = null
+    let indexAtual = 0;
+    const bannerElemento = document.getElementById('bannerImg');
 
-        let corridaAtual = null
-
-        // =========================
-        // LOGIN
-        // =========================
-
-        async function login(){
-
-            const email =
-            document.getElementById(
-                "email"
-            ).value
-
-            const senha =
-            document.getElementById(
-                "senha"
-            ).value
-
-            const status =
-            document.getElementById(
-                "loginStatus"
-            )
-
-            try{
-
-                const response = await fetch(
-
-                    API + "/login",
-
-                    {
-                        method:"POST",
-
-                        headers:{
-                            "Content-Type":
-                            "application/json"
-                        },
-
-                        body: JSON.stringify({
-
-                            email,
-                            senha
-                        })
-                    }
-                )
-
-                const data =
-                await response.json()
-
-                if(data.token){
-
-                    localStorage.setItem(
-                        "token",
-                        data.token
-                    )
-
-                    localStorage.setItem(
-                        "user",
-                        JSON.stringify(data.user)
-                    )
-
-                    user = data.user
-
-                    document.getElementById(
-                        "loginCard"
-                    ).style.display = "none"
-
-                    document.getElementById(
-                        "dashboard"
-                    ).style.display = "block"
-
-                }else{
-
-                    status.innerHTML =
-                    data.erro
-                }
-
-            }catch{
-
-                status.innerHTML =
-                "Erro servidor"
-            }
+    function trocarBanner() {
+        indexAtual++;
+        if (indexAtual >= imagensBanner.length) {
+            indexAtual = 0;
         }
+        
+        // Efeito suave de troca
+        bannerElemento.style.opacity = 0;
+        
+        setTimeout(() => {
+            bannerElemento.src = imagensBanner[indexAtual];
+            bannerElemento.style.opacity = 1;
+        }, 500);
+    }
 
-        // =========================
-        // FICAR ONLINE
-        // =========================
-
-        function ficarOnline(){
-
-            alert("Motorista Online")
-
-            navigator.geolocation.watchPosition(
-
-                (position)=>{
-
-                    socket.emit(
-
-                        "atualizar_localizacao",
-
-                        {
-
-                            motorista_id:user.id,
-
-                            latitude:
-                            position.coords.latitude,
-
-                            longitude:
-                            position.coords.longitude
-                        }
-                    )
-
-                    console.log(
-                        "GPS enviado"
-                    )
-                }
-            )
-        }
-
-        // =========================
-        // RECEBER CORRIDA
-        // =========================
-
-        socket.on(
-
-            "nova_corrida",
-
-            (data)=>{
-
-                corridaAtual = data
-
-                mostrarCorrida(data)
-            }
-        )
-
-        // =========================
-        // MOSTRAR CORRIDA
-        // =========================
-
-        function mostrarCorrida(data){
-
-            const area =
-            document.getElementById(
-                "corridaArea"
-            )
-
-            area.innerHTML = `
-
-                <div class="corrida">
-
-                    <h2>Nova Corrida</h2>
-
-                    <p>
-                        <strong>Origem:</strong>
-                        ${data.origem}
-                    </p>
-
-                    <p>
-                        <strong>Destino:</strong>
-                        ${data.destino}
-                    </p>
-
-                    <p>
-                        <strong>Valor:</strong>
-                        R$ ${data.valor}
-                    </p>
-
-                    <button
-                        class="aceitar"
-                        onclick="aceitarCorrida()"
-                    >
-                        Aceitar Corrida
-                    </button>
-
-                </div>
-            `
-        }
-
-        // =========================
-        // ACEITAR CORRIDA
-        // =========================
-
-        async function aceitarCorrida(){
-
-            const token =
-            localStorage.getItem("token")
-
-            await fetch(
-
-                API +
-
-                "/aceitar_corrida/" +
-
-                corridaAtual.corrida_id,
-
-                {
-
-                    method:"POST",
-
-                    headers:{
-
-                        Authorization:
-                        "Bearer " + token
-                    }
-                }
-            )
-
-            alert("Corrida aceita")
-
-            document.getElementById(
-                "corridaArea"
-            ).innerHTML = ""
-        }
-
-    </script>
+    // Troca a imagem a cada 4 segundos
+    setInterval(trocarBanner, 4000);
+</script>
 
 </body>
-
 </html>
