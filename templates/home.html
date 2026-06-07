@@ -458,6 +458,9 @@
 
             <div class="menu-superior">
                 <a href="/matches" class="btn">Curtidas❤️</a>
+                {% if total_notificacoes and total_notificacoes > 0 %}
+                <span class="badge-notificacao">{{ total_notificacoes }}</span>
+            {% endif %}
                 <a href="/logout" class="btn">Sair🏃</a>
             </div>
         </div>
