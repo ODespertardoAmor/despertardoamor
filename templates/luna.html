@@ -22,6 +22,10 @@ body {
     display: flex;
     flex-direction: column;
     background: #020617;
+    position: relative;
+    /* Evita que o menu inferior cubra o campo de texto */
+    padding-bottom: 75px; 
+    box-sizing: border-box;
 }
 
 header {
@@ -70,6 +74,7 @@ header {
     display: flex;
     gap: 6px;
     padding: 10px;
+    background: #020617;
 }
 
 input {
@@ -78,6 +83,8 @@ input {
     border-radius: 8px;
     border: none;
     font-size: 14px;
+    background: #1e293b;
+    color: white;
 }
 
 button {
@@ -86,6 +93,36 @@ button {
     border: none;
     font-size: 16px;
     cursor: pointer;
+    background: #38bdf8;
+    color: #020617;
+    font-weight: bold;
+}
+
+/* MENU INFERIOR FIXO E ALINHADO AO APP */
+.menu {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    max-width: 420px; /* Mantém o mesmo tamanho do app */
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    border-top: 1px solid #334155;
+    z-index: 100;
+    box-sizing: border-box;
+}
+
+.menu a {
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    font-size: 12px;
+}
+
+.menu div {
+    line-height: 1.4;
 }
 </style>
 </head>
@@ -97,7 +134,7 @@ button {
 <header>
     <h3>🌙 Luna</h3>
     <div id="avatar">
-        <img id="avatarImg" src="1771554426131.png" alt="Luna">
+        <img id="avatarImg" src="luna01.jpg" alt="Luna">
     </div>
 </header>
 
@@ -109,6 +146,14 @@ button {
     <button onclick="ouvir()">🎤</button>
 </div>
 
+<div class="menu">
+    <a href="/"><div>🏠<br>Início</div></a>
+    <a href="/perfil"><div>🖼️<br>Foto</div></a>
+    <a href="/chat"><div>💬<br>Chat</div></a>
+    <a href="/curtidas"><div>❤️<br>Curtidas</div></a>
+    <a href="/logout"><div>🏃<br>Sair</div></a>
+</div>
+
 </div>
 
 <script>
@@ -116,33 +161,24 @@ button {
 const API = "https://luna-ad4s.onrender.com/chat";
 
 // Avatar
-const AVATAR_IDLE = "1771555838106.png";
-const AVATAR_ACTIVE = "1771554415763.png";
+const AVATAR_IDLE = "luna02.png";
+const AVATAR_ACTIVE = "luna03.png";
 
-// Palavras-chave para imagens (adicione mais)
+// Palavras-chave para imagens
 const imagens = {
-    "joao": "joao.jpg",
-    "cachorro": "cachorro.jpg",
-    "gato": "gato.png"
+    "site": "site.jpg",
+    "ajuda": "ajuda.jpg",
+    "obrigad": "coracao.png"
 };
 
-// =========================
-// FUNÇÃO PARA REMOVER EMOJIS
-// =========================
 function removerEmojis(texto) {
     return texto.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, "").trim();
 }
 
-// =========================
-// FUNÇÃO PARA REMOVER ACENTOS
-// =========================
 function removerAcentos(texto) {
     return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-// =========================
-// ENVIAR TEXTO
-// =========================
 function enviar(textoManual = null) {
     const input = document.getElementById("texto");
     let textoOriginal = textoManual || input.value.trim();
@@ -176,9 +212,6 @@ function enviar(textoManual = null) {
     input.value = "";
 }
 
-// =========================
-// MICROFONE
-// =========================
 function ouvir() {
     if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
         alert("Microfone não suportado neste navegador");
@@ -203,9 +236,6 @@ function ouvir() {
     };
 }
 
-// =========================
-// VOZ DA LUNA (SEM EMOJI)
-// =========================
 function falar(texto) {
     if (!("speechSynthesis" in window)) {
         setAvatar(false);
@@ -218,7 +248,6 @@ function falar(texto) {
         return;
     }
 
-    // MELHORIA: Cancela áudios anteriores pendentes para não encavalar as falas
     window.speechSynthesis.cancel();
 
     const voz = new SpeechSynthesisUtterance(textoLimpo);
@@ -230,9 +259,7 @@ function falar(texto) {
     window.speechSynthesis.speak(voz);
 }
 
-// =========================
-// AVATAR (ESTADOS)
-// =========================
+// Controla o brilho e a imagem do Avatar
 function setAvatar(ativo) {
     const avatar = document.getElementById("avatar");
     const img = document.getElementById("avatarImg");
@@ -246,9 +273,6 @@ function setAvatar(ativo) {
     }
 }
 
-// =========================
-// ADD MENSAGEM + IMAGEM
-// =========================
 function add(nome, texto, cls, userTexto=null) {
     const div = document.createElement("div");
     div.className = "msg " + cls;
@@ -269,11 +293,11 @@ function add(nome, texto, cls, userTexto=null) {
     }
 
     const msg = document.getElementById("messages");
-    msg.appendChild(div);
+    box = document.getElementById("messages");
+    box.appendChild(div);
     
-    // MELHORIA: Executa o scroll com um delay mínimo para dar tempo do HTML renderizar a imagem
     setTimeout(() => {
-        msg.scrollTop = msg.scrollHeight;
+        box.scrollTop = box.scrollHeight;
     }, 50);
 }
 </script>
