@@ -6,6 +6,7 @@
     <title>Cadastro - D/❤️</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
 
@@ -104,6 +105,25 @@
             color:#94a3b8;
         }
 
+        /* ESTILO PARA O CAMPO DE IDADE COM RESTRIÇÃO */
+        .idade-container {
+            position: relative;
+        }
+
+        .erro-idade {
+            color: #ff4d6d;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* MARCA O CAMPO COMO INVÁLIDO QUANDO IDADE FOR MENOR */
+        input[name="idade"]:invalid {
+            border: 2px solid #ff4d6d;
+        }
+
         .btn{
 
             background:#ff4d6d;
@@ -177,7 +197,7 @@
             <h2>Criar Conta</h2>
 
             
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data" onsubmit="return validarIdade()">
                 <input type="text"
                        name="nome"
                        placeholder="Seu nome"
@@ -193,10 +213,19 @@
                        placeholder="Sua senha"
                        required>
 
-                <input type="number"
-                       name="idade"
-                       placeholder="Sua idade"
-                       required>
+                <!-- CAMPO DE IDADE COM RESTRIÇÕES -->
+                <div class="idade-container">
+                    <input type="number"
+                           name="idade"
+                           placeholder="Sua idade"
+                           min="18"  <!-- RESTRIÇÃO HTML BÁSICA -->
+                           max="120"
+                           required>
+                    <div class="erro-idade" id="erroIdade">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Apenas maiores de 18 anos podem se cadastrar!
+                    </div>
+                </div>
 
                 <input type="text"
                        name="cidade"
@@ -221,6 +250,37 @@
         </div>
 
     </div>
+
+    <script>
+        // VALIDAÇÃO EM JAVASCRIPT PARA GARANTIR A RESTRIÇÃO
+        function validarIdade() {
+            const idadeInput = document.querySelector('input[name="idade"]');
+            const idade = parseInt(idadeInput.value);
+            const erroMensagem = document.getElementById('erroIdade');
+
+            // Verifica se a idade é menor que 18 ou não é um número válido
+            if (isNaN(idade) || idade < 18 || idade > 120) {
+                erroMensagem.style.display = 'flex'; // Mostra mensagem de erro
+                idadeInput.focus(); // Direciona o foco para o campo
+                return false; // Bloqueia o envio do formulário
+            } else {
+                erroMensagem.style.display = 'none'; // Esconde mensagem se tudo estiver certo
+                return true; // Permite o envio
+            }
+        }
+
+        // MOSTRA A MENSAGEM DE ERRO AO DIGITAR UMA IDADE INVÁLIDA
+        document.querySelector('input[name="idade"]').addEventListener('input', function() {
+            const idade = parseInt(this.value);
+            const erroMensagem = document.getElementById('erroIdade');
+            
+            if (isNaN(idade) || idade < 18 || idade > 120) {
+                erroMensagem.style.display = 'flex';
+            } else {
+                erroMensagem.style.display = 'none';
+            }
+        });
+    </script>
 
 </body>
 </html>
